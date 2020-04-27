@@ -14,7 +14,7 @@ export const App = () => (
         <Route path="/" exact component={Home}></Route>
         <Route path="/create" exact component={Create}></Route>
         <Route path="/join" exact component={Join}></Route>
-        <Route path="/game/:id" exact component={Game}></Route>
+        <Route path="/games/:id" exact component={Game}></Route>
       </Switch>
     </Router>
   </ThemeProvider>

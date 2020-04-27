@@ -105,7 +105,7 @@ export const Create: React.FC = () => (
       </Row>
     </Flex>
     <Flex>
-      <Button fullWidth variant="contained" color="primary">
+      <Button fullWidth variant="outlined" color="primary">
         Save
       </Button>
     </Flex>

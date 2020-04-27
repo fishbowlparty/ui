@@ -31,10 +31,10 @@ export const Join: React.FC = () => {
       <Flex flex="1 1 0%"></Flex>
       <Flex flexDirection="column">
         <Typography variant="h2" align="center">
-          join a games
+          join a game
         </Typography>
         <Typography variant="body1" align="center">
-          Did a friend give you a game code? Enter it here to join their game!
+          Got a game code? Enter it here!
         </Typography>
         <Box m={4}></Box>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -53,9 +53,10 @@ export const Join: React.FC = () => {
               InputProps={{
                 inputProps: {
                   style: {
+                    ...theme.typography.h3,
                     textAlign: "center",
-                    fontSize: theme.spacing(6),
                     fontWeight: "bold",
+                    textTransform: "uppercase",
                   },
                   maxLength: 4,
                 },
@@ -63,7 +64,7 @@ export const Join: React.FC = () => {
             ></TextField>
           </Typography>
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             fullWidth
             type="submit"

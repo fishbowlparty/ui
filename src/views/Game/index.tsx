@@ -1,6 +1,12 @@
 import React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
+import { Flex } from "@rebass/grid/emotion";
+import { Register } from "./Register";
+import { Lobby } from "./Lobby";
+import { Write } from "./Write";
+
+interface Game {}
 
 export const Game: React.FC<RouteComponentProps<{ id: string }>> = () => {
-  return <div>Hello World</div>;
+  return <Lobby></Lobby>;
 };

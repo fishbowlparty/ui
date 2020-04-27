@@ -22,7 +22,7 @@ export const Home: React.FC = () => (
       </Box>
       <Button
         fullWidth
-        variant="contained"
+        variant="outlined"
         color="primary"
         component={Link}
         to="/create"
