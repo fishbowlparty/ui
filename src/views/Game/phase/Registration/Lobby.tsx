@@ -1,60 +1,44 @@
 import styled from "@emotion/styled";
-import {
-  Button,
-  List,
-  ListSubheader,
-  Typography,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Box,
-} from "@material-ui/core";
-import {
-  RemoveCircleOutline,
-  ShareOutlined,
-  DeleteForever,
-  Settings,
-} from "@material-ui/icons";
+import { Button, IconButton, List, Typography } from "@material-ui/core";
+import { RemoveCircleOutline } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
+import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
-import { useHistory, Link, useRouteMatch } from "react-router-dom";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
+
+  const dispatch = useActionDispatch();
+  const history = useHistory();
+  const match = useRouteMatch<{
+    gameCode: string;
+  }>();
+  const { url } = match;
+
   const hostId = useGameSelector((game) => game.hostId);
   const players = useGameSelector((game) => game.players);
-  const isHost = true;
-  const dispatch = useActionDispatch();
-  const match = useRouteMatch();
-  const { url } = match;
+  const isHost = id === hostId;
+  const isMe = useCallback((playerId: string) => id === playerId, [id]);
 
   useEffect(() => {
     dispatch({ type: "JOIN_GAME", payload: { playerId: id, name } });
   }, [dispatch, id, name]);
 
-  const onRegistration = useCallback(
-    (name: string) => {
-      setPlayerName(name);
-      dispatch({ type: "JOIN_GAME", payload: { playerId: id, name } });
+  const removeFromGame = useCallback(
+    (playerId) => {
+      dispatch({ type: "LEAVE_GAME", payload: { playerId } });
     },
-    [dispatch, id]
+    [dispatch]
   );
 
-  const history = useHistory();
-  // TODO: can host leave game?
-  const leaveGame = useCallback(() => {
-    dispatch({ type: "LEAVE_GAME", payload: { playerId: id } });
-    history.push("/");
-  }, [dispatch, history, id]);
-
-  const removeFromGame = useCallback(() => {
-    dispatch({ type: "LEAVE_GAME", payload: { playerId: id } });
-    history.push("/");
-  }, [dispatch, history, id]);
+  if (name === "") {
+    return (
+      <Redirect to={`/games/${match.params.gameCode}/register`}></Redirect>
+    );
+  }
 
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
@@ -65,7 +49,7 @@ export const Lobby: React.FC = () => {
       >
         <Button variant="outlined" fullWidth>
           <Flex flexDirection="column" alignItems="center">
-            <Typography variant="h5">BGGO</Typography>
+            <Typography variant="h5">{match.params.gameCode}</Typography>
             <Typography variant="caption" align="center" color="textSecondary">
               copy invite link
             </Typography>
@@ -95,25 +79,21 @@ export const Lobby: React.FC = () => {
         </Flex>
         <List>
           {players.map((player) => (
-            <ListItem key={player.id}>
-              <ListItemText>{player.name || "..."}</ListItemText>
-              <ListItemSecondaryAction>
-                {player.id === id && (
-                  <Button
-                    color="secondary"
-                    component={Link}
-                    to={`${url}/register`}
-                  >
-                    Change Name
-                  </Button>
-                )}
-                {isHost && (
-                  <IconButton>
-                    <RemoveCircleOutline></RemoveCircleOutline>
-                  </IconButton>
-                )}
-              </ListItemSecondaryAction>
-            </ListItem>
+            <Flex
+              key={player.id}
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Typography>{player.name || "..."}</Typography>
+              {isHost && !isMe(player.id) && (
+                <IconButton
+                  onClick={() => removeFromGame(player.id)}
+                  color="secondary"
+                >
+                  <RemoveCircleOutline></RemoveCircleOutline>
+                </IconButton>
+              )}
+            </Flex>
           ))}
         </List>
       </Flex>

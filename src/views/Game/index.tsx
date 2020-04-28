@@ -9,6 +9,7 @@ import { Drafting } from "./phase/Drafting";
 import { Ended } from "./phase/Ended";
 import { Registration } from "./phase/Registration";
 import { Writing } from "./phase/Writing";
+import { getPlayer } from "../../redux/localStorage";
 
 /*
 Notes for socket server:
@@ -32,7 +33,6 @@ export const GameView: React.FC<RouteComponentProps<{
   const { gameCode } = props.match.params;
   // const socket = useMemo(() => io(gameCode), [gameCode]);
   useEffect(() => {
-    console.log("FIRST RENDER");
     // TODO: namespace socket connection so that it can be sticky to server by gameCode
     const socket = io(gameCode);
     socket.on("connect", () => setConnected(true));
@@ -52,8 +52,74 @@ export const GameView: React.FC<RouteComponentProps<{
     };
   }, [gameCode]);
 
-  console.log("re-render");
-  const store = useGameStore();
+  const { id, name } = getPlayer();
+  const store = useGameStore({
+    gameCode,
+    phase: "registration",
+    cards: {},
+    activePlayer: {
+      team: "orange",
+      index: {
+        orange: 0,
+        blue: 0,
+      },
+    },
+    hostId: id,
+    players: [
+      {
+        id,
+        name,
+      },
+      {
+        id: "1",
+        name: "Caitlin",
+      },
+      {
+        id: "2",
+        name: "Dan",
+      },
+      {
+        id: "3",
+        name: "Chris",
+      },
+      {
+        id: "3",
+        name: "Sarah",
+      },
+    ],
+    round: {
+      guessedCardIds: [],
+      number: 0,
+    },
+    score: {
+      orange: 0,
+      blue: 0,
+    },
+    settings: {
+      cardsPerPlayer: 3,
+      numberOfRounds: 3,
+      skipPenalty: -1,
+      turnDuration: 45,
+    },
+    teams: {
+      orange: [],
+      blue: [],
+    },
+    turns: {
+      active: {
+        paused: true,
+        timeRemaining: 45,
+        guessedCardIds: [],
+        skippedCardIds: [],
+      },
+      previous: {
+        paused: true,
+        timeRemaining: 45,
+        guessedCardIds: [],
+        skippedCardIds: [],
+      },
+    },
+  });
 
   if (!connected) {
     return <div>loading...</div>;
