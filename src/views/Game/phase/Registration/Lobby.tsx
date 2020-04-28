@@ -7,6 +7,7 @@ import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
+import { useDispatch } from "react-redux";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
@@ -32,6 +33,10 @@ export const Lobby: React.FC = () => {
     },
     [dispatch]
   );
+
+  const advanceToWriting = useCallback(() => {
+    dispatch({ type: "SET_GAME_PHASE", payload: { phase: "writing" } });
+  }, [dispatch]);
 
   if (name === "") {
     return (
@@ -89,7 +94,12 @@ export const Lobby: React.FC = () => {
         ))}
       </Flex>
       <Flex>
-        <Button fullWidth variant="outlined" color="primary">
+        <Button
+          fullWidth
+          variant="outlined"
+          color="primary"
+          onClick={advanceToWriting}
+        >
           Start Game
         </Button>
       </Flex>
