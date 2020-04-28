@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Provider as ReduxProvider } from "react-redux";
+import { Provider as ReduxProvider, useDispatch } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import io from "socket.io-client";
-import { useGameSelector, useGameStore } from "../../redux";
+import { useGameSelector, useGameStore, useActionDispatch } from "../../redux";
 import { Active } from "./phase/Active";
 import { Canceled } from "./phase/Canceled";
 import { Drafting } from "./phase/Drafting";
@@ -32,6 +32,7 @@ export const GameView: React.FC<RouteComponentProps<{
   const { gameCode } = props.match.params;
   // const socket = useMemo(() => io(gameCode), [gameCode]);
   useEffect(() => {
+    console.log("FIRST RENDER");
     // TODO: namespace socket connection so that it can be sticky to server by gameCode
     const socket = io(gameCode);
     socket.on("connect", () => setConnected(true));
@@ -51,6 +52,7 @@ export const GameView: React.FC<RouteComponentProps<{
     };
   }, [gameCode]);
 
+  console.log("re-render");
   const store = useGameStore();
 
   if (!connected) {

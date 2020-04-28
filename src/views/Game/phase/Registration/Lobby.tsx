@@ -75,20 +75,24 @@ export const Lobby: React.FC = () => {
       <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
         <Flex alignItems="center" justifyContent="space-between">
           <Label>Rules</Label>
-
           {isHost && (
-            <IconButton component={Link} to={`${url}/settings`}>
-              <Settings></Settings>
-            </IconButton>
+            <Button component={Link} to={`${url}/settings`} color="secondary">
+              Change Rules
+            </Button>
           )}
         </Flex>
         <Typography>
-          3 rounds; 3 cards per player; 45 seconds per turn; -1 for skips
+          3 rounds, 3 cards per player, 45 seconds per turn, -1 for skips
         </Typography>
       </Flex>
 
       <Flex flex="1 0 auto" flexDirection="column">
-        <Label>Players</Label>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Label>Players</Label>
+          <Button component={Link} to={`${url}/register`} color="secondary">
+            Change My Name
+          </Button>
+        </Flex>
         <List>
           {players.map((player) => (
             <ListItem key={player.id}>
