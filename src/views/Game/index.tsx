@@ -83,7 +83,7 @@ export const GameView: React.FC<RouteComponentProps<{
         name: "Chris",
       },
       {
-        id: "3",
+        id: "4",
         name: "Sarah",
       },
     ],

@@ -26,6 +26,8 @@ import {
 // randomize which team goes first
 // so - dont optimiztic update phase changes, dont do a draw deck and instead let the active client draw cards
 
+// NO INSTEAD, PUSH RANDOMNESS INTO ACTION PAYLOADS
+
 const initialGame: Game = {
   gameCode: "",
   phase: "registration",

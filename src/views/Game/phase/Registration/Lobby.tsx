@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import { Button, IconButton, List, Typography } from "@material-ui/core";
+import { Button, IconButton, List, Typography, Box } from "@material-ui/core";
 import { RemoveCircleOutline } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
@@ -12,7 +12,6 @@ export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
 
   const dispatch = useActionDispatch();
-  const history = useHistory();
   const match = useRouteMatch<{
     gameCode: string;
   }>();
@@ -47,14 +46,9 @@ export const Lobby: React.FC = () => {
         justifyContent="center"
         marginBottom={`${theme.spacing(2)}px`}
       >
-        <Button variant="outlined" fullWidth>
-          <Flex flexDirection="column" alignItems="center">
-            <Typography variant="h5">{match.params.gameCode}</Typography>
-            <Typography variant="caption" align="center" color="textSecondary">
-              copy invite link
-            </Typography>
-          </Flex>
-        </Button>
+        <CopyGameCodeButton
+          gameCode={match.params.gameCode}
+        ></CopyGameCodeButton>
       </Flex>
       <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
         <Flex alignItems="center" justifyContent="space-between">
@@ -77,25 +71,22 @@ export const Lobby: React.FC = () => {
             Change My Name
           </Button>
         </Flex>
-        <List>
-          {players.map((player) => (
-            <Flex
-              key={player.id}
-              alignItems="center"
-              justifyContent="space-between"
-            >
-              <Typography>{player.name || "..."}</Typography>
+        {players.map((player) => (
+          <Flex
+            key={player.id}
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography>{player.name || "..."}</Typography>
+            <Box height="48px">
               {isHost && !isMe(player.id) && (
-                <IconButton
-                  onClick={() => removeFromGame(player.id)}
-                  color="secondary"
-                >
+                <IconButton onClick={() => removeFromGame(player.id)}>
                   <RemoveCircleOutline></RemoveCircleOutline>
                 </IconButton>
               )}
-            </Flex>
-          ))}
-        </List>
+            </Box>
+          </Flex>
+        ))}
       </Flex>
       <Flex>
         <Button fullWidth variant="outlined" color="primary">
@@ -103,6 +94,29 @@ export const Lobby: React.FC = () => {
         </Button>
       </Flex>
     </Flex>
+  );
+};
+
+const CopyGameCodeButton: React.FC<{ gameCode: string }> = ({ gameCode }) => {
+  const [highlighted, setHighlighted] = useState(false);
+  const timeout = useRef<number>();
+
+  const copyGameCode = useCallback(() => {
+    navigator.clipboard.writeText(window.location.href);
+    setHighlighted(true);
+    clearTimeout(timeout.current);
+    timeout.current = window.setTimeout(() => setHighlighted(false), 1000);
+  }, []);
+
+  return (
+    <Button variant="outlined" fullWidth onClick={copyGameCode}>
+      <Flex flexDirection="column" alignItems="center">
+        <Typography variant="h5">{gameCode}</Typography>
+        <Typography variant="caption" align="center">
+          {highlighted ? "copied!" : "copy invite link"}
+        </Typography>
+      </Flex>
+    </Button>
   );
 };
 
