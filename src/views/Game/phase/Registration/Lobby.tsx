@@ -1,8 +1,14 @@
 import styled from "@emotion/styled";
 import { Button, IconButton, List, Typography, Box } from "@material-ui/core";
-import { RemoveCircleOutline } from "@material-ui/icons";
+import { Remove } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
@@ -22,6 +28,22 @@ export const Lobby: React.FC = () => {
   const players = useGameSelector((game) => game.players);
   const isHost = id === hostId;
   const isMe = useCallback((playerId: string) => id === playerId, [id]);
+
+  const rulesDescription = useGameSelector((game) => {
+    const {
+      cardsPerPlayer,
+      numberOfRounds,
+      skipPenalty,
+      turnDuration,
+    } = game.settings;
+
+    return [
+      `${numberOfRounds} rounds`,
+      `${cardsPerPlayer} cards per player`,
+      `${turnDuration} second turns`,
+      `skips are ${skipPenalty === -1 ? "-1 points" : "free"}`,
+    ].join(", ");
+  });
 
   useEffect(() => {
     dispatch({ type: "JOIN_GAME", payload: { playerId: id, name } });
@@ -46,14 +68,20 @@ export const Lobby: React.FC = () => {
 
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        marginBottom={`${theme.spacing(2)}px`}
-      >
+      <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
+        <Flex height="36px">
+          <Label>Game Lobby</Label>
+        </Flex>
+
         <CopyGameCodeButton
           gameCode={match.params.gameCode}
         ></CopyGameCodeButton>
+        {isHost && (
+          <Typography variant="caption">
+            You are the host! Use this invite link to let your friends join. You
+            will control this game's rules and when the game starts. Have fun!
+          </Typography>
+        )}
       </Flex>
       <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
         <Flex alignItems="center" justifyContent="space-between">
@@ -64,9 +92,7 @@ export const Lobby: React.FC = () => {
             </Button>
           )}
         </Flex>
-        <Typography>
-          3 rounds, 3 cards per player, 45 seconds per turn, -1 for skips
-        </Typography>
+        <Typography variant="caption">{rulesDescription}</Typography>
       </Flex>
 
       <Flex flex="1 0 auto" flexDirection="column">
@@ -85,8 +111,11 @@ export const Lobby: React.FC = () => {
             <Typography>{player.name || "..."}</Typography>
             <Box height="48px">
               {isHost && !isMe(player.id) && (
-                <IconButton onClick={() => removeFromGame(player.id)}>
-                  <RemoveCircleOutline></RemoveCircleOutline>
+                <IconButton
+                  onClick={() => removeFromGame(player.id)}
+                  color="secondary"
+                >
+                  <Remove></Remove>
                 </IconButton>
               )}
             </Box>
@@ -115,18 +144,25 @@ const CopyGameCodeButton: React.FC<{ gameCode: string }> = ({ gameCode }) => {
     navigator.clipboard.writeText(window.location.href);
     setHighlighted(true);
     clearTimeout(timeout.current);
-    timeout.current = window.setTimeout(() => setHighlighted(false), 1000);
+    timeout.current = window.setTimeout(() => setHighlighted(false), 1500);
   }, []);
 
   return (
-    <Button variant="outlined" fullWidth onClick={copyGameCode}>
-      <Flex flexDirection="column" alignItems="center">
-        <Typography variant="h5">{gameCode}</Typography>
-        <Typography variant="caption" align="center">
-          {highlighted ? "copied!" : "copy invite link"}
-        </Typography>
-      </Flex>
-    </Button>
+    <Box mb={1}>
+      <Button
+        variant="outlined"
+        fullWidth
+        onClick={copyGameCode}
+        color="secondary"
+      >
+        <Flex flexDirection="column" alignItems="center">
+          <Typography variant="h5">{gameCode}</Typography>
+          <Typography variant="caption" align="center">
+            {highlighted ? "copied!" : "copy invite link"}
+          </Typography>
+        </Flex>
+      </Button>
+    </Box>
   );
 };
 

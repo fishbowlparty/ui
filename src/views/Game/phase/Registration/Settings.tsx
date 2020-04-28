@@ -131,9 +131,6 @@ export const Settings: React.FC = () => {
                 margin="dense"
                 inputRef={register({ required: true, min: 1 })}
                 InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">s</InputAdornment>
-                  ),
                   inputProps: {
                     required: true,
                     min: 1,
