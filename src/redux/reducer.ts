@@ -1,30 +1,77 @@
 import {
+  nextPlayerNextTeam,
+  nextPlayerSameTeam,
+  nextRound,
+  nextTurn,
+} from "./mutations";
+import {
   Actions,
+  END_TURN,
   Game,
-  Player,
-  GameSettings,
+  GOT_CARD,
   JOIN_GAME,
   LEAVE_GAME,
+  PAUSE_TURN,
   SET_GAME_PHASE,
-  SUBMIT_CARDS,
+  SET_GAME_SETTINGS,
   SET_TEAMS,
+  SKIP_CARD,
   SKIP_TURN,
   START_TURN,
-  PAUSE_TURN,
-  GOT_CARD,
-  TeamName,
-  SKIP_CARD,
-  Card,
-  END_TURN,
-  SET_GAME_SETTINGS,
+  SUBMIT_CARDS,
 } from "./types";
-import { nextPlayerSameTeam, nextPlayerNextTeam, nextTurn } from "./mutations";
-import { nextRound } from "./mutations";
 
 // where is randomness?
 // randomize teams
 // randomize which team goes first
 // so - dont optimiztic update phase changes, dont do a draw deck and instead let the active client draw cards
+
+const initialGame: Game = {
+  gameCode: "",
+  phase: "registration",
+  cards: {},
+  activePlayer: {
+    team: "orange",
+    index: {
+      orange: 0,
+      blue: 0,
+    },
+  },
+  hostId: "",
+  players: [],
+  round: {
+    guessedCardIds: [],
+    number: 0,
+  },
+  score: {
+    orange: 0,
+    blue: 0,
+  },
+  settings: {
+    cardsPerPlayer: 3,
+    numberOfRounds: 3,
+    skipPenalty: -1,
+    turnDuration: 45,
+  },
+  teams: {
+    orange: [],
+    blue: [],
+  },
+  turns: {
+    active: {
+      paused: true,
+      timeRemaining: 45,
+      guessedCardIds: [],
+      skippedCardIds: [],
+    },
+    previous: {
+      paused: true,
+      timeRemaining: 45,
+      guessedCardIds: [],
+      skippedCardIds: [],
+    },
+  },
+};
 
 function leaveGame(game: Game, action: LEAVE_GAME): Game {
   if (game.phase !== "registration") {
@@ -45,7 +92,7 @@ function joinGame(game: Game, action: JOIN_GAME): Game {
   const { playerId, name } = action.payload;
 
   const playerIndex = game.players.findIndex(
-    (player) => player.id !== playerId
+    (player) => player.id === playerId
   );
   if (playerIndex < 0) {
     return {
@@ -53,18 +100,17 @@ function joinGame(game: Game, action: JOIN_GAME): Game {
       players: game.players.concat({ id: playerId, name }),
     };
   }
-  const player = game.players[playerIndex];
   return {
     ...game,
     players: [
       ...game.players.slice(0, playerIndex),
-      { ...player, name },
+      { id: playerId, name },
       ...game.players.slice(playerIndex + 1),
     ],
   };
 }
 
-function shuffle(array) {
+function shuffle(array: any[]) {
   array = array.slice();
   for (var i = array.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -133,7 +179,6 @@ function setGamePhase(game: Game, action: SET_GAME_PHASE): Game {
       ...game,
       round: {
         number: 1,
-        drawCardIds: shuffle(Object.keys(game.cards)),
         guessedCardIds: [],
       },
       activePlayer: {
@@ -160,10 +205,16 @@ function setGamePhase(game: Game, action: SET_GAME_PHASE): Game {
     };
   }
 
-  // Game can only end as a side effect of a round ending
-  if (phase === "ended") {
-    return game;
+  // you can cancel a game at any point
+  if (phase === "canceled") {
+    return {
+      ...game,
+      phase,
+    };
   }
+
+  // Game can only end as a side effect of a round ending
+  return game;
 }
 
 export function submitCards(game: Game, action: SUBMIT_CARDS): Game {
@@ -321,10 +372,10 @@ function setSettings(game: Game, action: SET_GAME_SETTINGS): Game {
 }
 
 function assertUnreachable(x: never): never {
-  throw new Error("Didn't expect to get here");
+  throw new Error(`Unexpected Action ${JSON.stringify(x)}`);
 }
 
-export function GameReducer(game: Game, action: Actions): Game {
+export function GameReducer(game: Game = initialGame, action: Actions): Game {
   switch (action.type) {
     // phase
     case "SET_GAME_PHASE":
@@ -358,7 +409,7 @@ export function GameReducer(game: Game, action: Actions): Game {
 
     // default
     default:
-      return assertUnreachable(action);
+      return game;
   }
 }
 

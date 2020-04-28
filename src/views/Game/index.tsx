@@ -1,12 +1,89 @@
-import React from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
-import { Flex } from "@rebass/grid/emotion";
-import { Register } from "./Register";
-import { Lobby } from "./Lobby";
-import { Write } from "./Write";
+import React, { useEffect, useState } from "react";
+import { Provider as ReduxProvider } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import io from "socket.io-client";
+import { useGameSelector, useGameStore } from "../../redux";
+import { Active } from "./phase/Active";
+import { Canceled } from "./phase/Canceled";
+import { Drafting } from "./phase/Drafting";
+import { Ended } from "./phase/Ended";
+import { Registration } from "./phase/Registration";
+import { Writing } from "./phase/Writing";
 
-interface Game {}
+/*
+Notes for socket server:
+- Requests are pinned to servers by game id
+- Game states & their sockets are held in memory on servers, keyed by id
+  - When a server receives a request for a game, it checks if the game is already in memory
+    - If not, the game state is read out of the database, a new redux store is init'd with the game state
+      - If game is not in DB, 404 or equivalent down the socket. and reap?
+    - For each new socket connection, send init event with current game state.
+    - Subscribe to the store and push subsequent updates out onto the socket
+    - Subscribe to the store and write back to the db. DB writes are only for backup in case of server crash / game recovery.
+      - Need to check about how socket reconnects from client work on a server crash
+    - Listen on the sockets for events, and dispatch them onto the store
+    - Q: how are games reaped? Both in memory sessions, and db records. X time after ended? X time after last interaction? greater than 24 hr old?
+*/
 
-export const Game: React.FC<RouteComponentProps<{ id: string }>> = () => {
-  return <Lobby></Lobby>;
+export const GameView: React.FC<RouteComponentProps<{
+  gameCode: string;
+}>> = (props) => {
+  const [connected, setConnected] = useState(true);
+  const { gameCode } = props.match.params;
+  // const socket = useMemo(() => io(gameCode), [gameCode]);
+  useEffect(() => {
+    // TODO: namespace socket connection so that it can be sticky to server by gameCode
+    const socket = io(gameCode);
+    socket.on("connect", () => setConnected(true));
+    socket.on("disconnect", () => setConnected(false));
+
+    // TODO: type this data
+    // May need separate "first / init" event to initialize store from subsequent update events
+    //@ts-ignore
+    socket.on("data", (data) => {
+      console.log(data);
+    });
+
+    // TODO: how do I clean up a socket?
+    return () => {
+      socket.removeAllListeners();
+      socket.disconnect();
+    };
+  }, [gameCode]);
+
+  const store = useGameStore();
+
+  if (!connected) {
+    return <div>loading...</div>;
+  }
+
+  // deal with socket error / 404 here
+  if (false) {
+    return <div>404 or error?</div>;
+  }
+
+  return (
+    <ReduxProvider store={store}>
+      <PhaseSwitcher></PhaseSwitcher>
+    </ReduxProvider>
+  );
+};
+
+const PhaseSwitcher: React.FC = () => {
+  const phase = useGameSelector((state) => state.phase);
+
+  switch (phase) {
+    case "registration":
+      return <Registration></Registration>;
+    case "writing":
+      return <Writing></Writing>;
+    case "drafting":
+      return <Drafting></Drafting>;
+    case "active":
+      return <Active></Active>;
+    case "canceled":
+      return <Canceled></Canceled>;
+    case "ended":
+      return <Ended></Ended>;
+  }
 };

@@ -1,21 +1,29 @@
 import { ThemeProvider } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { theme } from "./theme";
 import { Home } from "./views/Home";
-import { Create } from "./views/Create";
 import { Join } from "./views/Join";
-import { Game } from "./views/Game";
+import { GameView } from "./views/Game";
+import { initializePlayerId } from "./redux/localStorage";
 
-export const App = () => (
-  <ThemeProvider theme={theme}>
-    <Router>
-      <Switch>
-        <Route path="/" exact component={Home}></Route>
-        <Route path="/create" exact component={Create}></Route>
-        <Route path="/join" exact component={Join}></Route>
-        <Route path="/games/:id" exact component={Game}></Route>
-      </Switch>
-    </Router>
-  </ThemeProvider>
-);
+export const App = () => {
+  useEffect(() => {
+    initializePlayerId();
+  }, []);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Switch>
+          <Route path="/" exact component={Home}></Route>
+          <Route path="/join" exact component={Join}></Route>
+          <Route path="/games/:gameCode" component={GameView}></Route>
+          <Route path="/" component={FourOhFour}></Route>
+        </Switch>
+      </Router>
+    </ThemeProvider>
+  );
+};
+
+const FourOhFour = () => <div>404 NOT FOUND</div>;

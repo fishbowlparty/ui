@@ -3,7 +3,8 @@ export type GamePhase =
   | "writing"
   | "drafting"
   | "active"
-  | "ended";
+  | "ended"
+  | "canceled";
 
 export interface GameSettings {
   numberOfRounds: number;
@@ -191,7 +192,6 @@ export type Actions = ADMIN_ACTIONS | GAMEPLAY_ACTIONS;
 Optimizations
 Make players an object for easier lookups?
 Skip deck can be map, ordering does not matter, cheaper lookups
-Name turn ordering state differently?
 */
 
 // helper functions take game state, return new game state

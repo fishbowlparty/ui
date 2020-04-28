@@ -27,3 +27,15 @@ export const theme = createMuiTheme({
     // },
   },
 });
+
+/*
+Typography elements:
+
+- Logo
+- Page header
+- Button
+- Copy
+- Form Label
+- Helper text
+- Game Code
+*/

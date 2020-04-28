@@ -1,31 +1,43 @@
-import React, { useCallback } from "react";
-import { Box, Typography, Button, TextField } from "@material-ui/core";
-import { theme } from "../../theme";
+import { Box, Button, TextField, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import styled from "@emotion/styled";
-import { Link, useHistory } from "react-router-dom";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import { useActionDispatch } from "../../../../redux";
+import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
+import { theme } from "../../../../theme";
 
 interface FormState {
   name: string;
 }
 
 export const Register: React.FC = () => {
+  const { id, name } = getPlayer();
   // TODO: read identity & username from cookie
   const { register, handleSubmit, formState } = useForm<FormState>({
     mode: "onChange",
-  });
-  const history = useHistory();
-  const onSubmit = useCallback(
-    (data: FormState) => {
-      console.log(data);
-      history.push(`/games/${data.name}`);
+    defaultValues: {
+      name,
     },
-    [history]
+  });
+
+  const dispatch = useActionDispatch();
+  const history = useHistory();
+  const { params } = useRouteMatch<{ gameCode: string }>();
+
+  const onFormSubmit = useCallback(
+    ({ name }: FormState) => {
+      dispatch({
+        type: "JOIN_GAME",
+        payload: { playerId: id, name },
+      });
+      setPlayerName(name);
+      history.push(`/games/${params.gameCode}`);
+    },
+    [history, dispatch, id, params]
   );
 
   const { isValid } = formState;
-  console.log(isValid);
 
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
@@ -38,7 +50,7 @@ export const Register: React.FC = () => {
           Tell everyone who you are!
         </Typography>
         <Box m={4}></Box>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onFormSubmit)}>
           <Typography variant="h5">
             <TextField
               fullWidth
@@ -66,7 +78,7 @@ export const Register: React.FC = () => {
             type="submit"
             disabled={!isValid}
           >
-            Enter Lobby
+            Save
           </Button>
         </form>
       </Flex>
