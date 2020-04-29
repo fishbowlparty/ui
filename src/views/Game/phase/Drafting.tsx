@@ -1,32 +1,31 @@
-import styled from "@emotion/styled";
 import {
-  Button,
-  IconButton,
+  Divider,
   List,
-  Typography,
-  Box,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
-  Divider,
-  ListSubheader,
+  Typography,
 } from "@material-ui/core";
-import { Remove, Check, Edit } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-} from "react";
-import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
-import { useActionDispatch, useGameSelector } from "../../../redux";
-import { getPlayer, setPlayerName } from "../../../redux/localStorage";
+import React from "react";
+import { useRouteMatch } from "react-router-dom";
+import { useGameSelector, useActionDispatch } from "../../../redux";
+import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
-import { useDispatch, useSelector } from "react-redux";
 import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+  ResponderProvided,
+} from "react-beautiful-dnd";
+import { TeamName } from "../../../redux/types";
 
+/*
+Make color neutral when dragging or change when crossing borders
+Try different list border colors
+Think about List with and without borders across this and the lobby
+*/
 export const Drafting: React.FC = () => {
   const { id } = getPlayer();
 
@@ -35,6 +34,32 @@ export const Drafting: React.FC = () => {
   const players = useGameSelector((game) => game.players);
   const teams = useGameSelector((game) => game.teams);
   const lookupPlayer = (id: string) => players.find((p) => p.id === id);
+  const dispatch = useActionDispatch();
+
+  const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    console.log(result);
+    const { draggableId, source, destination } = result;
+    if (destination?.droppableId == null) {
+      return;
+    }
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
+    const src = source.droppableId as TeamName;
+    const dst = destination.droppableId as TeamName;
+    const nextTeams = {
+      orange: [...teams.orange],
+      blue: [...teams.blue],
+    };
+    nextTeams[src].splice(source.index, 1);
+    nextTeams[dst].splice(destination.index, 0, draggableId);
+
+    dispatch({ type: "SET_TEAMS", payload: { teams: nextTeams } });
+  };
 
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
@@ -47,54 +72,88 @@ export const Drafting: React.FC = () => {
           <Label>Choose Your Teams...</Label>
         </Flex>
         <Flex>
-          <Flex flex="1 1 0%">
-            <List
-              style={{
-                border: `1px solid ${theme.palette.divider}`,
-                width: "100%",
-              }}
-              disablePadding
-            >
-              <Divider></Divider>
-              {teams.orange.map((playerId, i) => (
-                <React.Fragment key={playerId}>
-                  <ListItem key={playerId}>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        color: "secondary",
-                      }}
-                      primary={lookupPlayer(playerId)?.name || "..."}
-                    ></ListItemText>
-                  </ListItem>
-                  {i + 1 < players.length && <Divider></Divider>}
-                </React.Fragment>
-              ))}
-            </List>
-          </Flex>
-          <Flex flex="1 1 0%">
-            <List
-              style={{
-                border: `1px solid ${theme.palette.divider}`,
-                width: "100%",
-              }}
-              disablePadding
-            >
-              <Divider></Divider>
-              {teams.blue.map((playerId, i) => (
-                <React.Fragment key={playerId}>
-                  <ListItem key={playerId}>
-                    <ListItemText
-                      primaryTypographyProps={{
-                        color: "primary",
-                      }}
-                      primary={lookupPlayer(playerId)?.name || "..."}
-                    ></ListItemText>
-                  </ListItem>
-                  {i + 1 < players.length && <Divider></Divider>}
-                </React.Fragment>
-              ))}
-            </List>
-          </Flex>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Flex flex="1 1 0%">
+              <Droppable droppableId="orange">
+                {(provided, snapshot) => (
+                  <List
+                    innerRef={provided.innerRef}
+                    style={{
+                      border: `1px solid ${theme.palette.divider}`,
+                      width: "100%",
+                    }}
+                    disablePadding
+                    {...provided.droppableProps}
+                  >
+                    {teams.orange.map((playerId, i) => (
+                      <Draggable
+                        key={playerId}
+                        draggableId={playerId}
+                        index={i}
+                      >
+                        {(provided, snapshot) => (
+                          <ListItem
+                            key={playerId}
+                            innerRef={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <ListItemText
+                              primaryTypographyProps={{
+                                color: "secondary",
+                              }}
+                              primary={lookupPlayer(playerId)?.name || "..."}
+                            ></ListItemText>
+                          </ListItem>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </List>
+                )}
+              </Droppable>
+            </Flex>
+            <Flex flex="1 1 0%">
+              <Droppable droppableId="blue">
+                {(provided, snapshot) => (
+                  <List
+                    innerRef={provided.innerRef}
+                    style={{
+                      border: `1px solid ${theme.palette.divider}`,
+                      width: "100%",
+                    }}
+                    disablePadding
+                    {...provided.droppableProps}
+                  >
+                    {teams.blue.map((playerId, i) => (
+                      <Draggable
+                        key={playerId}
+                        draggableId={playerId}
+                        index={i}
+                      >
+                        {(provided, snapshot) => (
+                          <ListItem
+                            key={playerId}
+                            innerRef={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <ListItemText
+                              primaryTypographyProps={{
+                                color: "primary",
+                              }}
+                              primary={lookupPlayer(playerId)?.name || "..."}
+                            ></ListItemText>
+                          </ListItem>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </List>
+                )}
+              </Droppable>
+            </Flex>
+          </DragDropContext>
         </Flex>
       </Flex>
       <Flex>
