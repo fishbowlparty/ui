@@ -56,7 +56,7 @@ export const GameView: React.FC<RouteComponentProps<{
   const store = useGameStore({
     gameCode,
     phase: "registration",
-    cards: {},
+    playerCards: {},
     activePlayer: {
       team: "orange",
       index: {

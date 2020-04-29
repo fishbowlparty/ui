@@ -1,6 +1,22 @@
 import styled from "@emotion/styled";
-import { Button, IconButton, List, Typography, Box } from "@material-ui/core";
-import { Remove } from "@material-ui/icons";
+import {
+  Button,
+  IconButton,
+  List,
+  Typography,
+  Box,
+  ListItem,
+  ListItemText,
+  Divider,
+  ListItemSecondaryAction,
+} from "@material-ui/core";
+import {
+  RemoveCircleOutlineOutlined,
+  Remove,
+  Close,
+  Edit,
+  Settings,
+} from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
 import React, {
   useCallback,
@@ -14,6 +30,7 @@ import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useDispatch } from "react-redux";
+import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
@@ -56,10 +73,6 @@ export const Lobby: React.FC = () => {
     [dispatch]
   );
 
-  const advanceToWriting = useCallback(() => {
-    dispatch({ type: "SET_GAME_PHASE", payload: { phase: "writing" } });
-  }, [dispatch]);
-
   if (name === "") {
     return (
       <Redirect to={`/games/${match.params.gameCode}/register`}></Redirect>
@@ -69,16 +82,13 @@ export const Lobby: React.FC = () => {
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
       <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
-        <Flex height="36px">
-          <Label>Game Lobby</Label>
-        </Flex>
-
+        <Label>Game Lobby</Label>
         <CopyGameCodeButton
           gameCode={match.params.gameCode}
         ></CopyGameCodeButton>
         {isHost && (
           <Typography variant="caption">
-            You are the host! Use this invite link to let your friends join. You
+            You are the host. Use this invite link to let your friends join. You
             will control this game's rules and when the game starts. Have fun!
           </Typography>
         )}
@@ -87,9 +97,13 @@ export const Lobby: React.FC = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Label>Rules</Label>
           {isHost && (
-            <Button component={Link} to={`${url}/settings`} color="secondary">
-              Change Rules
-            </Button>
+            <IconButton
+              component={Link}
+              to={`${url}/settings`}
+              style={{ marginRight: 16 }}
+            >
+              <Settings></Settings>
+            </IconButton>
           )}
         </Flex>
         <Typography variant="caption">{rulesDescription}</Typography>
@@ -98,39 +112,36 @@ export const Lobby: React.FC = () => {
       <Flex flex="1 0 auto" flexDirection="column">
         <Flex alignItems="center" justifyContent="space-between">
           <Label>Players</Label>
-          <Button component={Link} to={`${url}/register`} color="secondary">
-            Change My Name
-          </Button>
         </Flex>
-        {players.map((player) => (
-          <Flex
-            key={player.id}
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Typography>{player.name || "..."}</Typography>
-            <Box height="48px">
-              {isHost && !isMe(player.id) && (
-                <IconButton
-                  onClick={() => removeFromGame(player.id)}
-                  color="secondary"
-                >
-                  <Remove></Remove>
-                </IconButton>
-              )}
-            </Box>
-          </Flex>
-        ))}
+        <List
+          style={{ border: `1px solid ${theme.palette.divider}` }}
+          disablePadding
+        >
+          {players.map((player, i) => (
+            <React.Fragment key={player.id}>
+              <ListItem>
+                <ListItemText primary={player.name || "..."}></ListItemText>
+                <ListItemSecondaryAction>
+                  {isMe(player.id) ? (
+                    <IconButton component={Link} to={`${url}/register`}>
+                      <Edit></Edit>
+                    </IconButton>
+                  ) : (
+                    isHost && (
+                      <IconButton onClick={() => removeFromGame(player.id)}>
+                        <Close></Close>
+                      </IconButton>
+                    )
+                  )}
+                </ListItemSecondaryAction>
+              </ListItem>
+              {i + 1 < players.length && <Divider></Divider>}
+            </React.Fragment>
+          ))}
+        </List>
       </Flex>
       <Flex>
-        <Button
-          fullWidth
-          variant="outlined"
-          color="primary"
-          onClick={advanceToWriting}
-        >
-          Start Game
-        </Button>
+        <AdvancePhaseButton></AdvancePhaseButton>
       </Flex>
     </Flex>
   );
@@ -167,7 +178,11 @@ const CopyGameCodeButton: React.FC<{ gameCode: string }> = ({ gameCode }) => {
 };
 
 const Label: React.FC = ({ children }) => (
-  <Typography style={{ fontWeight: 300 }} color="textSecondary" variant="h6">
+  <Typography
+    style={{ fontWeight: 300, lineHeight: "36px" }}
+    color="textSecondary"
+    variant="h6"
+  >
     {children}
   </Typography>
 );

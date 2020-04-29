@@ -20,6 +20,7 @@ import {
   START_TURN,
   SUBMIT_CARDS,
 } from "./types";
+import { selectCards } from "./selectors";
 
 // where is randomness?
 // randomize teams
@@ -27,11 +28,12 @@ import {
 // so - dont optimiztic update phase changes, dont do a draw deck and instead let the active client draw cards
 
 // NO INSTEAD, PUSH RANDOMNESS INTO ACTION PAYLOADS
+// This includes id creation - that is randomness
 
 const initialGame: Game = {
   gameCode: "",
   phase: "registration",
-  cards: {},
+  playerCards: {},
   activePlayer: {
     team: "orange",
     index: {
@@ -146,8 +148,8 @@ function setGamePhase(game: Game, action: SET_GAME_PHASE): Game {
     if (game.phase !== "writing") {
       return game;
     }
-    // requires at least 1 card
-    if (Object.keys(game.cards).length < 1) {
+    // requires at least 1 player's cards to be submitted
+    if (Object.keys(game.playerCards).length < 1) {
       return game;
     }
 
@@ -224,13 +226,13 @@ export function submitCards(game: Game, action: SUBMIT_CARDS): Game {
     return game;
   }
 
-  const { cards } = action.payload;
+  const { playerId, cards } = action.payload;
 
   return {
     ...game,
-    cards: {
-      ...game.cards,
-      ...cards,
+    playerCards: {
+      ...game.playerCards,
+      [playerId]: cards,
     },
   };
 }
@@ -330,7 +332,7 @@ function gotCard(game: Game, action: GOT_CARD): Game {
   // if we have now guessed all cards, go to the next round
   if (
     guessedCardIds.length + game.round.guessedCardIds.length >=
-    Object.keys(game.cards).length
+    Object.keys(selectCards(game)).length
   ) {
     game = nextRound(game, timeRemaining);
   }
@@ -371,10 +373,6 @@ function setSettings(game: Game, action: SET_GAME_SETTINGS): Game {
     ...game,
     settings: action.payload.settings,
   };
-}
-
-function assertUnreachable(x: never): never {
-  throw new Error(`Unexpected Action ${JSON.stringify(x)}`);
 }
 
 export function GameReducer(game: Game = initialGame, action: Actions): Game {

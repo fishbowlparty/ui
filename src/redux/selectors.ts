@@ -1,4 +1,4 @@
-import { Game, GamePhase } from "./types";
+import { Game, GamePhase, Card } from "./types";
 
 export const selectCanAdvanceToPhase = (
   game: Game,
@@ -22,7 +22,7 @@ export const selectCanAdvanceToPhase = (
       return false;
     }
     // requires at least 1 card
-    if (Object.keys(game.cards).length < 1) {
+    if (Object.keys(game.playerCards).length < 1) {
       return false;
     }
 
@@ -49,4 +49,24 @@ export const selectCanAdvanceToPhase = (
   if (phase === "canceled") {
     return true;
   }
+
+  return true;
+};
+
+export const selectHost = (game: Game) => {
+  const { hostId, players } = game;
+
+  const host = players.find((player) => player.id === hostId);
+  return host;
+};
+
+export const selectCards = (game: Game): Record<string, Card> => {
+  return Object.values(game.playerCards)
+    .flatMap((cards) => cards)
+    .reduce((cardMap, card) => {
+      return {
+        ...cardMap,
+        [card.id]: card,
+      };
+    }, {} as Record<string, Card>);
 };

@@ -23,7 +23,6 @@ export type TeamName = "orange" | "blue";
 export interface Card {
   id: string;
   text: string;
-  playerId: string;
 }
 
 export interface Turn {
@@ -42,8 +41,9 @@ export interface Game {
 
   // built up during registration:
   players: Player[];
-  // build during writing
-  cards: Record<string, Card>;
+  // built during writing - record of player id to cards
+  playerCards: Record<string, Card[]>;
+
   //built during drafting
   teams: Record<TeamName, string[]>;
 
@@ -104,7 +104,8 @@ export interface LEAVE_GAME {
 export interface SUBMIT_CARDS {
   type: "SUBMIT_CARDS";
   payload: {
-    cards: Record<string, Card>;
+    playerId: string;
+    cards: Card[];
   };
 }
 
