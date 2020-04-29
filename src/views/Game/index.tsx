@@ -55,7 +55,7 @@ export const GameView: React.FC<RouteComponentProps<{
   const { id, name } = getPlayer();
   const store = useGameStore({
     gameCode,
-    phase: "registration",
+    phase: "drafting",
     playerCards: {},
     activePlayer: {
       team: "orange",
@@ -102,8 +102,8 @@ export const GameView: React.FC<RouteComponentProps<{
       turnDuration: 45,
     },
     teams: {
-      orange: [],
-      blue: [],
+      orange: [id, "1", "2"],
+      blue: ["3", "4"],
     },
     turns: {
       active: {

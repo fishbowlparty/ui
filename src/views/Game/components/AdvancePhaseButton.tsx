@@ -48,8 +48,8 @@ export const advanceErrorMessage = (
     return null;
   }
   if (phase === "writing") {
-    // requires at least 1 card
-    if (Object.keys(game.playerCards).length < game.players.length) {
+    // TODO: how many cards are required to advance?
+    if (Object.keys(game.playerCards).length < 1) {
       return "Waiting for everyone's cards...";
     }
 

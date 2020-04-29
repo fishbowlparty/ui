@@ -38,6 +38,10 @@ export const Lobby: React.FC = () => {
     [playerCards]
   );
 
+  if (playerCards[id] == null) {
+    return <Redirect to={`/games/${params.gameCode}/cards`}></Redirect>;
+  }
+
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
       <Flex flex="1 0 auto" flexDirection="column">
