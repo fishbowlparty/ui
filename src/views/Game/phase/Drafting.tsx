@@ -4,6 +4,7 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  Box,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
@@ -28,8 +29,6 @@ Think about List with and without borders across this and the lobby
 */
 export const Drafting: React.FC = () => {
   const { id } = getPlayer();
-
-  const { params } = useRouteMatch<{ gameCode: string }>();
 
   const players = useGameSelector((game) => game.players);
   const teams = useGameSelector((game) => game.teams);
@@ -73,7 +72,7 @@ export const Drafting: React.FC = () => {
         </Flex>
         <Flex>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Flex flex="1 1 0%">
+            <Flex flex="1 1 0%" marginRight="-1px">
               <Droppable droppableId="orange">
                 {(provided, snapshot) => (
                   <List
@@ -92,19 +91,33 @@ export const Drafting: React.FC = () => {
                         index={i}
                       >
                         {(provided, snapshot) => (
-                          <ListItem
+                          <Flex
                             key={playerId}
-                            innerRef={provided.innerRef}
                             {...provided.draggableProps}
+                            style={{
+                              border: "1px solid blue",
+                              margin: "-0.5px",
+                              ...provided.draggableProps.style,
+                            }}
                             {...provided.dragHandleProps}
+                            ref={provided.innerRef}
                           >
-                            <ListItemText
-                              primaryTypographyProps={{
-                                color: "secondary",
-                              }}
-                              primary={lookupPlayer(playerId)?.name || "..."}
-                            ></ListItemText>
-                          </ListItem>
+                            <ListItem
+                            // innerRef={provided.innerRef}
+                            // {...provided.draggableProps}
+                            // {...provided.dragHandleProps}
+                            >
+                              <ListItemText
+                                primaryTypographyProps={
+                                  {
+                                    // style: { fontWeight: "bold" },
+                                    // color: "secondary",
+                                  }
+                                }
+                                primary={lookupPlayer(playerId)?.name || "..."}
+                              ></ListItemText>
+                            </ListItem>
+                          </Flex>
                         )}
                       </Draggable>
                     ))}
@@ -139,9 +152,12 @@ export const Drafting: React.FC = () => {
                             {...provided.dragHandleProps}
                           >
                             <ListItemText
-                              primaryTypographyProps={{
-                                color: "primary",
-                              }}
+                              primaryTypographyProps={
+                                {
+                                  // style: { fontWeight: "bold" },
+                                  // color: "primary",
+                                }
+                              }
                               primary={lookupPlayer(playerId)?.name || "..."}
                             ></ListItemText>
                           </ListItem>

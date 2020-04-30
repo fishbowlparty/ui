@@ -181,6 +181,7 @@ function setGamePhase(game: Game, action: SET_GAME_PHASE): Game {
     // initialize turn order state
     return {
       ...game,
+      phase,
       round: {
         number: 1,
         guessedCardIds: [],
