@@ -126,14 +126,8 @@ export const Lobby: React.FC = () => {
             <TableBody>
               {orderedPlayers.map((player, i) => (
                 <TableRow key={player.id}>
-                  <TableCell component="th" scope="row">
-                    {i + 1}
-                  </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    style={{ width: "100%" }}
-                  >
+                  <TableCell scope="row">{i + 1}</TableCell>
+                  <TableCell scope="row" style={{ width: "100%" }}>
                     {player.name}
                   </TableCell>
                   <TableCell align="right">

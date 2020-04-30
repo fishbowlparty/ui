@@ -3,7 +3,7 @@ import { createMuiTheme } from "@material-ui/core";
 export const theme = createMuiTheme({
   palette: {
     primary: { main: "#2196f3", contrastText: "#fff" },
-    secondary: { main: "#fc7100" },
+    secondary: { main: "#fc7100", contrastText: "#fff" },
   },
   typography: {
     // fontFamily: '"Helvetica", "Arial", sans-serif',

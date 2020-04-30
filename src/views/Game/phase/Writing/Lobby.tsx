@@ -9,8 +9,14 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Divider,
+  TableContainer,
+  Paper,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@material-ui/core";
-import { Remove, Check, Edit } from "@material-ui/icons";
+import { Remove, Check, Edit, Close } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
 import React, {
   useCallback,
@@ -49,31 +55,32 @@ export const Lobby: React.FC = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Label>Writing Cards...</Label>
         </Flex>
-        <List
-          style={{ border: `1px solid ${theme.palette.divider}` }}
-          disablePadding
-        >
-          {orderedPlayers.map((player, i) => (
-            <React.Fragment key={player.id}>
-              <ListItem key={player.id}>
-                <ListItemText primary={player.name || "..."}></ListItemText>
-                <ListItemSecondaryAction>
-                  {player.id === id ? (
-                    <IconButton
-                      component={Link}
-                      to={`/games/${params.gameCode}/cards`}
-                    >
-                      <Edit></Edit>
-                    </IconButton>
-                  ) : (
-                    playerHasCards(player.id) && <Check></Check>
-                  )}
-                </ListItemSecondaryAction>
-              </ListItem>
-              {i + 1 < orderedPlayers.length && <Divider></Divider>}
-            </React.Fragment>
-          ))}
-        </List>
+        <TableContainer component={Paper}>
+          <Table aria-label="Players">
+            <TableBody>
+              {orderedPlayers.map((player, i) => (
+                <TableRow key={player.id}>
+                  <TableCell scope="row" style={{ width: "100%" }}>
+                    {player.name}
+                  </TableCell>
+                  <TableCell align="right">
+                    {player.id === id ? (
+                      <IconButton
+                        component={Link}
+                        to={`/games/${params.gameCode}/cards`}
+                        style={{ margin: "-16px" }}
+                      >
+                        <Edit></Edit>
+                      </IconButton>
+                    ) : (
+                      playerHasCards(player.id) && <Check></Check>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Flex>
       <Flex>
         <AdvancePhaseButton></AdvancePhaseButton>

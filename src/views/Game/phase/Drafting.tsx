@@ -5,6 +5,15 @@ import {
   ListItemText,
   Typography,
   Box,
+  TableContainer,
+  Paper,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  IconButton,
+  Link,
+  TableHead,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
@@ -20,7 +29,8 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import { TeamName } from "../../../redux/types";
+import { TeamName, Player } from "../../../redux/types";
+import { Edit, Check } from "@material-ui/icons";
 
 /*
 Make color neutral when dragging or change when crossing borders
@@ -71,100 +81,85 @@ export const Drafting: React.FC = () => {
         </Flex>
         <Flex>
           <DragDropContext onDragEnd={onDragEnd}>
-            <Flex flex="1 1 0%" marginRight="-1px">
+            <Flex flex="1 1 0%" marginRight={2}>
               <Droppable droppableId="orange">
                 {(provided, snapshot) => (
-                  <List
+                  <TableContainer
+                    component={Paper}
                     innerRef={provided.innerRef}
-                    style={{
-                      border: `1px solid ${theme.palette.divider}`,
-                      width: "100%",
-                    }}
-                    disablePadding
                     {...provided.droppableProps}
                   >
-                    {teams.orange.map((playerId, i) => (
-                      <Draggable
-                        key={playerId}
-                        draggableId={playerId}
-                        index={i}
+                    <Table aria-label="Players">
+                      <TableHead
+                        style={{ background: theme.palette.secondary.main }}
                       >
-                        {(provided, snapshot) => (
-                          <Flex
-                            key={playerId}
-                            {...provided.draggableProps}
+                        <TableRow>
+                          <TableCell
                             style={{
-                              border: "1px solid blue",
-                              margin: "-0.5px",
-                              ...provided.draggableProps.style,
+                              color: theme.palette.secondary.contrastText,
+                              fontSize: 16,
+                              fontWeight: "bold",
                             }}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
                           >
-                            <ListItem
-                            // innerRef={provided.innerRef}
-                            // {...provided.draggableProps}
-                            // {...provided.dragHandleProps}
-                            >
-                              <ListItemText
-                                primaryTypographyProps={
-                                  {
-                                    // style: { fontWeight: "bold" },
-                                    // color: "secondary",
-                                  }
-                                }
-                                primary={players[playerId]?.name || "..."}
-                              ></ListItemText>
-                            </ListItem>
-                          </Flex>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </List>
+                            Orange
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {teams.orange.map((playerId, i) => (
+                          <TableRow key={playerId}>
+                            <DraggableCell
+                              player={players[playerId]}
+                              index={i}
+                            ></DraggableCell>
+                          </TableRow>
+                        ))}
+                        {provided.placeholder}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 )}
               </Droppable>
             </Flex>
-            <Flex flex="1 1 0%">
+            <Flex flex="1 1 0%" marginLeft={2}>
               <Droppable droppableId="blue">
                 {(provided, snapshot) => (
-                  <List
+                  <TableContainer
+                    component={Paper}
                     innerRef={provided.innerRef}
-                    style={{
-                      border: `1px solid ${theme.palette.divider}`,
-                      width: "100%",
-                    }}
-                    disablePadding
                     {...provided.droppableProps}
                   >
-                    {teams.blue.map((playerId, i) => (
-                      <Draggable
-                        key={playerId}
-                        draggableId={playerId}
-                        index={i}
+                    <Table aria-label="Players">
+                      <TableHead
+                        style={{
+                          background: theme.palette.primary.main,
+                        }}
                       >
-                        {(provided, snapshot) => (
-                          <ListItem
-                            key={playerId}
-                            innerRef={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
+                        <TableRow>
+                          <TableCell
+                            style={{
+                              color: theme.palette.primary.contrastText,
+                              fontSize: 16,
+                              fontWeight: "bold",
+                            }}
                           >
-                            <ListItemText
-                              primaryTypographyProps={
-                                {
-                                  // style: { fontWeight: "bold" },
-                                  // color: "primary",
-                                }
-                              }
-                              primary={players[playerId]?.name || "..."}
-                            ></ListItemText>
-                          </ListItem>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </List>
+                            Blue
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {teams.blue.map((playerId, i) => (
+                          <TableRow key={playerId}>
+                            <DraggableCell
+                              player={players[playerId]}
+                              index={i}
+                            ></DraggableCell>
+                          </TableRow>
+                        ))}
+                        {provided.placeholder}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 )}
               </Droppable>
             </Flex>
@@ -187,3 +182,34 @@ const Label: React.FC = ({ children }) => (
     {children}
   </Typography>
 );
+
+const DraggableCell: React.FC<{ player: Player; index: number }> = ({
+  player,
+  index,
+}) => {
+  return (
+    <Draggable key={player.id} draggableId={player.id} index={index}>
+      {(provided, snapshot) => {
+        console.log(snapshot.isDragging);
+        return (
+          <TableCell
+            scope="row"
+            component={Paper}
+            //@ts-ignore
+            square
+            elevation={snapshot.isDragging ? 2 : 0}
+            {...provided.draggableProps}
+            style={{
+              ...provided.draggableProps.style,
+              opacity: snapshot.isDragging ? 0.7 : 1,
+            }}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+          >
+            {player.name}
+          </TableCell>
+        );
+      }}
+    </Draggable>
+  );
+};
