@@ -1,63 +1,9 @@
-import { Game, GamePhase, Card } from "./types";
+import { Card, Game, Player } from "./types";
 
-export const selectCanAdvanceToPhase = (
-  game: Game,
-  phase: GamePhase
-): boolean => {
-  if (phase === "registration") {
-    return false;
-  }
-  if (phase === "writing") {
-    if (game.phase !== "registration") {
-      return false;
-    }
-    // requires at least 4 players
-    if (game.players.length < 4) {
-      return false;
-    }
-    return true;
-  }
-  if (phase === "drafting") {
-    if (game.phase !== "writing") {
-      return false;
-    }
-    // requires at least 1 card
-    if (Object.keys(game.playerCards).length < 1) {
-      return false;
-    }
-
-    return true;
-  }
-  if (phase === "active") {
-    if (game.phase !== "drafting") {
-      return false;
-    }
-    // all players must be assigned to a team
-    const { orange, blue } = game.teams;
-    if (orange.length < 2 || blue.length < 2) {
-      return false;
-    }
-    if (orange.length + blue.length !== game.players.length) {
-      return false;
-    }
-
-    // initialize turn order state
-    return true;
-  }
-
-  // you can cancel a game at any point
-  if (phase === "canceled") {
-    return true;
-  }
-
-  return true;
-};
-
-export const selectHost = (game: Game) => {
+export const selectHost = (game: Game): Player => {
   const { hostId, players } = game;
 
-  const host = players.find((player) => player.id === hostId);
-  return host;
+  return players[hostId];
 };
 
 export const selectCards = (game: Game): Record<string, Card> => {
@@ -70,3 +16,10 @@ export const selectCards = (game: Game): Record<string, Card> => {
       };
     }, {} as Record<string, Card>);
 };
+
+export const selectNumberOfPlayers = (game: Game): number => {
+  return Object.keys(game.players).length;
+};
+
+export const selectOrderedPlayers = (game: Game): Player[] =>
+  Object.values(game.players).sort((a, b) => a.joinOrder - b.joinOrder);

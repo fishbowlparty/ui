@@ -32,7 +32,6 @@ export const Drafting: React.FC = () => {
 
   const players = useGameSelector((game) => game.players);
   const teams = useGameSelector((game) => game.teams);
-  const lookupPlayer = (id: string) => players.find((p) => p.id === id);
   const dispatch = useActionDispatch();
 
   const onDragEnd = (result: DropResult, provided: ResponderProvided) => {
@@ -114,7 +113,7 @@ export const Drafting: React.FC = () => {
                                     // color: "secondary",
                                   }
                                 }
-                                primary={lookupPlayer(playerId)?.name || "..."}
+                                primary={players[playerId]?.name || "..."}
                               ></ListItemText>
                             </ListItem>
                           </Flex>
@@ -158,7 +157,7 @@ export const Drafting: React.FC = () => {
                                   // color: "primary",
                                 }
                               }
-                              primary={lookupPlayer(playerId)?.name || "..."}
+                              primary={players[playerId]?.name || "..."}
                             ></ListItemText>
                           </ListItem>
                         )}

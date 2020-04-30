@@ -38,6 +38,7 @@ import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useDispatch } from "react-redux";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
+import { selectOrderedPlayers } from "../../../../redux/selectors";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
@@ -49,7 +50,7 @@ export const Lobby: React.FC = () => {
   const { url } = match;
 
   const hostId = useGameSelector((game) => game.hostId);
-  const players = useGameSelector((game) => game.players);
+  const orderedPlayers = useGameSelector(selectOrderedPlayers);
   const isHost = id === hostId;
   const isMe = useCallback((playerId: string) => id === playerId, [id]);
 
@@ -123,9 +124,16 @@ export const Lobby: React.FC = () => {
         <TableContainer component={Paper}>
           <Table aria-label="Players">
             <TableBody>
-              {players.map((player, i) => (
+              {orderedPlayers.map((player, i) => (
                 <TableRow key={player.id}>
                   <TableCell component="th" scope="row">
+                    {i + 1}
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    style={{ width: "100%" }}
+                  >
                     {player.name}
                   </TableCell>
                   <TableCell align="right">

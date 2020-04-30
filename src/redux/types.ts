@@ -16,6 +16,7 @@ export interface GameSettings {
 export interface Player {
   id: string;
   name: string;
+  joinOrder: number;
 }
 
 export type TeamName = "orange" | "blue";
@@ -40,7 +41,7 @@ export interface Game {
   hostId: string;
 
   // built up during registration:
-  players: Player[];
+  players: Record<string, Player>;
   // built during writing - record of player id to cards
   playerCards: Record<string, Card[]>;
 
@@ -68,18 +69,29 @@ export interface Game {
  */
 // auth rule: only host
 // business rule: only allow valid transitions, do validation of game model (> 4 players, valid teams, whatever) before advancing
-export interface SET_GAME_PHASE {
-  type: "SET_GAME_PHASE";
-  payload: {
-    phase: GamePhase;
-  };
-}
-
 export interface SET_GAME_SETTINGS {
   type: "SET_GAME_SETTINGS";
   payload: {
     settings: GameSettings;
   };
+}
+
+export interface ADVANCE_FROM_REGISTRATION {
+  type: "ADVANCE_FROM_REGISTRATION";
+  payload: {
+    teams: Record<TeamName, string[]>;
+    firstTeam: TeamName;
+  };
+}
+
+export interface ADVANCE_FROM_WRITING {
+  type: "ADVANCE_FROM_WRITING";
+  payload: {};
+}
+
+export interface ADVANCE_FROM_DRAFTING {
+  type: "ADVANCE_FROM_DRAFTING";
+  payload: {};
 }
 
 // auth rule: playerId must be self
@@ -121,7 +133,9 @@ export interface SET_TEAMS {
 }
 
 export type ADMIN_ACTIONS =
-  | SET_GAME_PHASE
+  | ADVANCE_FROM_REGISTRATION
+  | ADVANCE_FROM_WRITING
+  | ADVANCE_FROM_DRAFTING
   | SET_GAME_SETTINGS
   | JOIN_GAME
   | LEAVE_GAME

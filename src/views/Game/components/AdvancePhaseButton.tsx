@@ -2,7 +2,7 @@ import { Button } from "@material-ui/core";
 import React, { useCallback } from "react";
 import { useActionDispatch, useGameSelector } from "../../../redux/index";
 import { getPlayer } from "../../../redux/localStorage";
-import { selectHost } from "../../../redux/selectors";
+import { selectHost, selectNumberOfPlayers } from "../../../redux/selectors";
 import { Game, GamePhase } from "../../../redux/types";
 
 export const AdvancePhaseButton: React.FC = () => {
@@ -20,8 +20,39 @@ export const AdvancePhaseButton: React.FC = () => {
     (isHost ? hostMessage(phase) : `${host?.name} will start the game...`);
 
   const onClick = useCallback(() => {
-    dispatch({ type: "SET_GAME_PHASE", payload: { phase: nextPhase(phase) } });
-  }, [dispatch, phase]);
+    if (phase === "registration") {
+      const firstTeam = Math.random() > 0.5 ? "orange" : "blue";
+      const teams = Object.values(game.players).reduce(
+        (teams, player, i) => {
+          const team = i % 2 === 0 ? "orange" : "blue";
+          teams[team].push(player.id);
+
+          return teams;
+        },
+        {
+          orange: [],
+          blue: [],
+        } as Game["teams"]
+      );
+
+      dispatch({
+        type: "ADVANCE_FROM_REGISTRATION",
+        payload: { teams, firstTeam },
+      });
+    }
+    if (phase === "writing") {
+      dispatch({
+        type: "ADVANCE_FROM_WRITING",
+        payload: {},
+      });
+    }
+    if (phase === "drafting") {
+      dispatch({
+        type: "ADVANCE_FROM_DRAFTING",
+        payload: {},
+      });
+    }
+  }, [dispatch, phase, game]);
 
   return (
     <Button
@@ -42,7 +73,7 @@ export const advanceErrorMessage = (
 ): string | null => {
   if (phase === "registration") {
     // requires at least 4 players
-    if (game.players.length < 4) {
+    if (selectNumberOfPlayers(game) < 4) {
       return "Waiting for 4 players...";
     }
     return null;

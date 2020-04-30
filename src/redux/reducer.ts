@@ -12,7 +12,9 @@ import {
   JOIN_GAME,
   LEAVE_GAME,
   PAUSE_TURN,
-  SET_GAME_PHASE,
+  ADVANCE_FROM_DRAFTING,
+  ADVANCE_FROM_REGISTRATION,
+  ADVANCE_FROM_WRITING,
   SET_GAME_SETTINGS,
   SET_TEAMS,
   SKIP_CARD,
@@ -20,15 +22,7 @@ import {
   START_TURN,
   SUBMIT_CARDS,
 } from "./types";
-import { selectCards } from "./selectors";
-
-// where is randomness?
-// randomize teams
-// randomize which team goes first
-// so - dont optimiztic update phase changes, dont do a draw deck and instead let the active client draw cards
-
-// NO INSTEAD, PUSH RANDOMNESS INTO ACTION PAYLOADS
-// This includes id creation - that is randomness
+import { selectCards, selectNumberOfPlayers } from "./selectors";
 
 const initialGame: Game = {
   gameCode: "",
@@ -42,7 +36,7 @@ const initialGame: Game = {
     },
   },
   hostId: "",
-  players: [],
+  players: {},
   round: {
     guessedCardIds: [],
     number: 0,
@@ -82,9 +76,11 @@ function leaveGame(game: Game, action: LEAVE_GAME): Game {
     return game;
   }
   const { playerId } = action.payload;
+
+  const { [playerId]: _, ...players } = game.players;
   return {
     ...game,
-    players: game.players.filter((player) => player.id !== playerId),
+    players,
   };
 }
 
@@ -94,132 +90,97 @@ function joinGame(game: Game, action: JOIN_GAME): Game {
   }
 
   const { playerId, name } = action.payload;
+  const joinOrder =
+    game.players[playerId]?.joinOrder ??
+    Math.max(...Object.values(game.players).map((player) => player.joinOrder)) +
+      1;
 
-  const playerIndex = game.players.findIndex(
-    (player) => player.id === playerId
-  );
-  if (playerIndex < 0) {
-    return {
-      ...game,
-      players: game.players.concat({ id: playerId, name }),
-    };
-  }
   return {
     ...game,
-    players: [
-      ...game.players.slice(0, playerIndex),
-      { id: playerId, name },
-      ...game.players.slice(playerIndex + 1),
-    ],
+    players: {
+      ...game.players,
+      [playerId]: {
+        id: playerId,
+        name,
+        joinOrder,
+      },
+    },
   };
 }
 
-function shuffle(array: any[]) {
-  array = array.slice();
-  for (var i = array.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-  return array;
-}
+function advanceFromRegistration(
+  game: Game,
+  action: ADVANCE_FROM_REGISTRATION
+): Game {
+  const { teams, firstTeam } = action.payload;
 
-function setGamePhase(game: Game, action: SET_GAME_PHASE): Game {
-  const { phase } = action.payload;
-
-  if (phase === "registration") {
+  if (game.phase !== "registration") {
     return game;
   }
-  if (phase === "writing") {
-    if (game.phase !== "registration") {
-      return game;
-    }
-    // requires at least 4 players
-    if (game.players.length < 4) {
-      return game;
-    }
-    return {
-      ...game,
-      phase,
-    };
+  // requires at least 4 players
+  if (selectNumberOfPlayers(game) < 4) {
+    return game;
   }
-  if (phase === "drafting") {
-    if (game.phase !== "writing") {
-      return game;
-    }
-    // requires at least 1 player's cards to be submitted
-    if (Object.keys(game.playerCards).length < 1) {
-      return game;
-    }
-
-    const playerIds = shuffle(game.players.map((player) => player.id));
-    const breakPoint = Math.ceil(playerIds.length / 2);
-
-    return {
-      ...game,
-      phase,
-      teams: {
-        orange: [...playerIds.slice(0, breakPoint)],
-        blue: [...playerIds.slice(breakPoint)],
-      },
-    };
+  return {
+    ...game,
+    teams,
+    activePlayer: {
+      team: firstTeam,
+      index: { orange: 0, blue: 0 },
+    },
+    phase: "writing",
+  };
+}
+function advanceFromWriting(game: Game, action: ADVANCE_FROM_WRITING): Game {
+  if (game.phase !== "writing") {
+    return game;
   }
-  if (phase === "active") {
-    if (game.phase !== "drafting") {
-      return game;
-    }
-    // all players must be assigned to a team
-    const { orange, blue } = game.teams;
-    if (orange.length < 2 || blue.length < 2) {
-      return game;
-    }
-    if (orange.length + blue.length !== game.players.length) {
-      return game;
-    }
+  // requires at least 1 player's cards to be submitted
+  if (Object.keys(game.playerCards).length < 1) {
+    return game;
+  }
 
-    // initialize turn order state
-    return {
-      ...game,
-      phase,
-      round: {
-        number: 1,
+  return {
+    ...game,
+    phase: "drafting",
+  };
+}
+function advanceFromDrafting(game: Game, action: ADVANCE_FROM_DRAFTING): Game {
+  if (game.phase !== "drafting") {
+    return game;
+  }
+  // all players must be assigned to a team
+  const { orange, blue } = game.teams;
+  if (orange.length < 2 || blue.length < 2) {
+    return game;
+  }
+  if (orange.length + blue.length !== selectNumberOfPlayers(game)) {
+    return game;
+  }
+
+  // initialize turn order state
+  return {
+    ...game,
+    phase: "active",
+    round: {
+      number: 1,
+      guessedCardIds: [],
+    },
+    turns: {
+      active: {
+        paused: true,
+        timeRemaining: game.settings.turnDuration,
         guessedCardIds: [],
+        skippedCardIds: [],
       },
-      activePlayer: {
-        team: Math.random() > 0.5 ? "orange" : "blue",
-        index: {
-          orange: 0,
-          blue: 0,
-        },
+      previous: {
+        paused: true,
+        timeRemaining: 0,
+        guessedCardIds: [],
+        skippedCardIds: [],
       },
-      turns: {
-        active: {
-          paused: true,
-          timeRemaining: game.settings.turnDuration,
-          guessedCardIds: [],
-          skippedCardIds: [],
-        },
-        previous: {
-          paused: true,
-          timeRemaining: 0,
-          guessedCardIds: [],
-          skippedCardIds: [],
-        },
-      },
-    };
-  }
-
-  // you can cancel a game at any point
-  if (phase === "canceled") {
-    return {
-      ...game,
-      phase,
-    };
-  }
-
-  // Game can only end as a side effect of a round ending
-  return game;
+    },
+  };
 }
 
 export function submitCards(game: Game, action: SUBMIT_CARDS): Game {
@@ -379,8 +340,12 @@ function setSettings(game: Game, action: SET_GAME_SETTINGS): Game {
 export function GameReducer(game: Game = initialGame, action: Actions): Game {
   switch (action.type) {
     // phase
-    case "SET_GAME_PHASE":
-      return setGamePhase(game, action);
+    case "ADVANCE_FROM_REGISTRATION":
+      return advanceFromRegistration(game, action);
+    case "ADVANCE_FROM_WRITING":
+      return advanceFromWriting(game, action);
+    case "ADVANCE_FROM_DRAFTING":
+      return advanceFromDrafting(game, action);
 
     // admin
     case "SET_GAME_SETTINGS":
@@ -413,6 +378,3 @@ export function GameReducer(game: Game = initialGame, action: Actions): Game {
       return game;
   }
 }
-
-// think of secondary effects
-//

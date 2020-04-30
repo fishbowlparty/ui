@@ -25,13 +25,14 @@ import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useDispatch } from "react-redux";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
+import { selectOrderedPlayers } from "../../../../redux/selectors";
 
 export const Lobby: React.FC = () => {
   const { id } = getPlayer();
 
   const { params } = useRouteMatch<{ gameCode: string }>();
 
-  const players = useGameSelector((game) => game.players);
+  const orderedPlayers = useGameSelector(selectOrderedPlayers);
   const playerCards = useGameSelector((game) => game.playerCards);
   const playerHasCards = useCallback(
     (playerId: string) => playerCards[playerId] != null,
@@ -52,7 +53,7 @@ export const Lobby: React.FC = () => {
           style={{ border: `1px solid ${theme.palette.divider}` }}
           disablePadding
         >
-          {players.map((player, i) => (
+          {orderedPlayers.map((player, i) => (
             <React.Fragment key={player.id}>
               <ListItem key={player.id}>
                 <ListItemText primary={player.name || "..."}></ListItemText>
@@ -69,7 +70,7 @@ export const Lobby: React.FC = () => {
                   )}
                 </ListItemSecondaryAction>
               </ListItem>
-              {i + 1 < players.length && <Divider></Divider>}
+              {i + 1 < orderedPlayers.length && <Divider></Divider>}
             </React.Fragment>
           ))}
         </List>

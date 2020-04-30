@@ -65,28 +65,33 @@ export const GameView: React.FC<RouteComponentProps<{
       },
     },
     hostId: id,
-    players: [
-      {
+    players: {
+      [id]: {
         id,
         name,
+        joinOrder: 0,
       },
-      {
+      1: {
         id: "1",
         name: "Caitlin",
+        joinOrder: 1,
       },
-      {
+      2: {
         id: "2",
         name: "Dan",
+        joinOrder: 2,
       },
-      {
+      3: {
         id: "3",
         name: "Chris",
+        joinOrder: 3,
       },
-      {
+      4: {
         id: "4",
         name: "Sarah",
+        joinOrder: 4,
       },
-    ],
+    },
     round: {
       guessedCardIds: [],
       number: 0,
