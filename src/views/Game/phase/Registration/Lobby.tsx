@@ -9,6 +9,13 @@ import {
   ListItemText,
   Divider,
   ListItemSecondaryAction,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@material-ui/core";
 import {
   RemoveCircleOutlineOutlined,
@@ -113,32 +120,39 @@ export const Lobby: React.FC = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Label>Players</Label>
         </Flex>
-        <List
-          style={{ border: `1px solid ${theme.palette.divider}` }}
-          disablePadding
-        >
-          {players.map((player, i) => (
-            <React.Fragment key={player.id}>
-              <ListItem>
-                <ListItemText primary={player.name || "..."}></ListItemText>
-                <ListItemSecondaryAction>
-                  {isMe(player.id) ? (
-                    <IconButton component={Link} to={`${url}/register`}>
-                      <Edit></Edit>
-                    </IconButton>
-                  ) : (
-                    isHost && (
-                      <IconButton onClick={() => removeFromGame(player.id)}>
-                        <Close></Close>
+        <TableContainer component={Paper}>
+          <Table aria-label="Players">
+            <TableBody>
+              {players.map((player, i) => (
+                <TableRow key={player.id}>
+                  <TableCell component="th" scope="row">
+                    {player.name}
+                  </TableCell>
+                  <TableCell align="right">
+                    {isMe(player.id) ? (
+                      <IconButton
+                        component={Link}
+                        to={`${url}/register`}
+                        style={{ margin: "-16px" }}
+                      >
+                        <Edit></Edit>
                       </IconButton>
-                    )
-                  )}
-                </ListItemSecondaryAction>
-              </ListItem>
-              {i + 1 < players.length && <Divider></Divider>}
-            </React.Fragment>
-          ))}
-        </List>
+                    ) : (
+                      isHost && (
+                        <IconButton
+                          onClick={() => removeFromGame(player.id)}
+                          style={{ margin: "-16px" }}
+                        >
+                          <Close></Close>
+                        </IconButton>
+                      )
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Flex>
       <Flex>
         <AdvancePhaseButton></AdvancePhaseButton>
