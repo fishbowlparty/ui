@@ -87,9 +87,7 @@ export const Reading: React.FC = () => {
     }, "");
   });
   const paused = useGameSelector((game) => game.turns.active.paused);
-  const isFresh = useGameSelector(
-    (game) => game.turns.active.timeRemaining === game.settings.turnDuration
-  );
+  const isFresh = useGameSelector((game) => game.turns.active.isFresh);
   // active card logic:
   // if there are draw cards, random draw card
   // otherwise, rotate skipp deck
@@ -108,6 +106,7 @@ export const Reading: React.FC = () => {
     });
   }, [dispatch, activeCard]);
 
+  const [timer, onTimerToggle] = useCountdownTimer();
   const gotCard = useCallback(() => {
     if (activeCard == null) {
       return;
@@ -117,11 +116,11 @@ export const Reading: React.FC = () => {
       payload: {
         cardId: activeCard.id,
         // TODO: need to wire this up?
-        timeRemaining: 30,
+        timeRemaining: timer,
         drawSeed: Math.random(),
       },
     });
-  }, [dispatch, activeCard]);
+  }, [dispatch, activeCard, timer]);
 
   const skipTurn = useCallback(() => {
     dispatch({ type: "SKIP_TURN", payload: {} });
@@ -194,7 +193,32 @@ export const Reading: React.FC = () => {
           <Typography align="center">{namesAre} guessing for you.</Typography>
         </Box>
         <Box mb={1}>
-          <CountdownButton />
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={onTimerToggle}
+            // color="secondary"
+          >
+            <Flex flexDirection="column" alignItems="center">
+              <Typography
+                variant="caption"
+                align="center"
+                color="textSecondary"
+              >
+                Time Remaining
+              </Typography>
+              <Typography
+                variant="h2"
+                style={{ fontWeight: "bold" }}
+                color="textSecondary"
+              >
+                {timer}
+              </Typography>
+              {/* <Typography variant="caption" align="center" color="textSecondary">
+          {paused ? "Resume timer" : "pause timer"}
+        </Typography> */}
+            </Flex>
+          </Button>
         </Box>
         <Box mb={2} mt={2} padding={4}>
           {paused ? (
@@ -244,7 +268,12 @@ export const Reading: React.FC = () => {
       ) : (
         <Flex>
           <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>
-            <Button fullWidth variant="outlined" onClick={skipCard}>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={skipCard}
+              disabled={nCardsRemaining === 0 && nCardsSkipped <= 1}
+            >
               Skip
             </Button>
           </Flex>
@@ -274,7 +303,7 @@ const Label: React.FC = ({ children }) => (
   </Typography>
 );
 
-const CountdownButton: React.FC = () => {
+const useCountdownTimer = (): [number, VoidFunction] => {
   const dispatch = useActionDispatch();
   const paused = useGameSelector((game) => game.turns.active.paused);
   const timeRemaining = useGameSelector(
@@ -310,28 +339,5 @@ const CountdownButton: React.FC = () => {
     }
   }, [dispatch, timer, paused]);
 
-  return (
-    <Button
-      variant="outlined"
-      fullWidth
-      onClick={onClick}
-      // color="secondary"
-    >
-      <Flex flexDirection="column" alignItems="center">
-        <Typography variant="caption" align="center" color="textSecondary">
-          Time Remaining
-        </Typography>
-        <Typography
-          variant="h2"
-          style={{ fontWeight: "bold" }}
-          color="textSecondary"
-        >
-          {timer}
-        </Typography>
-        {/* <Typography variant="caption" align="center" color="textSecondary">
-          {paused ? "Resume timer" : "pause timer"}
-        </Typography> */}
-      </Flex>
-    </Button>
-  );
+  return [timer, onClick];
 };
