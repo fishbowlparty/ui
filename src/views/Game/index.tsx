@@ -109,8 +109,8 @@ export const GameView: React.FC<RouteComponentProps<{
       ],
     },
     round: {
-      guessedCardIds: [],
-      number: 0,
+      guessedCardIds: {},
+      number: 1,
     },
     score: {
       orange: 0,
@@ -128,16 +128,17 @@ export const GameView: React.FC<RouteComponentProps<{
     },
     turns: {
       active: {
+        isFresh: true,
         paused: true,
+        activeCardId: "",
         timeRemaining: 45,
-        guessedCardIds: [],
-        skippedCardIds: [],
+        guessedCardIds: {},
+        skippedCardIds: {},
       },
-      previous: {
-        paused: true,
-        timeRemaining: 45,
+      recap: {
+        team: "orange",
         guessedCardIds: [],
-        skippedCardIds: [],
+        skippedCardCount: 0,
       },
     },
   });

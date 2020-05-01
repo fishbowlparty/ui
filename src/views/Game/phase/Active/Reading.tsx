@@ -38,16 +38,20 @@ export const Reading: React.FC = () => {
   const { id } = getPlayer();
   const dispatch = useActionDispatch();
 
-  const roundNumber = useGameSelector((game) => game.round.number + 1);
+  const roundNumber = useGameSelector((game) => game.round.number);
   const nCards = useGameSelector(
     (game) => Object.values(game.playerCards).flat().length
   );
   const nCardsGuessed = useGameSelector(
-    (game) =>
-      game.turns.active.guessedCardIds.length + game.round.guessedCardIds.length
+    (game) => Object.keys(game.round.guessedCardIds).length
   );
+
+  // want to remove guessed cards from skipped cards
   const nCardsSkipped = useGameSelector(
-    (game) => game.turns.active.skippedCardIds.length
+    (game) =>
+      Object.keys(game.turns.active.skippedCardIds).filter(
+        (cardId) => !game.round.guessedCardIds[cardId]
+      ).length
   );
   const nCardsRemaining = nCards - nCardsGuessed - nCardsSkipped;
   const score = useGameSelector((game) => game.score);
@@ -90,34 +94,18 @@ export const Reading: React.FC = () => {
   // if there are draw cards, random draw card
   // otherwise, rotate skipp deck
   // otherwuse null
-  const activeCard = useGameSelector((game) => {
-    const guessedIds = [
-      ...game.round.guessedCardIds,
-      ...game.turns.active.guessedCardIds,
-    ];
-    const { skippedCardIds } = game.turns.active;
-    const cards = selectCards(game);
-
-    const drawIds = Object.keys(cards).filter(
-      (cardId) =>
-        !(guessedIds.includes(cardId) || skippedCardIds.includes(cardId))
-    );
-    if (drawIds.length > 0) {
-      return cards[drawIds[Math.floor(Math.random() * drawIds.length)]];
-    }
-    if (skippedCardIds.length > 0) {
-      return cards[
-        skippedCardIds[Math.floor(Math.random() * skippedCardIds.length)]
-      ];
-    }
-    return null;
-  });
+  const activeCard = useGameSelector(
+    (game) => selectCards(game)[game.turns.active.activeCardId]
+  );
 
   const skipCard = useCallback(() => {
     if (activeCard == null) {
       return;
     }
-    dispatch({ type: "SKIP_CARD", payload: { cardId: activeCard.id } });
+    dispatch({
+      type: "SKIP_CARD",
+      payload: { cardId: activeCard.id, drawSeed: Math.random() },
+    });
   }, [dispatch, activeCard]);
 
   const gotCard = useCallback(() => {
@@ -126,7 +114,12 @@ export const Reading: React.FC = () => {
     }
     dispatch({
       type: "GOT_CARD",
-      payload: { cardId: activeCard.id, timeRemaining: 30 },
+      payload: {
+        cardId: activeCard.id,
+        // TODO: need to wire this up?
+        timeRemaining: 30,
+        drawSeed: Math.random(),
+      },
     });
   }, [dispatch, activeCard]);
 
@@ -134,7 +127,7 @@ export const Reading: React.FC = () => {
     dispatch({ type: "SKIP_TURN", payload: {} });
   }, [dispatch]);
   const startTurn = useCallback(() => {
-    dispatch({ type: "START_TURN", payload: {} });
+    dispatch({ type: "START_TURN", payload: { drawSeed: Math.random() } });
   }, [dispatch]);
 
   return (
@@ -189,7 +182,6 @@ export const Reading: React.FC = () => {
                   {score.orange}
                 </Typography>
               </Flex>
-              <Typography variant="h6">-</Typography>
               <Flex flex="1 0 auto" marginLeft={`${theme.spacing(1)}px`}>
                 <Typography variant="h6" color="primary">
                   {score.blue}
@@ -312,7 +304,7 @@ const CountdownButton: React.FC = () => {
 
   const onClick = useCallback(() => {
     if (paused) {
-      dispatch({ type: "START_TURN", payload: {} });
+      dispatch({ type: "START_TURN", payload: { drawSeed: Math.random() } });
     } else {
       dispatch({ type: "PAUSE_TURN", payload: { timeRemaining: timer } });
     }

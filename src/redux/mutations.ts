@@ -61,7 +61,7 @@ export function nextTurn(game: Game, timeRemaining?: number): Game {
 export function nextRound(game: Game, timeRemaining: number): Game {
   const nextRoundNumber = game.round.number + 1;
   const nextPhase =
-    nextRoundNumber > game.settings.numberOfRounds ? game.phase : "ended";
+    nextRoundNumber > game.settings.numberOfRounds ? "ended" : game.phase;
 
   return {
     ...nextTurn(game, timeRemaining),
@@ -81,22 +81,25 @@ export function drawNextCard(
   const { guessedCardIds } = game.round;
   const { skippedCardIds } = game.turns.active;
 
+  // the draw deck is  cards that have  not yet been  guessed or skipps
   const drawCardIds = Object.keys(selectCards(game)).filter(
-    (cardId) => guessedCardIds[cardId] == null && skippedCardIds[cardId] == null
+    (cardId) => !(guessedCardIds[cardId] || skippedCardIds[cardId])
+  );
+  const unguessedSkipCardIds = Object.keys(skippedCardIds).filter(
+    (cardId) => !guessedCardIds[cardId]
   );
   let activeCardId = null;
-  if (drawCardIds.length >= 0) {
+  if (drawCardIds.length > 0) {
     // if there are draw cards left, pull randomly from the draw deck
     activeCardId = drawCardIds[Math.floor(drawSeed * drawCardIds.length)];
-  } else if (Object.keys(skippedCardIds).length > 0) {
-    // otherwise, if there are skip cards left, rotate through the skip deck
-    const skippedCardIdsList = Object.keys(skippedCardIds);
+  } else if (unguessedSkipCardIds.length > 0) {
+    // otherwise, if there are skip cards left, rotate through the unguessed skip deck
     let nextIndex =
-      skippedCardIdsList.indexOf(game.turns.active.activeCardId) + 1;
-    if (nextIndex > skippedCardIdsList.length + 1) {
+      unguessedSkipCardIds.indexOf(game.turns.active.activeCardId) + 1;
+    if (nextIndex > unguessedSkipCardIds.length - 1) {
       nextIndex = 0;
     }
-    activeCardId = skippedCardIdsList[nextIndex];
+    activeCardId = unguessedSkipCardIds[nextIndex];
   } else {
     // otherwise we are down to 0 - go to next round
     return nextRound(game, timeRemaining);

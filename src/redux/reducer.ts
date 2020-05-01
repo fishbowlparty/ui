@@ -255,6 +255,12 @@ export function startTurn(game: Game, action: START_TURN): Game {
     return game;
   }
 
+  const { drawSeed } = action.payload;
+
+  if (game.turns.active.isFresh) {
+    game = drawNextCard(game, drawSeed, game.turns.active.timeRemaining);
+  }
+
   return {
     ...game,
     round: {
@@ -355,29 +361,26 @@ function skipCard(game: Game, action: SKIP_CARD): Game {
 
   const { cardId, drawSeed } = action.payload;
   const { skippedCardIds } = game.turns.active;
-  if (skippedCardIds[cardId]) {
-    return game;
-  }
-
-  const { team } = game.activePlayer;
-
-  game = {
-    ...game,
-    score: {
-      ...game.score,
-      [team]: game.score[team] + game.settings.skipPenalty,
-    },
-    turns: {
-      ...game.turns,
-      active: {
-        ...game.turns.active,
-        skippedCardIds: {
-          ...game.turns.active.skippedCardIds,
-          [cardId]: true,
+  if (!skippedCardIds[cardId]) {
+    const { team } = game.activePlayer;
+    game = {
+      ...game,
+      score: {
+        ...game.score,
+        [team]: game.score[team] + game.settings.skipPenalty,
+      },
+      turns: {
+        ...game.turns,
+        active: {
+          ...game.turns.active,
+          skippedCardIds: {
+            ...game.turns.active.skippedCardIds,
+            [cardId]: true,
+          },
         },
       },
-    },
-  };
+    };
+  }
 
   return drawNextCard(game, drawSeed, 0);
 }

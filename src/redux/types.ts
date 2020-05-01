@@ -173,7 +173,9 @@ export interface SKIP_TURN {
 
 export interface START_TURN {
   type: "START_TURN";
-  payload: {};
+  payload: {
+    drawSeed: number;
+  };
 }
 
 export interface PAUSE_TURN {
