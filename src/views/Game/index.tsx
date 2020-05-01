@@ -55,8 +55,7 @@ export const GameView: React.FC<RouteComponentProps<{
   const { id, name } = getPlayer();
   const store = useGameStore({
     gameCode,
-    phase: "drafting",
-    playerCards: {},
+    phase: "active",
     activePlayer: {
       team: "orange",
       index: {
@@ -91,6 +90,23 @@ export const GameView: React.FC<RouteComponentProps<{
         name: "Sarah",
         joinOrder: 4,
       },
+    },
+    playerCards: {
+      [id]: [
+        {
+          id: "0",
+          text: "Darth Vader",
+        },
+        {
+          id: "1",
+          text: "the cow jumped over the moon",
+        },
+
+        {
+          id: "2",
+          text: "the blue danube",
+        },
+      ],
     },
     round: {
       guessedCardIds: [],

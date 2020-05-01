@@ -17,10 +17,6 @@ interface FormState {
 
 export const WriteCards: React.FC = () => {
   const { id } = getPlayer();
-  // TODO: read identity & username from cookie
-  const { register, handleSubmit, formState } = useForm<FormState>({
-    mode: "onChange",
-  });
   const dispatch = useActionDispatch();
   const history = useHistory();
   const { params } = useRouteMatch<{ gameCode: string }>();
@@ -28,6 +24,14 @@ export const WriteCards: React.FC = () => {
   const cardsPerPlayer = useGameSelector(
     (game) => game.settings.cardsPerPlayer
   );
+  const myCards = useGameSelector((game) => game.playerCards[id] || []);
+  // TODO: read identity & username from cookie
+  const { register, handleSubmit, formState } = useForm<FormState>({
+    mode: "onChange",
+    defaultValues: {
+      cards: myCards.map((card) => card.text),
+    },
+  });
 
   const onSubmit = useCallback(
     ({ cards }: FormState) => {

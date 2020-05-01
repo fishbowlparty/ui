@@ -3,6 +3,7 @@ import {
   nextPlayerSameTeam,
   nextRound,
   nextTurn,
+  drawNextCard,
 } from "./mutations";
 import {
   Actions,
@@ -24,6 +25,25 @@ import {
 } from "./types";
 import { selectCards, selectNumberOfPlayers } from "./selectors";
 
+/*
+Flow:
+
+Rules
+- You set up state when you needed it
+
+Gameplay events
+- Skip turn
+  - Only allowed if isFresh
+  - Update active player
+  - Reset turn state
+- Start Turn
+  - 
+- Pause Turn
+- End Turn
+- Got card
+- Skip Card
+*/
+
 const initialGame: Game = {
   gameCode: "",
   phase: "registration",
@@ -38,7 +58,7 @@ const initialGame: Game = {
   hostId: "",
   players: {},
   round: {
-    guessedCardIds: [],
+    guessedCardIds: {},
     number: 0,
   },
   score: {
@@ -57,16 +77,17 @@ const initialGame: Game = {
   },
   turns: {
     active: {
+      activeCardId: "",
+      isFresh: true,
       paused: true,
       timeRemaining: 45,
-      guessedCardIds: [],
-      skippedCardIds: [],
+      guessedCardIds: {},
+      skippedCardIds: {},
     },
-    previous: {
-      paused: true,
-      timeRemaining: 45,
+    recap: {
+      team: "orange",
       guessedCardIds: [],
-      skippedCardIds: [],
+      skippedCardCount: 0,
     },
   },
 };
@@ -145,6 +166,7 @@ function advanceFromWriting(game: Game, action: ADVANCE_FROM_WRITING): Game {
     phase: "drafting",
   };
 }
+
 function advanceFromDrafting(game: Game, action: ADVANCE_FROM_DRAFTING): Game {
   if (game.phase !== "drafting") {
     return game;
@@ -164,20 +186,21 @@ function advanceFromDrafting(game: Game, action: ADVANCE_FROM_DRAFTING): Game {
     phase: "active",
     round: {
       number: 1,
-      guessedCardIds: [],
+      guessedCardIds: {},
     },
     turns: {
       active: {
+        activeCardId: "",
+        isFresh: true,
         paused: true,
         timeRemaining: game.settings.turnDuration,
-        guessedCardIds: [],
-        skippedCardIds: [],
+        guessedCardIds: {},
+        skippedCardIds: {},
       },
-      previous: {
-        paused: true,
-        timeRemaining: 0,
+      recap: {
+        team: game.activePlayer.team,
         guessedCardIds: [],
-        skippedCardIds: [],
+        skippedCardCount: 0,
       },
     },
   };
@@ -212,6 +235,7 @@ export function setTeams(game: Game, action: SET_TEAMS): Game {
   };
 }
 
+/** GAMEPLAY ACTIONS */
 export function skipTurn(game: Game, action: SKIP_TURN): Game {
   if (game.phase !== "active") {
     return game;
@@ -219,7 +243,7 @@ export function skipTurn(game: Game, action: SKIP_TURN): Game {
 
   const { active } = game.turns;
 
-  if (!(active.paused && active.timeRemaining === game.settings.turnDuration)) {
+  if (!active.isFresh) {
     return game;
   }
 
@@ -240,6 +264,7 @@ export function startTurn(game: Game, action: START_TURN): Game {
       ...game.turns,
       active: {
         ...game.turns.active,
+        isFresh: false,
         paused: false,
       },
     },
@@ -273,32 +298,50 @@ function gotCard(game: Game, action: GOT_CARD): Game {
   if (game.phase !== "active") {
     return game;
   }
+  if (game.turns.active.paused) {
+    return game;
+  }
 
-  const { cardId, timeRemaining } = action.payload;
+  const { cardId, timeRemaining, drawSeed } = action.payload;
+  // if the card we got was not the active card, ignore
+  if (cardId !== game.turns.active.activeCardId) {
+    return game;
+  }
+  // if the card has already been counted as guessed, ignore
+  if (game.round.guessedCardIds[cardId]) {
+    return game;
+  }
 
-  const guessedCardIds = game.turns.active.guessedCardIds.includes(cardId)
-    ? game.turns.active.guessedCardIds
-    : [...game.turns.active.guessedCardIds, cardId];
-
+  // add to guessed cards map, update score,
+  const { team } = game.activePlayer;
   game = {
     ...game,
+    // update the score
+    score: {
+      ...game.score,
+      [team]: game.score[team] + 1,
+    },
+    // add the card id to the round and active turn (becomes recap)
+    round: {
+      ...game.round,
+      guessedCardIds: {
+        ...game.round.guessedCardIds,
+        [cardId]: true,
+      },
+    },
     turns: {
       ...game.turns,
       active: {
         ...game.turns.active,
-        guessedCardIds,
+        guessedCardIds: {
+          ...game.round.guessedCardIds,
+          [cardId]: true,
+        },
       },
     },
   };
 
-  // if we have now guessed all cards, go to the next round
-  if (
-    guessedCardIds.length + game.round.guessedCardIds.length >=
-    Object.keys(selectCards(game)).length
-  ) {
-    game = nextRound(game, timeRemaining);
-  }
-
+  game = drawNextCard(game, drawSeed, timeRemaining);
   return game;
 }
 
@@ -306,28 +349,42 @@ function skipCard(game: Game, action: SKIP_CARD): Game {
   if (game.phase !== "active") {
     return game;
   }
+  if (game.turns.active.paused) {
+    return game;
+  }
 
-  const { cardId } = action.payload;
+  const { cardId, drawSeed } = action.payload;
+  const { skippedCardIds } = game.turns.active;
+  if (skippedCardIds[cardId]) {
+    return game;
+  }
 
-  // TODO: making new references even when there are not changes
-  const skippedCardIds = game.turns.active.skippedCardIds.includes(cardId)
-    ? game.turns.active.skippedCardIds
-    : [...game.turns.active.skippedCardIds, cardId];
+  const { team } = game.activePlayer;
 
-  return {
+  game = {
     ...game,
+    score: {
+      ...game.score,
+      [team]: game.score[team] + game.settings.skipPenalty,
+    },
     turns: {
       ...game.turns,
       active: {
         ...game.turns.active,
-        skippedCardIds,
+        skippedCardIds: {
+          ...game.turns.active.skippedCardIds,
+          [cardId]: true,
+        },
       },
     },
   };
+
+  return drawNextCard(game, drawSeed, 0);
 }
 
 function endTurn(game: Game, action: END_TURN): Game {
-  return nextPlayerNextTeam(nextTurn(game));
+  game = nextTurn(game);
+  return nextPlayerNextTeam(game);
 }
 
 function setSettings(game: Game, action: SET_GAME_SETTINGS): Game {

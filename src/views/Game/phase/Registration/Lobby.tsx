@@ -108,7 +108,7 @@ export const Lobby: React.FC = () => {
             <IconButton
               component={Link}
               to={`${url}/settings`}
-              style={{ marginRight: 16 }}
+              // style={{ marginRight: 16 }}
             >
               <Settings></Settings>
             </IconButton>

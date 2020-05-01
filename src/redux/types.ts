@@ -27,10 +27,18 @@ export interface Card {
 }
 
 export interface Turn {
+  isFresh: boolean;
   paused: boolean;
   timeRemaining: number;
-  skippedCardIds: string[];
+  activeCardId: string;
+  guessedCardIds: Record<string, boolean>;
+  skippedCardIds: Record<string, boolean>;
+}
+
+export interface TurnRecap {
+  team: TeamName;
   guessedCardIds: string[];
+  skippedCardCount: number;
 }
 
 export interface Game {
@@ -56,11 +64,11 @@ export interface Game {
   };
   round: {
     number: number;
-    guessedCardIds: string[];
+    guessedCardIds: Record<string, boolean>;
   };
   turns: {
     active: Turn;
-    previous: Turn;
+    recap: TurnRecap;
   };
 }
 
@@ -183,6 +191,7 @@ export interface GOT_CARD {
   payload: {
     timeRemaining: number;
     cardId: string;
+    drawSeed: number;
   };
 }
 
@@ -190,6 +199,7 @@ export interface SKIP_CARD {
   type: "SKIP_CARD";
   payload: {
     cardId: string;
+    drawSeed: number;
   };
 }
 
