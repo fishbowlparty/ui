@@ -40,7 +40,6 @@ export const GameView: React.FC<RouteComponentProps<{
       query: {
         gameCode,
       },
-      transports: ["polling"],
     });
 
     const cleanup = () => {
