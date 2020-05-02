@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createStore, Store } from "redux";
 import { Actions, Game, GameReducer } from "@fishbowl/common";
 
-export const useGameStore = (game?: Game): Store<Game, Actions> =>
+export const useGameStore = (game?: Game, middleware): Store<Game, Actions> =>
   useMemo(
     () =>
       createStore(

@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS games (
+  game_code TEXT PRIMARY KEY,
+  state JSON NOT NULL
+);

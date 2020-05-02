@@ -215,6 +215,22 @@ export type GAMEPLAY_ACTIONS =
 
 export type Actions = ADMIN_ACTIONS | GAMEPLAY_ACTIONS;
 
+export interface SERVER_INIT_STATE {
+  type: 'SERVER_INIT_STATE',
+  payload: Game
+}
+
+export interface SERVER_UPDATE_STATE {
+  type: 'SERVER_UPDATE_STATE',
+  payload: Game
+}
+
+export interface SERVER_NOT_FOUND {
+  type: 'SERVER_NOT_FOUND',
+  payload: {}
+}
+
+export type ServerEvents = SERVER_INIT_STATE | SERVER_UPDATE_STATE | SERVER_NOT_FOUND
 /*
 Optimizations
 Make players an object for easier lookups?
@@ -259,3 +275,4 @@ What are the "side effect things that happen?"
   - Update turn ordering (inactive team)
   - Initialize turn with new player id
 */
+
