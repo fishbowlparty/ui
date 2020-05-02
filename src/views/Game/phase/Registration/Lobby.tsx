@@ -1,44 +1,28 @@
 import styled from "@emotion/styled";
 import {
+  Box,
   Button,
   IconButton,
-  List,
-  Typography,
-  Box,
-  ListItem,
-  ListItemText,
-  Divider,
-  ListItemSecondaryAction,
-  TableContainer,
   Paper,
   Table,
-  TableHead,
-  TableRow,
-  TableCell,
   TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
 } from "@material-ui/core";
-import {
-  RemoveCircleOutlineOutlined,
-  Remove,
-  Close,
-  Edit,
-  Settings,
-} from "@material-ui/icons";
+import { Close, Edit, Settings } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-} from "react";
-import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
-import { useActionDispatch, useGameSelector } from "../../../../redux";
-import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Link, Redirect, useRouteMatch } from "react-router-dom";
+import {
+  selectOrderedPlayers,
+  useActionDispatch,
+  useGameSelector,
+} from "../../../../redux";
+import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
-import { useDispatch } from "react-redux";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
-import { selectOrderedPlayers } from "../../../../redux/selectors";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
