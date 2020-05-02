@@ -1,27 +1,15 @@
 import {
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  Box,
-  TableContainer,
   Paper,
   Table,
   TableBody,
-  TableRow,
   TableCell,
-  IconButton,
-  Link,
+  TableContainer,
   TableHead,
+  TableRow,
+  Typography,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
-import { useRouteMatch } from "react-router-dom";
-import { useGameSelector, useActionDispatch } from "../../../redux";
-import { getPlayer } from "../../../redux/localStorage";
-import { theme } from "../../../theme";
-import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
 import {
   DragDropContext,
   Draggable,
@@ -29,8 +17,12 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import { TeamName, Player } from "../../../redux/types";
-import { Edit, Check } from "@material-ui/icons";
+import { useActionDispatch, useGameSelector } from "../../../redux";
+import { Player, TeamName } from "@fishbowl/common";
+
+import { getPlayer } from "../../../redux/localStorage";
+import { theme } from "../../../theme";
+import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
 
 /*
 Make color neutral when dragging or change when crossing borders

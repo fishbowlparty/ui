@@ -1,5 +1,4 @@
 import { v4 } from "uuid";
-import { Player } from "./types";
 
 export const initializePlayerId = () => {
   if (localStorage.getItem("PLAYER_ID") == null) {

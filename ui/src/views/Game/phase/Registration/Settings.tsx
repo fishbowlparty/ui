@@ -1,22 +1,23 @@
 import styled from "@emotion/styled";
 import {
-  Typography,
   Box,
-  TextField,
-  InputAdornment,
-  FormGroup,
-  FormControlLabel,
-  Switch,
   Button,
+  FormControlLabel,
+  FormGroup,
+  InputAdornment,
+  Switch,
+  TextField,
+  Typography,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback } from "react";
-import { GameSettings, Game } from "../../../../redux/types";
-import { theme } from "../../../../theme";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useActionDispatch } from "../../../../redux";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import { useActionDispatch } from "../../../../redux";
+import { Game } from "@fishbowl/common";
+
+import { theme } from "../../../../theme";
 
 interface FormState {
   turnDuration: string;

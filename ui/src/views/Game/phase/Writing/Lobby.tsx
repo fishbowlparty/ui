@@ -1,37 +1,23 @@
-import styled from "@emotion/styled";
 import {
-  Button,
   IconButton,
-  List,
-  Typography,
-  Box,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Divider,
-  TableContainer,
   Paper,
   Table,
   TableBody,
-  TableRow,
   TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
 } from "@material-ui/core";
-import { Remove, Check, Edit, Close } from "@material-ui/icons";
+import { Check, Edit } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useMemo,
-} from "react";
-import { Link, useHistory, useRouteMatch, Redirect } from "react-router-dom";
-import { useActionDispatch, useGameSelector } from "../../../../redux";
-import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
+import React, { useCallback } from "react";
+import { Link, Redirect, useRouteMatch } from "react-router-dom";
+import { useGameSelector } from "../../../../redux";
+import { selectOrderedPlayers } from "@fishbowl/common";
+
+import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
-import { useDispatch } from "react-redux";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
-import { selectOrderedPlayers } from "../../../../redux/selectors";
 
 export const Lobby: React.FC = () => {
   const { id } = getPlayer();
