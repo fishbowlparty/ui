@@ -31,6 +31,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "socket.io-client": "^2.3.0",
     "typescript": "~3.7.2",
     "uuid": "^7.0.3"
@@ -60,5 +61,5 @@
     "@types/react-beautiful-dnd": "^12.1.2",
     "@types/socket.io-client": "^1.4.32"
   },
-  "proxy": "http://localhost:3001" 
+  "proxy": "http://localhost:3001"
 }

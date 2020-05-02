@@ -54,6 +54,7 @@ export async function createGame(hostId: string) {
   }
 
   await db.upsertGame({ ...initialGame, gameCode, hostId });
+
   return {
     gameCode,
   };
@@ -75,7 +76,14 @@ async function createGameStore(gameCode: string) {
     return null;
   }
 
-  return createStore(GameReducer, game);
+  const store = createStore(GameReducer, game);
+
+  // TODO: need a reaping strategy
+  const unsubscribe = store.subscribe(() => {
+    db.upsertGame(store.getState());
+  });
+
+  return store;
 }
 
 export interface Options {

@@ -10,6 +10,7 @@ import bodyParser from "body-parser";
 console.log("hey there");
 
 function send(socket: socketIo.Socket, message: ServerEvents) {
+  console.log("sending", message);
   socket.send(message);
 }
 
@@ -32,6 +33,7 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
   const io = socketIo(server);
   io.on("connection", async (socket) => {
     const { gameCode } = socket.handshake.query;
+    console.log("connection", gameCode);
 
     const gameStore = await getGameStore(gameCode);
     if (gameStore == null) {
@@ -54,7 +56,8 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       });
     });
 
-    socket.on("message", (_, action: Actions) => {
+    socket.on("message", (action: Actions) => {
+      console.log("socket message", action);
       gameStore.dispatch(action);
     });
   });

@@ -428,6 +428,9 @@ export function GameReducer(game: Game = initialGame, action: Actions): Game {
       return gotCard(game, action);
     case "SKIP_CARD":
       return skipCard(game, action);
+    case "SERVER_UPDATE_STATE": 
+      // TODO: merge state for cheaper updates
+      return action.payload
 
     // default
     default:

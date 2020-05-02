@@ -110,7 +110,7 @@ export const Lobby: React.FC = () => {
                 <TableRow key={player.id}>
                   <TableCell scope="row">{i + 1}</TableCell>
                   <TableCell scope="row" style={{ width: "100%" }}>
-                    {player.name}
+                    {player.name || "..."}
                   </TableCell>
                   <TableCell align="right">
                     {isMe(player.id) ? (

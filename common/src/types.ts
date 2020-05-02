@@ -73,6 +73,26 @@ export interface Game {
 }
 
 /**
+ * SERVER MESSAGES
+ */
+export interface SERVER_INIT_STATE {
+  type: 'SERVER_INIT_STATE',
+  payload: Game
+}
+
+export interface SERVER_UPDATE_STATE {
+  type: 'SERVER_UPDATE_STATE',
+  payload: Game
+}
+
+export interface SERVER_NOT_FOUND {
+  type: 'SERVER_NOT_FOUND',
+  payload: {}
+}
+
+export type ServerEvents = SERVER_INIT_STATE | SERVER_UPDATE_STATE | SERVER_NOT_FOUND
+
+/**
  * ADMINISTRATIVE ACTIONS
  */
 // auth rule: only host
@@ -148,7 +168,8 @@ export type ADMIN_ACTIONS =
   | JOIN_GAME
   | LEAVE_GAME
   | SUBMIT_CARDS
-  | SET_TEAMS;
+  | SET_TEAMS
+  | SERVER_UPDATE_STATE;
 
 /**
  * GAMEPLAY ACTIONS
@@ -215,22 +236,6 @@ export type GAMEPLAY_ACTIONS =
 
 export type Actions = ADMIN_ACTIONS | GAMEPLAY_ACTIONS;
 
-export interface SERVER_INIT_STATE {
-  type: 'SERVER_INIT_STATE',
-  payload: Game
-}
-
-export interface SERVER_UPDATE_STATE {
-  type: 'SERVER_UPDATE_STATE',
-  payload: Game
-}
-
-export interface SERVER_NOT_FOUND {
-  type: 'SERVER_NOT_FOUND',
-  payload: {}
-}
-
-export type ServerEvents = SERVER_INIT_STATE | SERVER_UPDATE_STATE | SERVER_NOT_FOUND
 /*
 Optimizations
 Make players an object for easier lookups?
