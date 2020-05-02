@@ -68,7 +68,7 @@ export interface Game {
   };
   turns: {
     active: Turn;
-    recap: TurnRecap;
+    recap: TurnRecap | null;
   };
 }
 

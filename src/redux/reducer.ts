@@ -84,11 +84,7 @@ const initialGame: Game = {
       guessedCardIds: {},
       skippedCardIds: {},
     },
-    recap: {
-      team: "orange",
-      guessedCardIds: [],
-      skippedCardCount: 0,
-    },
+    recap: null,
   },
 };
 

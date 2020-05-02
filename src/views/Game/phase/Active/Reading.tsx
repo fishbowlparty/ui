@@ -32,7 +32,11 @@ import { getPlayer, setPlayerName } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useDispatch } from "react-redux";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
-import { selectOrderedPlayers, selectCards } from "../../../../redux/selectors";
+import {
+  selectOrderedPlayers,
+  selectCards,
+  selectActivePlayer,
+} from "../../../../redux/selectors";
 
 export const Reading: React.FC = () => {
   const { id } = getPlayer();
@@ -57,7 +61,7 @@ export const Reading: React.FC = () => {
   const score = useGameSelector((game) => game.score);
   const namesAre = useGameSelector((game) => {
     const teamNames = game.teams[game.activePlayer.team]
-      .filter((playerId) => playerId != id)
+      .filter((playerId) => playerId !== selectActivePlayer(game).id)
       .map((playerId) => game.players[playerId].name);
 
     return teamNames.reduce((s, name, i) => {
@@ -88,10 +92,9 @@ export const Reading: React.FC = () => {
   });
   const paused = useGameSelector((game) => game.turns.active.paused);
   const isFresh = useGameSelector((game) => game.turns.active.isFresh);
-  // active card logic:
-  // if there are draw cards, random draw card
-  // otherwise, rotate skipp deck
-  // otherwuse null
+  const recap = useGameSelector((game) => game.turns.recap);
+  const settings = useGameSelector((game) => game.settings);
+  const cards = useGameSelector(selectCards);
   const activeCard = useGameSelector(
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
@@ -193,12 +196,7 @@ export const Reading: React.FC = () => {
           <Typography align="center">{namesAre} guessing for you.</Typography>
         </Box>
         <Box mb={1}>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={onTimerToggle}
-            // color="secondary"
-          >
+          <Button variant="outlined" fullWidth onClick={onTimerToggle}>
             <Flex flexDirection="column" alignItems="center">
               <Typography
                 variant="caption"
@@ -214,14 +212,25 @@ export const Reading: React.FC = () => {
               >
                 {timer}
               </Typography>
-              {/* <Typography variant="caption" align="center" color="textSecondary">
-          {paused ? "Resume timer" : "pause timer"}
-        </Typography> */}
             </Flex>
           </Button>
         </Box>
         <Box mb={2} mt={2} padding={4}>
-          {paused ? (
+          {isFresh ? (
+            recap == null ? null : (
+              <Flex flexDirection="column">
+                <Typography variant="h6" align="center">
+                  {recap.team} team got{" "}
+                  {recap.guessedCardIds.length +
+                    recap.skippedCardCount * settings.skipPenalty}{" "}
+                  points.
+                </Typography>
+                {recap.guessedCardIds.map((cardId) => (
+                  <Typography>{cards[cardId].text}</Typography>
+                ))}
+              </Flex>
+            )
+          ) : paused ? (
             <Typography variant="h4" color="secondary" align="center">
               PAUSED
             </Typography>

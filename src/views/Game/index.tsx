@@ -135,11 +135,7 @@ export const GameView: React.FC<RouteComponentProps<{
         guessedCardIds: {},
         skippedCardIds: {},
       },
-      recap: {
-        team: "orange",
-        guessedCardIds: [],
-        skippedCardCount: 0,
-      },
+      recap: null,
     },
   });
 

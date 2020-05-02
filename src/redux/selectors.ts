@@ -6,6 +6,16 @@ export const selectHost = (game: Game): Player => {
   return players[hostId];
 };
 
+export const selectActivePlayer = (game: Game): Player => {
+  const {
+    teams,
+    activePlayer: { team, index },
+    players,
+  } = game;
+
+  return players[teams[team][index[team]]];
+};
+
 export const selectCards = (game: Game): Record<string, Card> => {
   return Object.values(game.playerCards)
     .flatMap((cards) => cards)

@@ -144,10 +144,6 @@ export function gotCard(game: Game, cardId: string): Game {
     },
     turns: {
       ...game.turns,
-      recap: {
-        ...game.turns.recap,
-        guessedCardIds: game.turns.recap.guessedCardIds.concat(cardId),
-      },
     },
   };
 }
