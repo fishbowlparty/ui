@@ -1,0 +1,15 @@
+{
+  "name": "@fishbowl/common",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dest/index.js",
+  "types": "dest/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}
