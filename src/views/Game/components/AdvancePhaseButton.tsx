@@ -1,13 +1,12 @@
 import { Button } from "@material-ui/core";
 import React, { useCallback } from "react";
+import { useActionDispatch, useGameSelector } from "../../../redux";
 import {
   Game,
   GamePhase,
   selectHost,
   selectNumberOfPlayers,
-  useActionDispatch,
-  useGameSelector,
-} from "../../../redux";
+} from "@fishbowl/common";
 import { getPlayer } from "../../../redux/localStorage";
 
 export const AdvancePhaseButton: React.FC = () => {

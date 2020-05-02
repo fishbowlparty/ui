@@ -15,11 +15,9 @@ import { Close, Edit, Settings } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link, Redirect, useRouteMatch } from "react-router-dom";
-import {
-  selectOrderedPlayers,
-  useActionDispatch,
-  useGameSelector,
-} from "../../../../redux";
+import { useActionDispatch, useGameSelector } from "../../../../redux";
+import { selectOrderedPlayers } from "@fishbowl/common";
+
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";

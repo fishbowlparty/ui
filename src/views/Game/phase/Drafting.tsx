@@ -17,12 +17,9 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
-import {
-  Player,
-  TeamName,
-  useActionDispatch,
-  useGameSelector,
-} from "../../../redux";
+import { useActionDispatch, useGameSelector } from "../../../redux";
+import { Player, TeamName } from "@fishbowl/common";
+
 import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
 import { AdvancePhaseButton } from "../components/AdvancePhaseButton";

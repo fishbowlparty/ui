@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
+    "@fishbowl/common": "file:../common",
     "@material-ui/core": "^4.9.11",
     "@material-ui/icons": "^4.9.1",
     "@rebass/grid": "^6.1.0",

@@ -1,12 +1,8 @@
 import { Box, Button, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  selectActivePlayer,
-  selectCards,
-  useActionDispatch,
-  useGameSelector,
-} from "../../../../redux";
+import { useActionDispatch, useGameSelector } from "../../../../redux";
+import { selectActivePlayer, selectCards } from "@fishbowl/common";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 

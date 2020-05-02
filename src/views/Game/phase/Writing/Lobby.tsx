@@ -12,7 +12,9 @@ import { Check, Edit } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback } from "react";
 import { Link, Redirect, useRouteMatch } from "react-router-dom";
-import { selectOrderedPlayers, useGameSelector } from "../../../../redux";
+import { useGameSelector } from "../../../../redux";
+import { selectOrderedPlayers } from "@fishbowl/common";
+
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";

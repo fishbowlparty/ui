@@ -1,11 +1,7 @@
 import { Dispatch, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createStore, Store } from "redux";
-import { GameReducer } from "../../../common/reducer";
-import { Actions, Game } from "../../../common/types";
-
-export * from "../../../common/types";
-export * from "../../../common/selectors";
+import { Actions, Game, GameReducer } from "@fishbowl/common";
 
 export const useGameStore = (game?: Game): Store<Game, Actions> =>
   useMemo(

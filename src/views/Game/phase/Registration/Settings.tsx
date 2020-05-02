@@ -14,7 +14,9 @@ import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useHistory, useRouteMatch } from "react-router-dom";
-import { Game, useActionDispatch } from "../../../../redux";
+import { useActionDispatch } from "../../../../redux";
+import { Game } from "@fishbowl/common";
+
 import { theme } from "../../../../theme";
 
 interface FormState {
