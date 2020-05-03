@@ -1,0 +1,21 @@
+{
+  "name": "fishbowl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "heroku-prebuild": "chmod +x build.sh && bash build.sh",
+    "start": "cd api && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fishbowlparty/ui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fishbowlparty/ui/issues"
+  },
+  "homepage": "https://github.com/fishbowlparty/ui#readme"
+}

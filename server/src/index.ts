@@ -62,6 +62,8 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
     });
   });
 
+  app.use(express.static("public"));
+
   server.listen(3001, () => {
     console.log("app listening");
   });
