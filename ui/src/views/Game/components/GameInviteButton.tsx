@@ -10,11 +10,14 @@ import {
   TableContainer,
   TableRow,
   Typography,
+  Grow,
+  Fade,
 } from "@material-ui/core";
 import { Close, Edit, Settings } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
+import { GameCode } from "../../../components/Typography";
 
 export const GameInviteButton: React.FC<{ small?: boolean }> = ({ small }) => {
   const [highlighted, setHighlighted] = useState(false);
@@ -34,18 +37,37 @@ export const GameInviteButton: React.FC<{ small?: boolean }> = ({ small }) => {
         variant="outlined"
         fullWidth={!small}
         onClick={copyGameCode}
-        color={small ? "default" : "secondary"}
+        color={small && !highlighted ? "default" : "secondary"}
         size={small ? "small" : "medium"}
       >
         {small ? (
-          highlighted ? (
-            "copied!"
-          ) : (
-            params.gameCode
-          )
+          <>
+            <GameCode small>{params.gameCode}</GameCode>
+            <Fade in={highlighted} timeout={{ enter: 100, exit: 200 }}>
+              <Flex
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  background: "white",
+                  borderRadius: 4,
+                }}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Typography
+                  variant="caption"
+                  align="center"
+                  style={{ lineHeight: "1em" }}
+                >
+                  copied!
+                </Typography>
+              </Flex>
+            </Fade>
+          </>
         ) : (
           <Flex flexDirection="column" alignItems="center">
-            <Typography variant="h5">{params.gameCode}</Typography>
+            <GameCode>{params.gameCode}</GameCode>
             <Typography variant="caption" align="center">
               {highlighted ? "copied!" : "copy invite link"}
             </Typography>

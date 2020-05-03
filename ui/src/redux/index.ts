@@ -8,14 +8,14 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const createGameStore = (
   game: Game,
-  middleware: (action: Actions) => void
+  middleware?: (action: Actions) => void
 ) => {
   return createStore(
     GameReducer,
     game,
     composeEnhancers(
       applyMiddleware(() => (next) => (action: Actions) => {
-        middleware(action);
+        middleware && middleware(action);
         next(action);
       })
     )

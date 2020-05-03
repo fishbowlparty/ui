@@ -1,19 +1,14 @@
-import React, { useCallback } from "react";
-import { useGameSelector, useActionDispatch } from "../../../../redux";
-import { getPlayer } from "../../../../redux/localStorage";
-import { Reading } from "./Reading";
 import { Flex } from "@rebass/grid/emotion";
+import React from "react";
+import { useGameSelector } from "../../../../redux";
+import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
-import { Box, Typography, Button } from "@material-ui/core";
-import { selectActivePlayer, selectCards } from "@fishbowl/common";
-import { TimerContextProvider, useTimerContext } from "./timer";
 import { ActionButtons } from "./ActionButtons";
-import { useRouteMatch } from "react-router-dom";
-import { GameInviteButton } from "../../components/GameInviteButton";
+import { CardArea } from "./CardArea";
 import { GameHeader } from "./GameHeader";
 import { GameStatus } from "./GameStatus";
 import { GameTimer } from "./GameTimer";
-import { CardArea } from "./CardArea";
+import { TimerContextProvider } from "./timer";
 
 export const Active: React.FC = () => {
   const { id } = getPlayer();

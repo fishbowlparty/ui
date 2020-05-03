@@ -16,6 +16,8 @@ export const GameTimer: React.FC = () => {
   const { id } = getPlayer();
   const dispatch = useActionDispatch();
   const isNewTurn = useGameSelector(selectIsNewTurn);
+  const isNewGame =
+    useGameSelector((game) => game.turns.recap == null) && isNewTurn;
   const isMyTurn = useGameSelector(
     (game) => selectActivePlayer(game).id === id
   );
@@ -29,6 +31,10 @@ export const GameTimer: React.FC = () => {
       dispatch({ type: "PAUSE_TURN", payload: { timeRemaining: timer } });
     }
   }, [dispatch, timer, paused]);
+
+  if (isNewGame) {
+    return null;
+  }
 
   if (isNewTurn) {
     return (

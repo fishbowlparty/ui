@@ -11,6 +11,10 @@ import { Drafting } from "./phase/Drafting";
 import { Ended } from "./phase/Ended";
 import { Registration } from "./phase/Registration";
 import { Writing } from "./phase/Writing";
+import { NotFound } from "./NotFound";
+import { Flex } from "@rebass/grid/emotion";
+import { CircularProgress } from "@material-ui/core";
+import { getPlayer } from "../../redux/localStorage";
 
 /*
 Notes for socket server:
@@ -30,151 +34,25 @@ Notes for socket server:
 export const GameView: React.FC<RouteComponentProps<{
   gameCode: string;
 }>> = (props) => {
-  const [store, setStore] = useState<Store<Game, Actions> | null>(null);
-  const [notFound, setNotFound] = useState(false);
   const { gameCode } = props.match.params;
 
-  useEffect(() => {
-    // TODO: namespace socket connection so that it can be sticky to server by gameCode
-    const socket = io("http://localhost:3001", {
-      query: {
-        gameCode,
-      },
-    });
-
-    const cleanup = () => {
-      socket.removeAllListeners();
-      socket.disconnect();
-    };
-    let _store: Store<Game, Actions> | null = null;
-
-    socket.on("connect", () => {
-      console.log("socket connect");
-      socket.on("message", (data: ServerEvents) => {
-        console.log("socket message", data);
-        console.log(data);
-        if (data.type === "SERVER_NOT_FOUND") {
-          setNotFound(true);
-          cleanup();
-        }
-        // TODO: wire up
-        if (data.type === "SERVER_INIT_STATE") {
-          const game = data.payload;
-          _store = createGameStore(game, (action) => {
-            console.log("action middleware", socket.send);
-            if (action.type === "SERVER_UPDATE_STATE") {
-              return;
-            }
-            socket.send(action);
-          });
-          setStore(_store);
-        }
-        if (data.type === "SERVER_UPDATE_STATE") {
-          _store?.dispatch(data);
-        }
-      });
-    });
-
-    // TODO: how do I clean up a socket?
-    return cleanup;
-  }, [gameCode]);
-
-  // const { id, name } = getPlayer();
-  // const store = useGameStore(
-  //   {
-  //     gameCode,
-  //     phase: "active",
-  //     activePlayer: {
-  //       team: "orange",
-  //       index: {
-  //         orange: 0,
-  //         blue: 0,
-  //       },
-  //     },
-  //     hostId: id,
-  //     players: {
-  //       [id]: {
-  //         id,
-  //         name,
-  //         joinOrder: 0,
-  //       },
-  //       1: {
-  //         id: "1",
-  //         name: "Caitlin",
-  //         joinOrder: 1,
-  //       },
-  //       2: {
-  //         id: "2",
-  //         name: "Dan",
-  //         joinOrder: 2,
-  //       },
-  //       3: {
-  //         id: "3",
-  //         name: "Chris",
-  //         joinOrder: 3,
-  //       },
-  //       4: {
-  //         id: "4",
-  //         name: "Sarah",
-  //         joinOrder: 4,
-  //       },
-  //     },
-  //     playerCards: {
-  //       [id]: [
-  //         {
-  //           id: "0",
-  //           text: "Darth Vader",
-  //         },
-  //         {
-  //           id: "1",
-  //           text: "the cow jumped over the moon",
-  //         },
-
-  //         {
-  //           id: "2",
-  //           text: "the blue danube",
-  //         },
-  //       ],
-  //     },
-  //     round: {
-  //       guessedCardIds: {},
-  //       number: 1,
-  //     },
-  //     score: {
-  //       orange: 0,
-  //       blue: 0,
-  //     },
-  //     settings: {
-  //       cardsPerPlayer: 3,
-  //       numberOfRounds: 3,
-  //       skipPenalty: -1,
-  //       turnDuration: 45,
-  //     },
-  //     teams: {
-  //       orange: [id, "1", "2"],
-  //       blue: ["3", "4"],
-  //     },
-  //     turns: {
-  //       active: {
-  //         isFresh: true,
-  //         paused: true,
-  //         activeCardId: "",
-  //         timeRemaining: 45,
-  //         guessedCardIds: {},
-  //         skippedCardIds: {},
-  //       },
-  //       recap: null,
-  //     },
-  //   }
-  //   // applyMiddleware(broadCastOverSocket)
-  // );
+  // const [store, notFound] = useNetworkStore(gameCode);
+  const [store, notFound] = useMockStore(gameCode);
 
   if (notFound) {
-    return <div>404 not found gameCode</div>;
+    return <NotFound></NotFound>;
   }
 
   if (store == null) {
-    return <div>loading...</div>;
+    return (
+      <Flex flex="1 1 0%" flexDirection="column">
+        <Flex flex="1 1 0%"></Flex>
+        <Flex justifyContent="center">
+          <CircularProgress></CircularProgress>
+        </Flex>
+        <Flex flex="2 2 0%"></Flex>
+      </Flex>
+    );
   }
 
   return (
@@ -201,4 +79,149 @@ const PhaseSwitcher: React.FC = () => {
     case "ended":
       return <Ended></Ended>;
   }
+};
+
+const useMockStore = (
+  gameCode: string
+): [Store<Game, Actions> | null, boolean] => {
+  const { id, name } = getPlayer();
+  const store = createGameStore(
+    {
+      gameCode,
+      phase: "registration",
+      activePlayer: {
+        team: "orange",
+        index: {
+          orange: 0,
+          blue: 0,
+        },
+      },
+      hostId: id,
+      players: {
+        [id]: {
+          id,
+          name,
+          joinOrder: 0,
+        },
+        1: {
+          id: "1",
+          name: "Caitlin",
+          joinOrder: 1,
+        },
+        2: {
+          id: "2",
+          name: "Dan",
+          joinOrder: 2,
+        },
+        3: {
+          id: "3",
+          name: "Chris",
+          joinOrder: 3,
+        },
+        4: {
+          id: "4",
+          name: "Sarah",
+          joinOrder: 4,
+        },
+      },
+      playerCards: {
+        [id]: [
+          {
+            id: "0",
+            text: "Darth Vader",
+          },
+          {
+            id: "1",
+            text: "the cow jumped over the moon",
+          },
+
+          {
+            id: "2",
+            text: "the blue danube",
+          },
+        ],
+      },
+      round: {
+        guessedCardIds: {},
+        number: 1,
+      },
+      score: {
+        orange: 0,
+        blue: 0,
+      },
+      settings: {
+        cardsPerPlayer: 3,
+        numberOfRounds: 3,
+        skipPenalty: -1,
+        turnDuration: 15,
+      },
+      teams: {
+        orange: [id, "1", "2"],
+        blue: ["3", "4"],
+      },
+      turns: {
+        active: {
+          isFresh: true,
+          paused: true,
+          activeCardId: "",
+          timeRemaining: 15,
+          guessedCardIds: {},
+          skippedCardIds: {},
+        },
+        recap: null,
+      },
+    }
+    // applyMiddleware(broadCastOverSocket)
+  );
+  return [store, false];
+};
+
+const useNetworkStore = (
+  gameCode: string
+): [Store<Game, Actions> | null, boolean] => {
+  const [store, setStore] = useState<Store<Game, Actions> | null>(null);
+  const [notFound, setNotFound] = useState<boolean>(false);
+
+  useEffect(() => {
+    const socket = io({
+      query: {
+        gameCode,
+      },
+    });
+
+    const cleanup = () => {
+      socket.removeAllListeners();
+      socket.disconnect();
+    };
+    let _store: Store<Game, Actions> | null = null;
+
+    socket.on("connect", () => {
+      socket.on("message", (data: ServerEvents) => {
+        if (data.type === "SERVER_NOT_FOUND") {
+          setNotFound(true);
+          cleanup();
+        }
+        // TODO: wire up
+        if (data.type === "SERVER_INIT_STATE") {
+          const game = data.payload;
+          _store = createGameStore(game, (action) => {
+            console.log("action middleware", socket.send);
+            if (action.type === "SERVER_UPDATE_STATE") {
+              return;
+            }
+            socket.send(action);
+          });
+          setStore(_store);
+        }
+        if (data.type === "SERVER_UPDATE_STATE") {
+          _store?.dispatch(data);
+        }
+      });
+    });
+
+    // TODO: how do I clean up a socket?
+    return cleanup;
+  }, [gameCode]);
+
+  return [store, notFound];
 };

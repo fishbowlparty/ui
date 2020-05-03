@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useGameSelector, useActionDispatch } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
-import { Reading } from "./Reading";
 import { Flex } from "@rebass/grid/emotion";
 import { theme } from "../../../../theme";
 import { Box, Typography, Button } from "@material-ui/core";
@@ -34,11 +33,15 @@ export const CardArea: React.FC = () => {
   if (isNewTurn) {
     if (recap == null) {
       return (
-        <Box m={2}>
-          <Typography variant="h4" align="center">
-            Hey whats up welcome to a new game
-          </Typography>
-        </Box>
+        <Flex flex="1 0 auto" flexDirection="column">
+          <Flex flex="1 1 0%"></Flex>
+          <Box m={2}>
+            <Typography variant="h4" align="center">
+              Hey whats up welcome to a new game
+            </Typography>
+          </Box>
+          <Flex flex="2 2 0%"></Flex>
+        </Flex>
       );
     }
 
@@ -50,7 +53,7 @@ export const CardArea: React.FC = () => {
           points.
         </Typography>
         {recap.guessedCardIds.map((cardId) => (
-          <Typography>{cards[cardId].text}</Typography>
+          <Typography key={cardId}>{cards[cardId].text}</Typography>
         ))}
         {recap.skippedCardCount > 0 && (
           <Typography variant="caption" color="textSecondary">

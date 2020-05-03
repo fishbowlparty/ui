@@ -5,6 +5,8 @@ import { Flex } from "@rebass/grid/emotion";
 import styled from "@emotion/styled";
 import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { ActionPage } from "../components/ActionPage";
+import { Title, Instructions } from "../components/Typography";
 
 interface FormState {
   gameCode: string;
@@ -27,42 +29,36 @@ export const Join: React.FC = () => {
   console.log(isValid);
 
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex flex="1 1 0%"></Flex>
-      <Flex flexDirection="column">
-        <Typography variant="h2" align="center">
-          join a game
-        </Typography>
-        <Typography variant="body1" align="center">
-          Got a game code? Enter it here!
-        </Typography>
-        <Box m={4}></Box>
+    <ActionPage>
+      <Flex flexDirection="column" alignItems="center">
+        <Title>Join a game</Title>
+        <Box mb={1}></Box>
+        <Instructions>Got a game code? Enter it here!</Instructions>
+        <Box mb={4}></Box>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Typography variant="h5">
-            <TextField
-              fullWidth
-              name="gameCode"
-              margin="normal"
-              variant="outlined"
-              placeholder="ABCD"
-              inputRef={register({
-                required: true,
-                maxLength: 4,
-                minLength: 4,
-              })}
-              InputProps={{
-                inputProps: {
-                  style: {
-                    ...theme.typography.h3,
-                    textAlign: "center",
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                  },
-                  maxLength: 4,
+          <TextField
+            fullWidth
+            name="gameCode"
+            margin="normal"
+            variant="outlined"
+            placeholder="ABCD"
+            inputRef={register({
+              required: true,
+              maxLength: 4,
+              minLength: 4,
+            })}
+            InputProps={{
+              inputProps: {
+                style: {
+                  ...theme.typography.h5,
+                  textAlign: "center",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
                 },
-              }}
-            ></TextField>
-          </Typography>
+                maxLength: 4,
+              },
+            }}
+          ></TextField>
           <Button
             variant="outlined"
             color="primary"
@@ -74,7 +70,12 @@ export const Join: React.FC = () => {
           </Button>
         </form>
       </Flex>
-      <Flex flex="2 2 0%"></Flex>
-    </Flex>
+    </ActionPage>
   );
 };
+
+const Label: React.FC = ({ children }) => (
+  <Typography style={{ fontWeight: 300 }} color="textSecondary" variant="h4">
+    {children}
+  </Typography>
+);

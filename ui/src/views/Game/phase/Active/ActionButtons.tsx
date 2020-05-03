@@ -92,7 +92,7 @@ export const ActionButtons: React.FC = () => {
           color="primary"
           onClick={startTurn}
         >
-          Start Turn
+          Resume Turn
         </Button>
       </Flex>
     );
