@@ -32,7 +32,12 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
   const server = createServer(app);
 
   const io = socketIo(server);
+  //these directory paths are kind of dub because of how the dockerfile copies files around
+  //should really be cleaned up
   app.use(express.static("public"));
+  app.get("*", function (request, response) {
+    response.sendFile("/app/public/index.html");
+  });
 
   io.on("connection", async (socket) => {
     const { gameCode } = socket.handshake.query;
@@ -64,8 +69,6 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       gameStore.dispatch(action);
     });
   });
-
-  app.use(express.static("public"));
 
   server.listen(CONFIG.PORT, () => {
     console.log("app listening");
