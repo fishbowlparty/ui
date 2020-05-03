@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo heroku build starting
+
 cd common
 npm install
 npm run build
