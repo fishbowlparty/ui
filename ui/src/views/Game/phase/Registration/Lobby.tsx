@@ -21,6 +21,7 @@ import { selectOrderedPlayers } from "@fishbowl/common";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
+import { GameInviteButton } from "../../components/GameInviteButton";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
@@ -73,9 +74,7 @@ export const Lobby: React.FC = () => {
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
       <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
         <Label>Game Lobby</Label>
-        <CopyGameCodeButton
-          gameCode={match.params.gameCode}
-        ></CopyGameCodeButton>
+        <GameInviteButton></GameInviteButton>
         {isHost && (
           <Typography variant="caption">
             You are the host. Use this invite link to let your friends join. You
@@ -142,36 +141,6 @@ export const Lobby: React.FC = () => {
         <AdvancePhaseButton></AdvancePhaseButton>
       </Flex>
     </Flex>
-  );
-};
-
-const CopyGameCodeButton: React.FC<{ gameCode: string }> = ({ gameCode }) => {
-  const [highlighted, setHighlighted] = useState(false);
-  const timeout = useRef<number>();
-
-  const copyGameCode = useCallback(() => {
-    navigator.clipboard.writeText(window.location.href);
-    setHighlighted(true);
-    clearTimeout(timeout.current);
-    timeout.current = window.setTimeout(() => setHighlighted(false), 1500);
-  }, []);
-
-  return (
-    <Box mb={1}>
-      <Button
-        variant="outlined"
-        fullWidth
-        onClick={copyGameCode}
-        color="secondary"
-      >
-        <Flex flexDirection="column" alignItems="center">
-          <Typography variant="h5">{gameCode}</Typography>
-          <Typography variant="caption" align="center">
-            {highlighted ? "copied!" : "copy invite link"}
-          </Typography>
-        </Flex>
-      </Button>
-    </Box>
   );
 };
 
