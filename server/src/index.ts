@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { migrate } from "./postgres";
 import { getGameStore, createGame } from "./games";
 import bodyParser from "body-parser";
+import { CONFIG } from "./config";
 
 console.log("hey there");
 
@@ -31,6 +32,13 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
   const server = createServer(app);
 
   const io = socketIo(server);
+  //these directory paths are kind of dub because of how the dockerfile copies files around
+  //should really be cleaned up
+  app.use(express.static("public"));
+  app.get("*", function (request, response) {
+    response.sendFile("/app/public/index.html");
+  });
+
   io.on("connection", async (socket) => {
     const { gameCode } = socket.handshake.query;
     console.log("connection", gameCode);
@@ -62,7 +70,7 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
     });
   });
 
-  server.listen(3001, () => {
+  server.listen(CONFIG.PORT, () => {
     console.log("app listening");
   });
 })();
