@@ -5,7 +5,7 @@
   "main": "dest/index.js",
   "types": "dest/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "author": "",
   "license": "ISC",
