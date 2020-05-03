@@ -3,8 +3,7 @@
 echo heroku build starting
 
 cd common
-npm install
-npm run build
+npm install && npm run build
 cd ..
 
 
