@@ -17,8 +17,8 @@ export const Join: React.FC = () => {
   const history = useHistory();
   const onSubmit = useCallback(
     (data: FormState) => {
-      console.log(data);
-      history.push(`/games/${data.gameCode}`);
+      const gameCode = data.gameCode.toUpperCase();
+      history.push(`/games/${gameCode}`);
     },
     [history]
   );
