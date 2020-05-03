@@ -36,7 +36,7 @@ export const GameView: React.FC<RouteComponentProps<{
 
   useEffect(() => {
     // TODO: namespace socket connection so that it can be sticky to server by gameCode
-    const socket = io("http://localhost:3001", {
+    const socket = io({
       query: {
         gameCode,
       },

@@ -6,3 +6,10 @@ services:
       - POSTGRES_PASSWORD=passw0rd
     ports:
       - "5432:5432"
+  server:
+    image: fishbowl:latest
+    environment:
+      - DATABASE_URL=postgresql://postgres:passw0rd@postgres:5432/postgres
+      - PORT=7000
+    ports:
+      - "7000:7000"

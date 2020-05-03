@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { migrate } from "./postgres";
 import { getGameStore, createGame } from "./games";
 import bodyParser from "body-parser";
+import { CONFIG } from "./config";
 
 console.log("hey there");
 
@@ -31,6 +32,8 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
   const server = createServer(app);
 
   const io = socketIo(server);
+  app.use(express.static("public"));
+
   io.on("connection", async (socket) => {
     const { gameCode } = socket.handshake.query;
     console.log("connection", gameCode);
@@ -64,7 +67,7 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
 
   app.use(express.static("public"));
 
-  server.listen(3001, () => {
+  server.listen(CONFIG.PORT, () => {
     console.log("app listening");
   });
 })();
