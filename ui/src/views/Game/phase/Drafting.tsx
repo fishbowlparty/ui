@@ -7,6 +7,7 @@ import {
   TableHead,
   Typography,
   TableRow,
+  Divider,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
@@ -25,6 +26,7 @@ import { theme } from "../../../theme";
 import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
 import { PlayerTableRow } from "../components/PlayerTable";
 import { Title } from "../../../components/Typography";
+import styled from "@emotion/styled";
 
 /*
 Make color neutral when dragging or change when crossing borders
@@ -74,65 +76,10 @@ export const Drafting: React.FC = () => {
         <Flex>
           <DragDropContext onDragEnd={onDragEnd}>
             <Flex flex="1 1 0%" marginRight={2}>
-              <Droppable droppableId="orange">
-                {(provided, snapshot) => (
-                  <TableContainer
-                    component={Paper}
-                    variant="outlined"
-                    innerRef={provided.innerRef}
-                    {...provided.droppableProps}
-                    style={{
-                      boxShadow: `0 0 4px 0px ${theme.palette.secondary.main}`,
-                      background: theme.palette.background.default,
-                    }}
-                  >
-                    <Table aria-label="Players">
-                      <TableBody>
-                        {teams.orange.map((playerId, i) => (
-                          <PlayerTableRow key={playerId}>
-                            <DraggableCell
-                              player={players[playerId]}
-                              index={i}
-                            ></DraggableCell>
-                          </PlayerTableRow>
-                        ))}
-                        {provided.placeholder}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </Droppable>
+              <TeamDroppable team="orange"></TeamDroppable>
             </Flex>
             <Flex flex="1 1 0%" marginLeft={2}>
-              <Droppable droppableId="blue">
-                {(provided, snapshot) => (
-                  <TableContainer
-                    component={Paper}
-                    variant="outlined"
-                    innerRef={provided.innerRef}
-                    {...provided.droppableProps}
-                    style={{
-                      // border: `1px solid ${theme.palette.primary.main}`,
-                      boxShadow: `0 0 4px 0px ${theme.palette.primary.main}`,
-                      background: theme.palette.background.default,
-                    }}
-                  >
-                    <Table aria-label="Players">
-                      <TableBody>
-                        {teams.blue.map((playerId, i) => (
-                          <PlayerTableRow key={playerId}>
-                            <DraggableCell
-                              player={players[playerId]}
-                              index={i}
-                            ></DraggableCell>
-                          </PlayerTableRow>
-                        ))}
-                        {provided.placeholder}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </Droppable>
+              <TeamDroppable team="blue"></TeamDroppable>
             </Flex>
           </DragDropContext>
         </Flex>
@@ -141,6 +88,35 @@ export const Drafting: React.FC = () => {
         <AdvancePhaseButton></AdvancePhaseButton>
       </Flex>
     </Flex>
+  );
+};
+
+const TeamDroppable: React.FC<{ team: TeamName }> = ({ team }) => {
+  const players = useGameSelector((game) => game.players);
+  const teams = useGameSelector((game) => game.teams);
+
+  return (
+    <Droppable droppableId={team}>
+      {(provided, snapshot) => (
+        <Paper
+          variant="outlined"
+          innerRef={provided.innerRef}
+          {...provided.droppableProps}
+          style={{
+            flex: "1 1 0%",
+            boxShadow: `0 0 4px 0px ${
+              theme.palette[team === "orange" ? "secondary" : "primary"].main
+            }`,
+            background: theme.palette.background.default,
+          }}
+        >
+          {teams[team].map((playerId, i) => (
+            <DraggableCell player={players[playerId]} index={i}></DraggableCell>
+          ))}
+          {provided.placeholder}
+        </Paper>
+      )}
+    </Droppable>
   );
 };
 
@@ -153,20 +129,30 @@ const DraggableCell: React.FC<{ player: Player; index: number }> = ({
       {(provided, snapshot) => {
         console.log(snapshot.isDragging);
         return (
-          <TableCell
-            {...provided.draggableProps}
-            style={{
-              ...provided.draggableProps.style,
-              opacity: snapshot.isDragging ? 0.7 : 1,
-              background: theme.palette.background.paper,
-            }}
-            {...provided.dragHandleProps}
+          <div
             ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
           >
-            {player.name}
-          </TableCell>
+            <Cell isDragging={snapshot.isDragging && !snapshot.isDropAnimating}>
+              <Typography variant="body2">{player.name}</Typography>
+            </Cell>
+          </div>
         );
       }}
     </Draggable>
   );
 };
+
+const Cell = styled(Flex)<{ isDragging?: boolean }>`
+  padding: 16px;
+  transition: all 100ms ease-out;
+  background: ${theme.palette.background.paper};
+  border-bottom: 1px solid transparent;
+  border-color: ${(p) =>
+    p.isDragging ? "transparent" : theme.palette.divider};
+  /* opacity: ${(p) => (p.isDragging ? 0.85 : 1)}; */
+  box-shadow: ${(p) => (p.isDragging ? theme.shadows[2] : "none")};
+  transform: ${(p) =>
+    p.isDragging ? "perspective(100px) translateZ(5px)" : "none"};
+`;
