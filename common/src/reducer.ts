@@ -296,6 +296,27 @@ export function pauseTurn(game: Game, action: PAUSE_TURN): Game {
   };
 }
 
+
+export function resumeTurn(game: Game): Game {
+  if (game.phase !== "active") {
+    return game;
+  }
+
+  return {
+    ...game,
+    round: {
+      ...game.round,
+    },
+    turns: {
+      ...game.turns,
+      active: {
+        ...game.turns.active,
+        paused: false,
+      },
+    },
+  };
+}
+
 function gotCard(game: Game, action: GOT_CARD): Game {
   if (game.phase !== "active") {
     return game;
@@ -420,10 +441,12 @@ export function GameReducer(game: Game = initialGame, action: Actions): Game {
       return skipTurn(game, action);
     case "START_TURN":
       return startTurn(game, action);
-    case "PAUSE_TURN":
+      case "END_TURN":
+        return endTurn(game, action);
+            case "PAUSE_TURN":
       return pauseTurn(game, action);
-    case "END_TURN":
-      return endTurn(game, action);
+      case "RESUME_TURN":
+        return resumeTurn(game, action);
     case "GOT_CARD":
       return gotCard(game, action);
     case "SKIP_CARD":

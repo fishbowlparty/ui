@@ -81,7 +81,7 @@ export function drawNextCard(
   const { guessedCardIds } = game.round;
   const { skippedCardIds } = game.turns.active;
 
-  // the draw deck is  cards that have  not yet been  guessed or skipps
+  // the draw deck is  cards that have  not yet been  guessed or skips
   const drawCardIds = Object.keys(selectCards(game)).filter(
     (cardId) => !(guessedCardIds[cardId] || skippedCardIds[cardId])
   );

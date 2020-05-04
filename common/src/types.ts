@@ -31,14 +31,12 @@ export interface Turn {
   paused: boolean;
   timeRemaining: number;
   activeCardId: string;
-  guessedCardIds: Record<string, boolean>;
   skippedCardIds: Record<string, boolean>;
 }
 
 export interface TurnRecap {
   team: TeamName;
-  guessedCardIds: string[];
-  skippedCardCount: number;
+  cardEvents: Array<string | null>;
 }
 
 export interface Game {
@@ -199,14 +197,19 @@ export interface START_TURN {
   };
 }
 
+export interface END_TURN {
+  type: "END_TURN";
+  payload: {};
+}
+
 export interface PAUSE_TURN {
   type: "PAUSE_TURN";
   payload: { timeRemaining: number };
 }
 
-export interface END_TURN {
-  type: "END_TURN";
-  payload: {};
+export interface RESUME_TURN {
+  type: "RESUME_TURN";
+  payload: { };
 }
 
 export interface GOT_CARD {
@@ -229,8 +232,9 @@ export interface SKIP_CARD {
 export type GAMEPLAY_ACTIONS =
   | SKIP_TURN
   | START_TURN
-  | PAUSE_TURN
   | END_TURN
+  | PAUSE_TURN
+  | RESUME_TURN
   | GOT_CARD
   | SKIP_CARD;
 

@@ -56,6 +56,9 @@ export const ActionButtons: React.FC = () => {
   const startTurn = useCallback(() => {
     dispatch({ type: "START_TURN", payload: { drawSeed: Math.random() } });
   }, [dispatch]);
+  const resumeTurn = useCallback(() => {
+    dispatch({ type: "RESUME_TURN", payload: {} });
+  }, [dispatch]);
 
   if (!isActive) {
     // placeholder to avoid layout thrashing when buttons disappear
@@ -91,7 +94,7 @@ export const ActionButtons: React.FC = () => {
           variant="outlined"
           fullWidth
           color="primary"
-          onClick={startTurn}
+          onClick={resumeTurn}
         >
           Resume Turn
         </Button>

@@ -78,7 +78,6 @@ export const CardArea: React.FC = () => {
               <TableBody>
                 {recap.guessedCardIds.map((cardId, i) => (
                   <PlayerTableRow key={cardId}>
-                    <TableCell scope="row">{i + 1}</TableCell>
                     <TableCell scope="row" style={{ width: "100%" }}>
                       {cards[cardId].text}
                     </TableCell>
