@@ -1,4 +1,10 @@
-import { Box, Button, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Typography,
+  IconButton,
+  ButtonBase,
+} from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
@@ -11,6 +17,7 @@ import { getPlayer } from "../../../../redux/localStorage";
 
 import { theme } from "../../../../theme";
 import { useTimerContext } from "./timer";
+import { PlayArrow, Pause } from "@material-ui/icons";
 
 export const GameTimer: React.FC = () => {
   const { id } = getPlayer();
@@ -21,64 +28,45 @@ export const GameTimer: React.FC = () => {
   const isMyTurn = useGameSelector(
     (game) => selectActivePlayer(game).id === id
   );
-  const paused = useGameSelector((game) => game.turns.active.paused);
+  const isPaused = useGameSelector((game) => game.turns.active.paused);
   const timer = useTimerContext();
 
-  const onClick = useCallback(() => {
-    if (paused) {
+  const togglePause = useCallback(() => {
+    if (isPaused) {
       dispatch({ type: "START_TURN", payload: { drawSeed: Math.random() } });
     } else {
       dispatch({ type: "PAUSE_TURN", payload: { timeRemaining: timer } });
     }
-  }, [dispatch, timer, paused]);
+  }, [dispatch, timer, isPaused]);
 
-  if (isNewGame) {
-    return null;
-  }
+  const isDisabled = isNewTurn || !isMyTurn;
+  const timesUp = isNewTurn || timer < 0;
 
-  if (isNewTurn) {
-    return (
-      <Typography variant="h4" align="center">
-        Time's up!
-      </Typography>
-    );
-  }
-  if (isMyTurn) {
-    return (
-      <Button variant="outlined" fullWidth onClick={onClick}>
-        <Flex flexDirection="column" alignItems="center">
-          <Typography variant="caption" align="center" color="textSecondary">
-            Time Remaining
-          </Typography>
-          <Typography
-            variant="h2"
-            style={{ fontWeight: "bold" }}
-            color="textSecondary"
-          >
-            {timer}
-          </Typography>
-          <Typography variant="caption" align="center" color="textSecondary">
-            {paused ? "paused" : "tap to pause"}
+  return (
+    <ButtonBase
+      style={{
+        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+        borderBottom: `1px solid ${theme.palette.divider}`,
+      }}
+      disabled={isDisabled}
+      onClick={togglePause}
+    >
+      <Flex flex="1 0 auto">
+        <Flex flex="1 1 0%"></Flex>
+        <Typography
+          variant="h4"
+          style={{ fontWeight: "bold" }}
+          color="textSecondary"
+        >
+          {isNewGame ? <span>&nbsp;</span> : timesUp ? "Time's up!" : timer}
+        </Typography>
+        <Flex flex="1 1 0%" justifyContent="flex-end" alignItems="flex-start">
+          <Typography color="textSecondary">
+            {!isDisabled &&
+              (isPaused ? <PlayArrow></PlayArrow> : <Pause></Pause>)}
           </Typography>
         </Flex>
-      </Button>
-    );
-  }
-  return (
-    <Flex flexDirection="column" alignItems="center">
-      <Typography variant="caption" align="center" color="textSecondary">
-        Time Remaining
-      </Typography>
-      <Typography
-        variant="h2"
-        style={{ fontWeight: "bold" }}
-        color="textSecondary"
-      >
-        {timer}
-      </Typography>
-      <Typography variant="caption" align="center" color="textSecondary">
-        {paused ? "paused" : <span>&nbsp;</span>}
-      </Typography>
-    </Flex>
+      </Flex>
+    </ButtonBase>
   );
 };

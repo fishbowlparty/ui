@@ -1,4 +1,4 @@
-import { Typography } from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
 import { useGameSelector } from "../../../../redux";
@@ -27,15 +27,12 @@ export const GameHeader: React.FC = () => {
 
   return (
     <>
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-        margin={`${theme.spacing(1)}px 0`}
-      >
+      <Flex justifyContent="space-between" alignItems="center">
         <Typography variant="h5">Round {roundNumber}</Typography>
         <GameInviteButton small></GameInviteButton>
       </Flex>
-      <Flex margin={`${theme.spacing(1)}px 0`}>
+      <Box mb={1}></Box>
+      <Flex>
         <Flex flex="1 1 0%" alignItems="center" flexDirection="column">
           <Typography
             style={{ fontWeight: 300, lineHeight: "36px" }}
@@ -87,6 +84,7 @@ export const GameHeader: React.FC = () => {
           </Flex>
         </Flex>
       </Flex>
+      <Box mb={1}></Box>
     </>
   );
 };

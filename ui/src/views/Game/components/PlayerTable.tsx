@@ -1,15 +1,6 @@
-import React from "react";
-import {
-  TableContainer,
-  Paper,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  IconButton,
-  Link,
-} from "@material-ui/core";
 import styled from "@emotion/styled";
+import { Paper, Table, TableContainer, TableRow } from "@material-ui/core";
+import React from "react";
 
 export const PlayerTable: React.FC = ({ children }) => {
   return (

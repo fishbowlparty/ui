@@ -6,7 +6,6 @@ import { theme } from "../../../../theme";
 import { ActionButtons } from "./ActionButtons";
 import { CardArea } from "./CardArea";
 import { GameHeader } from "./GameHeader";
-import { GameStatus } from "./GameStatus";
 import { GameTimer } from "./GameTimer";
 import { TimerContextProvider } from "./timer";
 import { TurnCard } from "./TurnCard";
@@ -67,11 +66,7 @@ export const Active: React.FC = () => {
       <Flex flex="1 0 auto" flexDirection="column" padding={theme.spacing(2)}>
         <Flex flex="1 0 auto" flexDirection="column">
           <GameHeader></GameHeader>
-          <TurnCard>
-            <GameStatus></GameStatus>
-            <GameTimer></GameTimer>
-            <CardArea></CardArea>
-          </TurnCard>
+          <TurnCard></TurnCard>
         </Flex>
         <ActionButtons></ActionButtons>
       </Flex>

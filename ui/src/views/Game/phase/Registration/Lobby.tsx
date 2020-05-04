@@ -1,28 +1,15 @@
-import styled from "@emotion/styled";
-import {
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-} from "@material-ui/core";
+import { selectOrderedPlayers } from "@fishbowl/common";
+import { IconButton, TableBody, TableCell } from "@material-ui/core";
 import { Close, Edit, Settings } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Link, Redirect, useRouteMatch } from "react-router-dom";
+import { Instructions, Title } from "../../../../components/Typography";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
-import { selectOrderedPlayers } from "@fishbowl/common";
-
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
 import { GameInviteButton } from "../../components/GameInviteButton";
-import { Instructions, Title } from "../../../../components/Typography";
 import { PlayerTable, PlayerTableRow } from "../../components/PlayerTable";
 
 export const Lobby: React.FC = () => {

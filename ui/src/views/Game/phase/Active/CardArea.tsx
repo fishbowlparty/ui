@@ -3,7 +3,16 @@ import { useGameSelector, useActionDispatch } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { Flex } from "@rebass/grid/emotion";
 import { theme } from "../../../../theme";
-import { Box, Typography, Button } from "@material-ui/core";
+import {
+  Box,
+  Typography,
+  Button,
+  TableContainer,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+} from "@material-ui/core";
 import {
   selectActivePlayer,
   selectCards,
@@ -14,15 +23,19 @@ import { ActionButtons } from "./ActionButtons";
 import { useRouteMatch } from "react-router-dom";
 import { GameInviteButton } from "../../components/GameInviteButton";
 import { GameHeader } from "./GameHeader";
+import { Title } from "../../../../components/Typography";
+import { StretchPaper } from "../../components/StretchPaper";
+import { PlayerTableRow } from "../../components/PlayerTable";
 
 export const CardArea: React.FC = () => {
   const { id } = getPlayer();
 
-  const isNewTurn = useGameSelector(selectIsNewTurn);
+  const isFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isMyTurn = useGameSelector(
     (game) => selectActivePlayer(game).id === id
   );
 
+  const activePlayer = useGameSelector(selectActivePlayer);
   const recap = useGameSelector((game) => game.turns.recap);
   const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
   const cards = useGameSelector(selectCards);
@@ -30,46 +43,93 @@ export const CardArea: React.FC = () => {
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
 
-  if (isNewTurn) {
+  if (isFresh) {
     if (recap == null) {
       return (
-        <Flex flex="1 0 auto" flexDirection="column">
-          <Flex flex="1 1 0%"></Flex>
-          <Box m={2}>
-            <Typography variant="h4" align="center">
-              Hey whats up welcome to a new game
-            </Typography>
-          </Box>
-          <Flex flex="2 2 0%"></Flex>
-        </Flex>
+        <Centered>
+          <CardTitle center>
+            {isMyTurn
+              ? "You're up first. Start the turn whenever you're ready."
+              : `Waiting for ${activePlayer.name} to start the game`}
+          </CardTitle>
+        </Centered>
       );
     }
 
+    const borderColor =
+      theme.palette[recap.team === "orange" ? "secondary" : "primary"].main;
+
     return (
-      <Flex flexDirection="column">
-        <Typography variant="h6" align="center">
+      <Centered>
+        <CardTitle>
           {recap.team} team got{" "}
           {recap.guessedCardIds.length + recap.skippedCardCount * skipPenalty}{" "}
           points.
-        </Typography>
-        {recap.guessedCardIds.map((cardId) => (
-          <Typography key={cardId}>{cards[cardId].text}</Typography>
-        ))}
+        </CardTitle>
+        <Box mb={1}></Box>
+        {recap.guessedCardIds.length > 0 && (
+          <TableContainer
+            component={Paper}
+            variant="outlined"
+            style={{ borderColor, marginBottom: theme.spacing(1) }}
+          >
+            <Table aria-label="Players">
+              <TableBody>
+                {recap.guessedCardIds.map((cardId, i) => (
+                  <PlayerTableRow key={cardId}>
+                    <TableCell scope="row">{i + 1}</TableCell>
+                    <TableCell scope="row" style={{ width: "100%" }}>
+                      {cards[cardId].text}
+                    </TableCell>
+                  </PlayerTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
         {recap.skippedCardCount > 0 && (
-          <Typography variant="caption" color="textSecondary">
-            {recap.skippedCardCount} skipped
+          <Typography variant="caption" color="textSecondary" align="right">
+            {recap.skippedCardCount} skips
           </Typography>
         )}
-      </Flex>
+      </Centered>
     );
   }
 
   if (isMyTurn) {
     return (
-      <Typography variant="h4" align="center">
-        {activeCard?.text}
-      </Typography>
+      <Centered>
+        <Typography variant="h4" align="center">
+          {activeCard?.text}
+        </Typography>
+      </Centered>
     );
   }
-  return null;
+
+  return (
+    <Centered>
+      <CardTitle center>
+        {`${activePlayer.name} is giving clues. Pay attention!`}
+      </CardTitle>
+    </Centered>
+  );
 };
+
+const Centered: React.FC = ({ children }) => (
+  <>
+    <Flex flex="1 1 0%"></Flex>
+    {children}
+    <Flex flex="2 2 0%"></Flex>
+  </>
+);
+
+const CardTitle: React.FC<{ center?: boolean }> = ({ children, center }) => (
+  <Typography
+    align={center ? "center" : "left"}
+    variant="h6"
+    style={{ fontWeight: 300 }}
+    color="textSecondary"
+  >
+    {children}
+  </Typography>
+);
