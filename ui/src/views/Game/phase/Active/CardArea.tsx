@@ -76,49 +76,80 @@ export const CardArea: React.FC = () => {
         >
           <Table aria-label="Players">
             <TableBody>
-              {recap.cardEvents.map((cardId, i) => {
-                const isSkip = cardId == null;
-
-                return (
-                  <PlayerTableRow key={i}>
-                    <TableCell scope="row">
-                      {cardId == null ? (
-                        <Typography
-                          variant="body2"
-                          style={{ fontWeight: 300, fontStyle: "italic" }}
-                          color="textSecondary"
-                        >
-                          skipped
-                        </Typography>
-                      ) : (
-                        cards[cardId].text
-                      )}
-                    </TableCell>
-                    <TableCell scope="row" align="right">
-                      {cardId == null ? (
-                        skipPenalty == 0 ? null : (
-                          <Typography variant="subtitle2" color="textSecondary">
-                            - 1
-                          </Typography>
-                        )
-                      ) : (
-                        <Typography variant="subtitle2">+ 1</Typography>
-                      )}
+              {recap.cardEvents.length == 0 ? (
+                <>
+                  <PlayerTableRow>
+                    <TableCell scope="row" align="center">
+                      <Typography
+                        variant="body2"
+                        style={{ fontWeight: 300, fontStyle: "italic" }}
+                        color="textSecondary"
+                      >
+                        soooo you get what we are doing here right?
+                      </Typography>
                     </TableCell>
                   </PlayerTableRow>
-                );
-              })}
-              <PlayerTableRow>
-                <TableCell scope="row" align="right"></TableCell>
-                <TableCell scope="row" align="right">
-                  <Typography
-                    variant="subtitle2"
-                    color={recap.team == "orange" ? "secondary" : "primary"}
-                  >
-                    = {pointTotal}
-                  </Typography>
-                </TableCell>
-              </PlayerTableRow>
+                  <PlayerTableRow>
+                    <TableCell scope="row" align="center">
+                      <Typography
+                        variant="subtitle2"
+                        color={recap.team == "orange" ? "secondary" : "primary"}
+                      >
+                        0 points
+                      </Typography>
+                    </TableCell>
+                  </PlayerTableRow>
+                </>
+              ) : (
+                <>
+                  {recap.cardEvents.map((cardId, i) => {
+                    const isSkip = cardId == null;
+
+                    return (
+                      <PlayerTableRow key={i}>
+                        <TableCell scope="row">
+                          {cardId == null ? (
+                            <Typography
+                              variant="body2"
+                              style={{ fontWeight: 300, fontStyle: "italic" }}
+                              color="textSecondary"
+                            >
+                              skipped
+                            </Typography>
+                          ) : (
+                            cards[cardId].text
+                          )}
+                        </TableCell>
+                        <TableCell scope="row" align="right">
+                          {cardId == null ? (
+                            skipPenalty == 0 ? null : (
+                              <Typography
+                                variant="subtitle2"
+                                color="textSecondary"
+                              >
+                                - 1
+                              </Typography>
+                            )
+                          ) : (
+                            <Typography variant="subtitle2">+ 1</Typography>
+                          )}
+                        </TableCell>
+                      </PlayerTableRow>
+                    );
+                  })}
+                  <PlayerTableRow>
+                    <TableCell scope="row" align="right"></TableCell>
+                    <TableCell scope="row" align="right">
+                      <Typography
+                        variant="subtitle2"
+                        color={recap.team == "orange" ? "secondary" : "primary"}
+                      >
+                        = {pointTotal}
+                      </Typography>
+                    </TableCell>
+                  </PlayerTableRow>
+                </>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
