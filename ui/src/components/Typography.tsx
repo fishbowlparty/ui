@@ -5,7 +5,7 @@ export const Title: React.FC<{ small?: boolean }> = ({ children, small }) => (
   <Typography
     variant={small ? "h6" : "h4"}
     color="textSecondary"
-    style={{ fontWeight: 300 }}
+    style={{ fontWeight: 300, lineHeight: small ? "48px" : undefined }}
   >
     {children}
   </Typography>

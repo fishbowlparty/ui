@@ -22,6 +22,8 @@ import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
 import { GameInviteButton } from "../../components/GameInviteButton";
+import { Instructions, Title } from "../../../../components/Typography";
+import { PlayerTable, PlayerTableRow } from "../../components/PlayerTable";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
@@ -72,37 +74,35 @@ export const Lobby: React.FC = () => {
 
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
-        <Label>Game Lobby</Label>
-        <GameInviteButton></GameInviteButton>
-        {isHost && (
-          <Typography variant="caption">
-            You are the host. Use this invite link to let your friends join. You
-            will control this game's rules and when the game starts. Have fun!
-          </Typography>
-        )}
-      </Flex>
-      <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Label>Rules</Label>
+      <Flex flex="1 0 auto" flexDirection="column">
+        <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
+          <Title small>Game Lobby</Title>
+          <GameInviteButton></GameInviteButton>
           {isHost && (
-            <IconButton component={Link} to={`${url}/rules`}>
-              <Settings></Settings>
-            </IconButton>
+            <Instructions>
+              You are the host. Use this invite link to let your friends join.
+              You will control this game's rules and when the game starts. Have
+              fun!
+            </Instructions>
           )}
         </Flex>
-        <Typography variant="caption">{rulesDescription}</Typography>
-      </Flex>
-
-      <Flex flex="1 0 auto" flexDirection="column">
-        <Flex alignItems="center" justifyContent="space-between">
-          <Label>Players</Label>
+        <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
+          <Flex alignItems="center" justifyContent="space-between">
+            <Title small>Rules</Title>
+            {isHost && (
+              <IconButton component={Link} to={`${url}/rules`}>
+                <Settings></Settings>
+              </IconButton>
+            )}
+          </Flex>
+          <Instructions>{rulesDescription}</Instructions>
         </Flex>
-        <TableContainer component={Paper}>
-          <Table aria-label="Players">
+        <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
+          <Title small>Players</Title>
+          <PlayerTable>
             <TableBody>
               {orderedPlayers.map((player, i) => (
-                <TableRow key={player.id}>
+                <PlayerTableRow key={player.id}>
                   <TableCell scope="row">{i + 1}</TableCell>
                   <TableCell scope="row" style={{ width: "100%" }}>
                     {player.name || "..."}
@@ -127,11 +127,11 @@ export const Lobby: React.FC = () => {
                       )
                     )}
                   </TableCell>
-                </TableRow>
+                </PlayerTableRow>
               ))}
             </TableBody>
-          </Table>
-        </TableContainer>
+          </PlayerTable>
+        </Flex>
       </Flex>
       <Flex>
         <AdvancePhaseButton></AdvancePhaseButton>

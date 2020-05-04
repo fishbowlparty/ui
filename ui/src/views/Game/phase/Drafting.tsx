@@ -5,7 +5,6 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
   Typography,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
@@ -23,6 +22,8 @@ import { Player, TeamName } from "@fishbowl/common";
 import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
 import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
+import { PlayerTableRow } from "../components/PlayerTable";
+import { Title } from "../../../components/Typography";
 
 /*
 Make color neutral when dragging or change when crossing borders
@@ -66,11 +67,9 @@ export const Drafting: React.FC = () => {
       <Flex
         flex="1 0 auto"
         flexDirection="column"
-        paddingBottom={theme.spacing(2)}
+        marginBottom={`${theme.spacing(2)}px`}
       >
-        <Flex alignItems="center" justifyContent="space-between">
-          <Label>Choose Your Teams...</Label>
-        </Flex>
+        <Title small>Choose Teams</Title>
         <Flex>
           <DragDropContext onDragEnd={onDragEnd}>
             <Flex flex="1 1 0%" marginRight={2}>
@@ -78,6 +77,7 @@ export const Drafting: React.FC = () => {
                 {(provided, snapshot) => (
                   <TableContainer
                     component={Paper}
+                    variant="outlined"
                     innerRef={provided.innerRef}
                     {...provided.droppableProps}
                   >
@@ -85,7 +85,7 @@ export const Drafting: React.FC = () => {
                       <TableHead
                         style={{ background: theme.palette.secondary.main }}
                       >
-                        <TableRow>
+                        <PlayerTableRow>
                           <TableCell
                             style={{
                               color: theme.palette.secondary.contrastText,
@@ -95,16 +95,16 @@ export const Drafting: React.FC = () => {
                           >
                             Orange
                           </TableCell>
-                        </TableRow>
+                        </PlayerTableRow>
                       </TableHead>
                       <TableBody>
                         {teams.orange.map((playerId, i) => (
-                          <TableRow key={playerId}>
+                          <PlayerTableRow key={playerId}>
                             <DraggableCell
                               player={players[playerId]}
                               index={i}
                             ></DraggableCell>
-                          </TableRow>
+                          </PlayerTableRow>
                         ))}
                         {provided.placeholder}
                       </TableBody>
@@ -118,6 +118,7 @@ export const Drafting: React.FC = () => {
                 {(provided, snapshot) => (
                   <TableContainer
                     component={Paper}
+                    variant="outlined"
                     innerRef={provided.innerRef}
                     {...provided.droppableProps}
                   >
@@ -127,7 +128,7 @@ export const Drafting: React.FC = () => {
                           background: theme.palette.primary.main,
                         }}
                       >
-                        <TableRow>
+                        <PlayerTableRow>
                           <TableCell
                             style={{
                               color: theme.palette.primary.contrastText,
@@ -137,16 +138,16 @@ export const Drafting: React.FC = () => {
                           >
                             Blue
                           </TableCell>
-                        </TableRow>
+                        </PlayerTableRow>
                       </TableHead>
                       <TableBody>
                         {teams.blue.map((playerId, i) => (
-                          <TableRow key={playerId}>
+                          <PlayerTableRow key={playerId}>
                             <DraggableCell
                               player={players[playerId]}
                               index={i}
                             ></DraggableCell>
-                          </TableRow>
+                          </PlayerTableRow>
                         ))}
                         {provided.placeholder}
                       </TableBody>

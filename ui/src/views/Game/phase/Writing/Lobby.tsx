@@ -18,6 +18,8 @@ import { selectOrderedPlayers } from "@fishbowl/common";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
+import { PlayerTable, PlayerTableRow } from "../../components/PlayerTable";
+import { Title, Instructions } from "../../../../components/Typography";
 
 export const Lobby: React.FC = () => {
   const { id } = getPlayer();
@@ -37,36 +39,36 @@ export const Lobby: React.FC = () => {
 
   return (
     <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex flex="1 0 auto" flexDirection="column">
-        <Flex alignItems="center" justifyContent="space-between">
-          <Label>Writing Cards...</Label>
-        </Flex>
-        <TableContainer component={Paper}>
-          <Table aria-label="Players">
-            <TableBody>
-              {orderedPlayers.map((player, i) => (
-                <TableRow key={player.id}>
-                  <TableCell scope="row" style={{ width: "100%" }}>
-                    {player.name}
-                  </TableCell>
-                  <TableCell align="right">
-                    {player.id === id ? (
-                      <IconButton
-                        component={Link}
-                        to={`/games/${params.gameCode}/cards`}
-                        style={{ margin: "-16px" }}
-                      >
-                        <Edit></Edit>
-                      </IconButton>
-                    ) : (
-                      playerHasCards(player.id) && <Check></Check>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      <Flex
+        flex="1 0 auto"
+        flexDirection="column"
+        marginBottom={`${theme.spacing(2)}px`}
+      >
+        <Title small>Writing Cards</Title>
+        <PlayerTable>
+          <TableBody>
+            {orderedPlayers.map((player, i) => (
+              <PlayerTableRow key={player.id}>
+                <TableCell scope="row" style={{ width: "100%" }}>
+                  {player.name}
+                </TableCell>
+                <TableCell align="right">
+                  {player.id === id ? (
+                    <IconButton
+                      component={Link}
+                      to={`/games/${params.gameCode}/cards`}
+                      style={{ margin: "-16px" }}
+                    >
+                      <Edit></Edit>
+                    </IconButton>
+                  ) : (
+                    playerHasCards(player.id) && <Check></Check>
+                  )}
+                </TableCell>
+              </PlayerTableRow>
+            ))}
+          </TableBody>
+        </PlayerTable>
       </Flex>
       <Flex>
         <AdvancePhaseButton></AdvancePhaseButton>
