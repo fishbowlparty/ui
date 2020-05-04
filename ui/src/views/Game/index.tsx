@@ -1,5 +1,5 @@
 import { Actions, Game, ServerEvents } from "@fishbowl/common";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { Store } from "redux";
@@ -85,93 +85,94 @@ const useMockStore = (
   gameCode: string
 ): [Store<Game, Actions> | null, boolean] => {
   const { id, name } = getPlayer();
-  const store = createGameStore(
-    {
-      gameCode,
-      phase: "registration",
-      activePlayer: {
-        team: "orange",
-        index: {
+  const store = useMemo(
+    () =>
+      createGameStore({
+        gameCode,
+        phase: "registration",
+        activePlayer: {
+          team: "orange",
+          index: {
+            orange: 0,
+            blue: 0,
+          },
+        },
+        hostId: id,
+        players: {
+          [id]: {
+            id,
+            name,
+            joinOrder: 0,
+          },
+          1: {
+            id: "1",
+            name: "Caitlin",
+            joinOrder: 1,
+          },
+          2: {
+            id: "2",
+            name: "Dan",
+            joinOrder: 2,
+          },
+          3: {
+            id: "3",
+            name: "Chris",
+            joinOrder: 3,
+          },
+          4: {
+            id: "4",
+            name: "Sarah",
+            joinOrder: 4,
+          },
+        },
+        playerCards: {
+          [id]: [
+            {
+              id: "0",
+              text: "Darth Vader",
+            },
+            {
+              id: "1",
+              text: "the cow jumped over the moon",
+            },
+
+            {
+              id: "2",
+              text: "the blue danube",
+            },
+          ],
+        },
+        round: {
+          guessedCardIds: {},
+          number: 1,
+        },
+        score: {
           orange: 0,
           blue: 0,
         },
-      },
-      hostId: id,
-      players: {
-        [id]: {
-          id,
-          name,
-          joinOrder: 0,
+        settings: {
+          cardsPerPlayer: 3,
+          numberOfRounds: 3,
+          skipPenalty: -1,
+          turnDuration: 15,
         },
-        1: {
-          id: "1",
-          name: "Caitlin",
-          joinOrder: 1,
+        teams: {
+          orange: [id, "1", "2"],
+          blue: ["3", "4"],
         },
-        2: {
-          id: "2",
-          name: "Dan",
-          joinOrder: 2,
-        },
-        3: {
-          id: "3",
-          name: "Chris",
-          joinOrder: 3,
-        },
-        4: {
-          id: "4",
-          name: "Sarah",
-          joinOrder: 4,
-        },
-      },
-      playerCards: {
-        [id]: [
-          {
-            id: "0",
-            text: "Darth Vader",
+        turns: {
+          active: {
+            isFresh: true,
+            paused: true,
+            activeCardId: "",
+            timeRemaining: 15,
+            guessedCardIds: {},
+            skippedCardIds: {},
           },
-          {
-            id: "1",
-            text: "the cow jumped over the moon",
-          },
-
-          {
-            id: "2",
-            text: "the blue danube",
-          },
-        ],
-      },
-      round: {
-        guessedCardIds: {},
-        number: 1,
-      },
-      score: {
-        orange: 0,
-        blue: 0,
-      },
-      settings: {
-        cardsPerPlayer: 3,
-        numberOfRounds: 3,
-        skipPenalty: -1,
-        turnDuration: 15,
-      },
-      teams: {
-        orange: [id, "1", "2"],
-        blue: ["3", "4"],
-      },
-      turns: {
-        active: {
-          isFresh: true,
-          paused: true,
-          activeCardId: "",
-          timeRemaining: 15,
-          guessedCardIds: {},
-          skippedCardIds: {},
+          recap: null,
         },
-        recap: null,
-      },
-    }
-    // applyMiddleware(broadCastOverSocket)
+      }),
+    [gameCode]
   );
   return [store, false];
 };

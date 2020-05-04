@@ -1,5 +1,11 @@
-import React, { useCallback } from "react";
-import { Box, Typography, Button, TextField } from "@material-ui/core";
+import React, { useCallback, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  InputAdornment,
+} from "@material-ui/core";
 import { theme } from "../../../../theme";
 import { Flex } from "@rebass/grid/emotion";
 import styled from "@emotion/styled";
@@ -8,6 +14,8 @@ import { useForm } from "react-hook-form";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { v4 } from "uuid";
+import { ActionPage } from "../../../../components/ActionPage";
+import { Title, Instructions, Label } from "../../../../components/Typography";
 
 const placeholders = ["Darth Vader", "Arachnophobia", "Band Camp"];
 
@@ -51,47 +59,42 @@ export const WriteCards: React.FC = () => {
   );
 
   const { isValid } = formState;
+  useEffect(() => document.getElementById("cards[0]")?.focus(), []);
 
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Typography variant="h2">Write Your Cards</Typography>
-      <Typography variant="caption">
-        Using the words and phrases everyone writes on their cards, you will
-        take turns giving clues and getting your team to guess what is on the
-        cards. A good card will be a word or phrase that everyone in your group
-        will know and understand. Be creative and think about how you can get
-        some laughs!
-      </Typography>
-      <Box m={4}></Box>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+    <ActionPage
+      title="Write your cards"
+      instructions="Write words and phrases that everyone will then guess, based on clues
+    from their teammates."
+    >
+      <form onSubmit={handleSubmit(onSubmit)}>
         {[...Array(cardsPerPlayer)].map((_, i) => {
           console.log(i);
           return (
             <Row key={i}>
-              <Typography
-                variant="body1"
-                style={{ fontWeight: "bold" }}
-                component="label"
-                htmlFor={`cards[${i}]`}
-              >
-                Card #{i + 1}
-              </Typography>
               <TextField
                 fullWidth
                 id={`cards[${i}]`}
                 name={`cards[${i}]`}
-                margin="dense"
+                margin="none"
                 variant="outlined"
                 placeholder={placeholders[i] || "..."}
                 inputRef={register({
                   required: true,
                 })}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Box mr={0.5}>
+                        <Title small>{i + 1}</Title>
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
               ></TextField>
             </Row>
           );
         })}
-
-        <Flex flex="1 1 0%"></Flex>
         <Button
           variant="outlined"
           color="primary"
@@ -101,16 +104,10 @@ export const WriteCards: React.FC = () => {
         >
           Ready!
         </Button>
-      </Form>
-    </Flex>
+      </form>
+    </ActionPage>
   );
 };
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  flex: 1 0 auto;
-`;
 
 const Row = styled(Flex)`
   flex-direction: column;

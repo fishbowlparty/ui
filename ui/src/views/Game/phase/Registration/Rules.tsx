@@ -18,6 +18,8 @@ import { useActionDispatch } from "../../../../redux";
 import { Game } from "@fishbowl/common";
 
 import { theme } from "../../../../theme";
+import { ActionPage } from "../../../../components/ActionPage";
+import { Title, Instructions, Label } from "../../../../components/Typography";
 
 interface FormState {
   turnDuration: string;
@@ -25,7 +27,7 @@ interface FormState {
   cardsPerPlayer: string;
 }
 
-export const Settings: React.FC = () => {
+export const Rules: React.FC = () => {
   const settings = useSelector((game: Game) => game.settings);
   const dispatch = useActionDispatch();
   const history = useHistory();
@@ -61,31 +63,14 @@ export const Settings: React.FC = () => {
   );
 
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Header>
-        <Typography variant="h4" align="center">
-          game rules
-        </Typography>
-      </Header>
-      <Form onSubmit={handleSubmit(onFormSubmit)}>
+    <ActionPage title="Game rules" instructions="Set the rules for this game.">
+      <form onSubmit={handleSubmit(onFormSubmit)}>
         <Flex flex="1 0 auto" flexDirection="column">
           <Row>
-            <Typography
-              variant="body1"
-              style={{ fontWeight: "bold" }}
-              component="label"
-              htmlFor="turnDuration"
-            >
-              Time Per Turn
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ fontWeight: "lighter" }}
-              component="label"
-              htmlFor="turnDuration"
-            >
+            <Label htmlFor="turnDuration">Time Per Turn</Label>
+            <Instructions>
               how much time does each player get on their turn?
-            </Typography>
+            </Instructions>
             <Box width="6em">
               <TextField
                 id="turnDuration"
@@ -107,22 +92,10 @@ export const Settings: React.FC = () => {
             </Box>
           </Row>
           <Row>
-            <Typography
-              variant="body1"
-              style={{ fontWeight: "bold" }}
-              component="label"
-              htmlFor="cardsPerPlayer"
-            >
-              Cards Per Player
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ fontWeight: "lighter" }}
-              component="label"
-              htmlFor="cardsPerPlayer"
-            >
+            <Label htmlFor="cardsPerPlayer">Cards Per Player</Label>
+            <Instructions>
               how many cards will each player need to fill out?
-            </Typography>
+            </Instructions>
             <Box width="6em">
               <TextField
                 id="cardsPerPlayer"
@@ -141,22 +114,10 @@ export const Settings: React.FC = () => {
             </Box>
           </Row>
           <Row>
-            <Typography
-              variant="body1"
-              style={{ fontWeight: "bold" }}
-              component="label"
-              htmlFor="skipPenalty"
-            >
-              Skip Penalty
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ fontWeight: "lighter" }}
-              component="label"
-              htmlFor="skipPenalty"
-            >
+            <Label htmlFor="skipPenalty">Skip Penalty</Label>
+            <Instructions>
               players lose a point (-1) for their team when they skip a card
-            </Typography>
+            </Instructions>
             <FormGroup>
               <FormControlLabel
                 control={
@@ -177,8 +138,8 @@ export const Settings: React.FC = () => {
             Save
           </Button>
         </Flex>
-      </Form>
-    </Flex>
+      </form>
+    </ActionPage>
   );
 };
 

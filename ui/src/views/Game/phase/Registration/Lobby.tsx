@@ -86,11 +86,7 @@ export const Lobby: React.FC = () => {
         <Flex alignItems="center" justifyContent="space-between">
           <Label>Rules</Label>
           {isHost && (
-            <IconButton
-              component={Link}
-              to={`${url}/settings`}
-              // style={{ marginRight: 16 }}
-            >
+            <IconButton component={Link} to={`${url}/rules`}>
               <Settings></Settings>
             </IconButton>
           )}

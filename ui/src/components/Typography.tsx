@@ -11,8 +11,22 @@ export const Title: React.FC<{ small?: boolean }> = ({ children, small }) => (
   </Typography>
 );
 
+export const Label: React.FC<{ htmlFor?: string }> = ({
+  children,
+  htmlFor,
+}) => (
+  <Typography
+    variant="body1"
+    style={{ fontWeight: 600 }}
+    component="label"
+    htmlFor={htmlFor}
+  >
+    {children}
+  </Typography>
+);
+
 export const Instructions: React.FC = ({ children }) => (
-  <Typography variant="caption">{children}</Typography>
+  <Typography variant="body1">{children}</Typography>
 );
 
 export const GameCode: React.FC<{ small?: boolean }> = ({
