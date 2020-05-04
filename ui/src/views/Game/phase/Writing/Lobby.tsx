@@ -7,6 +7,7 @@ import {
   TableContainer,
   TableRow,
   Typography,
+  Box,
 } from "@material-ui/core";
 import { Check, Edit } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";

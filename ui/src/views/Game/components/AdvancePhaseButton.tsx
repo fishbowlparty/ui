@@ -85,7 +85,7 @@ export const advanceErrorMessage = (
   if (phase === "writing") {
     // TODO: how many cards are required to advance?
     if (Object.keys(game.playerCards).length < 1) {
-      return "Waiting for everyone's cards...";
+      return "Waiting for cards...";
     }
 
     return null;
@@ -94,7 +94,7 @@ export const advanceErrorMessage = (
     // all players must be assigned to a team
     const { orange, blue } = game.teams;
     if (orange.length < 2 || blue.length < 2) {
-      return "Teams must have 2 players...";
+      return "Teams must have 2 players";
     }
 
     // initialize turn order state
@@ -107,11 +107,11 @@ export const advanceErrorMessage = (
 const hostMessage = (phase: GamePhase) => {
   switch (phase) {
     case "registration":
-      return "Everyone is here!";
+      return "Everyone is here";
     case "writing":
-      return "Choose Teams!";
+      return "Choose Teams";
     case "drafting":
-      return "Start Game!";
+      return "Start Game";
   }
   return "";
 };

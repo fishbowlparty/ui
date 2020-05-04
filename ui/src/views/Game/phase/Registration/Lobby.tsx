@@ -139,20 +139,3 @@ export const Lobby: React.FC = () => {
     </Flex>
   );
 };
-
-const Label: React.FC = ({ children }) => (
-  <Typography
-    style={{ fontWeight: 300, lineHeight: "36px" }}
-    color="textSecondary"
-    variant="h6"
-  >
-    {children}
-  </Typography>
-);
-
-const Header = styled(Flex)`
-  flex-direction: column;
-  border-bottom: 1px solid ${theme.palette.divider};
-  padding-bottom: ${theme.spacing(1)}px;
-  margin-bottom: ${theme.spacing(2)}px;
-`;

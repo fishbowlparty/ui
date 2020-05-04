@@ -6,6 +6,7 @@ import {
   TableContainer,
   TableHead,
   Typography,
+  TableRow,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
@@ -80,23 +81,12 @@ export const Drafting: React.FC = () => {
                     variant="outlined"
                     innerRef={provided.innerRef}
                     {...provided.droppableProps}
+                    style={{
+                      boxShadow: `0 0 4px 0px ${theme.palette.secondary.main}`,
+                      background: theme.palette.background.default,
+                    }}
                   >
                     <Table aria-label="Players">
-                      <TableHead
-                        style={{ background: theme.palette.secondary.main }}
-                      >
-                        <PlayerTableRow>
-                          <TableCell
-                            style={{
-                              color: theme.palette.secondary.contrastText,
-                              fontSize: 16,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Orange
-                          </TableCell>
-                        </PlayerTableRow>
-                      </TableHead>
                       <TableBody>
                         {teams.orange.map((playerId, i) => (
                           <PlayerTableRow key={playerId}>
@@ -121,25 +111,13 @@ export const Drafting: React.FC = () => {
                     variant="outlined"
                     innerRef={provided.innerRef}
                     {...provided.droppableProps}
+                    style={{
+                      // border: `1px solid ${theme.palette.primary.main}`,
+                      boxShadow: `0 0 4px 0px ${theme.palette.primary.main}`,
+                      background: theme.palette.background.default,
+                    }}
                   >
                     <Table aria-label="Players">
-                      <TableHead
-                        style={{
-                          background: theme.palette.primary.main,
-                        }}
-                      >
-                        <PlayerTableRow>
-                          <TableCell
-                            style={{
-                              color: theme.palette.primary.contrastText,
-                              fontSize: 16,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Blue
-                          </TableCell>
-                        </PlayerTableRow>
-                      </TableHead>
                       <TableBody>
                         {teams.blue.map((playerId, i) => (
                           <PlayerTableRow key={playerId}>
@@ -166,16 +144,6 @@ export const Drafting: React.FC = () => {
   );
 };
 
-const Label: React.FC = ({ children }) => (
-  <Typography
-    style={{ fontWeight: 300, lineHeight: "36px" }}
-    color="textSecondary"
-    variant="h6"
-  >
-    {children}
-  </Typography>
-);
-
 const DraggableCell: React.FC<{ player: Player; index: number }> = ({
   player,
   index,
@@ -186,15 +154,11 @@ const DraggableCell: React.FC<{ player: Player; index: number }> = ({
         console.log(snapshot.isDragging);
         return (
           <TableCell
-            scope="row"
-            component={Paper}
-            //@ts-ignore
-            square
-            elevation={snapshot.isDragging ? 2 : 0}
             {...provided.draggableProps}
             style={{
               ...provided.draggableProps.style,
               opacity: snapshot.isDragging ? 0.7 : 1,
+              background: theme.palette.background.paper,
             }}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
