@@ -42,6 +42,7 @@ export const CardArea: React.FC = () => {
   const activeCard = useGameSelector(
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
+  const isPaused = useGameSelector((game) => game.turns.active.paused);
 
   if (isFresh) {
     if (recap == null) {
@@ -92,6 +93,16 @@ export const CardArea: React.FC = () => {
             {recap.skippedCardCount} skips
           </Typography>
         )}
+      </Centered>
+    );
+  }
+
+  if (isPaused) {
+    return (
+      <Centered>
+        <CardTitle center>{`${
+          isMyTurn ? "You" : activePlayer.name
+        } paused the timer.`}</CardTitle>
       </Centered>
     );
   }
