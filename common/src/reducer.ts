@@ -16,6 +16,7 @@ import {
   ADVANCE_FROM_DRAFTING,
   ADVANCE_FROM_REGISTRATION,
   ADVANCE_FROM_WRITING,
+  RESTART_GAME,
   SET_GAME_SETTINGS,
   SET_TEAMS,
   SKIP_CARD,
@@ -194,6 +195,42 @@ function advanceFromDrafting(game: Game, action: ADVANCE_FROM_DRAFTING): Game {
         isFresh: true,
         paused: true,
         timeRemaining: game.settings.turnDuration,
+        skippedCardIds: {},
+      },
+      recap: {
+        team: "orange",
+        cardEvents: [],
+      },
+    },
+  };
+}
+
+export function restartGame(game: Game, action: RESTART_GAME): Game {
+  if (game.phase != "ended") {
+    return game;
+  }
+
+  return {
+    ...game,
+    phase: "registration",
+    isFresh: true,
+    playerCards: {},
+    teams: { orange: [], blue: [] },
+    score: { orange: 0, blue: 0 },
+    activePlayer: {
+      team: "orange",
+      index: { orange: 0, blue: 0 },
+    },
+    round: {
+      number: 1,
+      guessedCardIds: {},
+    },
+    turns: {
+      active: {
+        isFresh: true,
+        paused: true,
+        timeRemaining: game.settings.turnDuration,
+        activeCardId: "",
         skippedCardIds: {},
       },
       recap: {
@@ -431,6 +468,8 @@ export function GameReducer(game: Game = initialGame, action: Actions): Game {
       return advanceFromWriting(game, action);
     case "ADVANCE_FROM_DRAFTING":
       return advanceFromDrafting(game, action);
+    case "RESTART_GAME":
+      return restartGame(game, action);
 
     // admin
     case "SET_GAME_SETTINGS":

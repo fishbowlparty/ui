@@ -124,6 +124,11 @@ export interface ADVANCE_FROM_DRAFTING {
   payload: {};
 }
 
+export interface RESTART_GAME {
+  type: "RESTART_GAME";
+  payload: {};
+}
+
 // auth rule: playerId must be self
 export interface JOIN_GAME {
   type: "JOIN_GAME";
@@ -166,6 +171,7 @@ export type ADMIN_ACTIONS =
   | ADVANCE_FROM_REGISTRATION
   | ADVANCE_FROM_WRITING
   | ADVANCE_FROM_DRAFTING
+  | RESTART_GAME
   | SET_GAME_SETTINGS
   | JOIN_GAME
   | LEAVE_GAME
