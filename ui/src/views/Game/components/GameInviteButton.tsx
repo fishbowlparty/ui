@@ -42,7 +42,9 @@ export const GameInviteButton: React.FC<{ small?: boolean }> = ({ small }) => {
       >
         {small ? (
           <>
-            <GameCode small>{params.gameCode}</GameCode>
+            <Typography color="textSecondary">
+              <GameCode small>{params.gameCode}</GameCode>
+            </Typography>
             <Fade in={highlighted} timeout={{ enter: 100, exit: 200 }}>
               <Flex
                 style={{

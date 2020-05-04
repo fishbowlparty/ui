@@ -99,15 +99,15 @@ const TeamDroppable: React.FC<{ team: TeamName }> = ({ team }) => {
     <Droppable droppableId={team}>
       {(provided, snapshot) => (
         <Paper
-          variant="outlined"
           innerRef={provided.innerRef}
           {...provided.droppableProps}
           style={{
             flex: "1 1 0%",
-            boxShadow: `0 0 4px 0px ${
+            boxShadow: `0px 0px 2px 1px ${
               theme.palette[team === "orange" ? "secondary" : "primary"].main
             }`,
             background: theme.palette.background.default,
+            overflow: "hidden",
           }}
         >
           {teams[team].map((playerId, i) => (

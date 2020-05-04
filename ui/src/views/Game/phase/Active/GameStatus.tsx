@@ -2,8 +2,9 @@ import React from "react";
 import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { selectIsNewTurn, selectActivePlayer } from "@fishbowl/common";
-import { Typography } from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
+import { theme } from "../../../../theme";
 
 /*
   Your status
@@ -28,6 +29,7 @@ export const GameStatus: React.FC = () => {
     game.teams[game.activePlayer.team].includes(id)
   );
   const activePlayer = useGameSelector(selectActivePlayer);
+  const activeTeam = useGameSelector((game) => game.activePlayer.team);
 
   const teammateNames = useGameSelector((game) => {
     const teamNames = game.teams[game.activePlayer.team]
@@ -58,23 +60,50 @@ export const GameStatus: React.FC = () => {
     }, "");
   });
 
+  const activeTeamPalette =
+    theme.palette[activeTeam === "orange" ? "secondary" : "primary"];
+  const headerBackground = isMyTeam ? activeTeamPalette.main : undefined;
+  const headerColor = isMyTeam ? activeTeamPalette.contrastText : undefined;
+
   return (
     <Flex flexDirection="column">
-      <Typography variant="h6">
-        {isNewTurn
-          ? isMyTurn
-            ? "You're up next!"
-            : "Up next..."
-          : isMyTurn
-          ? "Your turn"
-          : isMyTeam
-          ? "You're guessing"
-          : "You're spectating"}
-      </Typography>
+      <Flex
+        style={{
+          background: headerBackground,
+          margin: `-${theme.spacing(2)}px -${theme.spacing(
+            2
+          )}px 0 -${theme.spacing(2)}px`,
+          padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+          borderBottom: `1px solid ${
+            isMyTeam ? headerBackground : theme.palette.divider
+          }`,
+          transition: "all 100ms cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+      >
+        <Typography
+          variant="h6"
+          style={{
+            color: headerColor,
+            transition: "all 100ms cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+        >
+          {isNewTurn
+            ? isMyTurn
+              ? "You're up next!"
+              : "Up next..."
+            : isMyTurn
+            ? "Your turn"
+            : isMyTeam
+            ? "You're guessing"
+            : "You're spectating"}
+        </Typography>
+      </Flex>
+      <Box mb={1}></Box>
       <Typography variant="body1">
         {isMyTurn ? "You are" : `${activePlayer.name} is`} giving clues to{" "}
         {teammateNames}.
       </Typography>
+      <Box mb={2}></Box>
     </Flex>
   );
 };

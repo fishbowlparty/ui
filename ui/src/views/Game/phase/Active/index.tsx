@@ -9,6 +9,7 @@ import { GameHeader } from "./GameHeader";
 import { GameStatus } from "./GameStatus";
 import { GameTimer } from "./GameTimer";
 import { TimerContextProvider } from "./timer";
+import { TurnCard } from "./TurnCard";
 
 export const Active: React.FC = () => {
   const { id } = getPlayer();
@@ -66,9 +67,11 @@ export const Active: React.FC = () => {
       <Flex flex="1 0 auto" flexDirection="column" padding={theme.spacing(2)}>
         <Flex flex="1 0 auto" flexDirection="column">
           <GameHeader></GameHeader>
-          <GameStatus></GameStatus>
-          <GameTimer></GameTimer>
-          <CardArea></CardArea>
+          <TurnCard>
+            <GameStatus></GameStatus>
+            <GameTimer></GameTimer>
+            <CardArea></CardArea>
+          </TurnCard>
         </Flex>
         <ActionButtons></ActionButtons>
       </Flex>

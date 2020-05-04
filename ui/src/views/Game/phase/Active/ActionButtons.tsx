@@ -58,7 +58,8 @@ export const ActionButtons: React.FC = () => {
   }, [dispatch]);
 
   if (!isActive) {
-    return null;
+    // placeholder to avoid layout thrashing when buttons disappear
+    return <Flex height="36px"></Flex>;
   }
 
   if (isFresh) {
