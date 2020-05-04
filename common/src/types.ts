@@ -45,6 +45,7 @@ export interface Game {
   phase: GamePhase;
   settings: GameSettings;
   hostId: string;
+  isFresh: boolean;
 
   // built up during registration:
   players: Record<string, Player>;
@@ -66,7 +67,7 @@ export interface Game {
   };
   turns: {
     active: Turn;
-    recap: TurnRecap | null;
+    recap: TurnRecap;
   };
 }
 
@@ -74,21 +75,24 @@ export interface Game {
  * SERVER MESSAGES
  */
 export interface SERVER_INIT_STATE {
-  type: 'SERVER_INIT_STATE',
-  payload: Game
+  type: "SERVER_INIT_STATE";
+  payload: Game;
 }
 
 export interface SERVER_UPDATE_STATE {
-  type: 'SERVER_UPDATE_STATE',
-  payload: Game
+  type: "SERVER_UPDATE_STATE";
+  payload: Game;
 }
 
 export interface SERVER_NOT_FOUND {
-  type: 'SERVER_NOT_FOUND',
-  payload: {}
+  type: "SERVER_NOT_FOUND";
+  payload: {};
 }
 
-export type ServerEvents = SERVER_INIT_STATE | SERVER_UPDATE_STATE | SERVER_NOT_FOUND
+export type ServerEvents =
+  | SERVER_INIT_STATE
+  | SERVER_UPDATE_STATE
+  | SERVER_NOT_FOUND;
 
 /**
  * ADMINISTRATIVE ACTIONS
@@ -209,7 +213,7 @@ export interface PAUSE_TURN {
 
 export interface RESUME_TURN {
   type: "RESUME_TURN";
-  payload: { };
+  payload: {};
 }
 
 export interface GOT_CARD {
@@ -284,4 +288,3 @@ What are the "side effect things that happen?"
   - Update turn ordering (inactive team)
   - Initialize turn with new player id
 */
-

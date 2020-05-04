@@ -41,18 +41,13 @@ export function nextTurn(game: Game, timeRemaining?: number): Game {
   return {
     ...game,
     turns: {
+      ...game.turns,
       active: {
         isFresh: true,
         paused: true,
         timeRemaining: timeRemaining ?? game.settings.turnDuration,
         activeCardId: "",
-        guessedCardIds: {},
         skippedCardIds: {},
-      },
-      recap: {
-        team: game.activePlayer.team,
-        guessedCardIds: Object.keys(game.turns.active.guessedCardIds),
-        skippedCardCount: Object.keys(game.turns.active.skippedCardIds).length,
       },
     },
   };
@@ -113,37 +108,6 @@ export function drawNextCard(
         ...game.turns.active,
         activeCardId,
       },
-    },
-  };
-}
-
-export function gotCard(game: Game, cardId: string): Game {
-  // if the card we got was not the active card, ignore
-  if (cardId !== game.turns.active.activeCardId) {
-    return game;
-  }
-  // if the card has already been counted as guessed, ignore
-  if (game.round.guessedCardIds[cardId] != null) {
-    return game;
-  }
-
-  // add to guessed cards map, update score,
-  const { team } = game.activePlayer;
-  return {
-    ...game,
-    round: {
-      ...game.round,
-      guessedCardIds: {
-        ...game.round.guessedCardIds,
-        [cardId]: true,
-      },
-    },
-    score: {
-      ...game.score,
-      [team]: game.score[team] + 1,
-    },
-    turns: {
-      ...game.turns,
     },
   };
 }

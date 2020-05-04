@@ -30,7 +30,8 @@ import { PlayerTableRow } from "../../components/PlayerTable";
 export const CardArea: React.FC = () => {
   const { id } = getPlayer();
 
-  const isFresh = useGameSelector((game) => game.turns.active.isFresh);
+  const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
+  const isGameFresh = useGameSelector((game) => game.isFresh);
   const isMyTurn = useGameSelector(
     (game) => selectActivePlayer(game).id === id
   );
@@ -43,55 +44,84 @@ export const CardArea: React.FC = () => {
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
+  const pointTotal = recap.cardEvents.reduce(
+    (sum, cardEvent) => sum + (cardEvent == null ? skipPenalty : 1),
+    0
+  );
 
-  if (isFresh) {
-    if (recap == null) {
-      return (
-        <Centered>
-          <CardTitle center>
-            {isMyTurn
-              ? "You're up first. Start the turn whenever you're ready."
-              : `Waiting for ${activePlayer.name} to start the game`}
-          </CardTitle>
-        </Centered>
-      );
-    }
+  if (isGameFresh) {
+    return (
+      <Centered>
+        <CardTitle center>
+          {isMyTurn
+            ? "You're up first. Start the turn whenever you're ready."
+            : `Waiting for ${activePlayer.name} to start the game`}
+        </CardTitle>
+      </Centered>
+    );
+  }
 
-    const borderColor =
+  if (isTurnFresh) {
+    const teamColor =
       theme.palette[recap.team === "orange" ? "secondary" : "primary"].main;
 
     return (
       <Centered>
-        <CardTitle>
-          {recap.team} team got{" "}
-          {recap.guessedCardIds.length + recap.skippedCardCount * skipPenalty}{" "}
-          points.
-        </CardTitle>
+        <CardTitle>turn recap</CardTitle>
         <Box mb={1}></Box>
-        {recap.guessedCardIds.length > 0 && (
-          <TableContainer
-            component={Paper}
-            variant="outlined"
-            style={{ borderColor, marginBottom: theme.spacing(1) }}
-          >
-            <Table aria-label="Players">
-              <TableBody>
-                {recap.guessedCardIds.map((cardId, i) => (
-                  <PlayerTableRow key={cardId}>
-                    <TableCell scope="row" style={{ width: "100%" }}>
-                      {cards[cardId].text}
+        <TableContainer
+          component={Paper}
+          variant="outlined"
+          style={{ borderColor: teamColor, marginBottom: theme.spacing(1) }}
+        >
+          <Table aria-label="Players">
+            <TableBody>
+              {recap.cardEvents.map((cardId, i) => {
+                const isSkip = cardId == null;
+
+                return (
+                  <PlayerTableRow key={i}>
+                    <TableCell scope="row">
+                      {cardId == null ? (
+                        <Typography
+                          variant="body2"
+                          style={{ fontWeight: 300, fontStyle: "italic" }}
+                          color="textSecondary"
+                        >
+                          skipped
+                        </Typography>
+                      ) : (
+                        cards[cardId].text
+                      )}
+                    </TableCell>
+                    <TableCell scope="row" align="right">
+                      {cardId == null ? (
+                        skipPenalty == 0 ? null : (
+                          <Typography variant="subtitle2" color="textSecondary">
+                            - 1
+                          </Typography>
+                        )
+                      ) : (
+                        <Typography variant="subtitle2">+ 1</Typography>
+                      )}
                     </TableCell>
                   </PlayerTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-        {recap.skippedCardCount > 0 && (
-          <Typography variant="caption" color="textSecondary" align="right">
-            {recap.skippedCardCount} skips
-          </Typography>
-        )}
+                );
+              })}
+              <PlayerTableRow>
+                <TableCell scope="row" align="right"></TableCell>
+                <TableCell scope="row" align="right">
+                  <Typography
+                    variant="subtitle2"
+                    color={recap.team == "orange" ? "secondary" : "primary"}
+                  >
+                    = {pointTotal}
+                  </Typography>
+                </TableCell>
+              </PlayerTableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Centered>
     );
   }

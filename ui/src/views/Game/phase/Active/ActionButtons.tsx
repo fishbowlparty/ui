@@ -12,7 +12,7 @@ export const ActionButtons: React.FC = () => {
   const isActive = useGameSelector(
     (game) => selectActivePlayer(game).id === id
   );
-  const isFresh = useGameSelector((game) => game.turns.active.isFresh);
+  const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isPaused = useGameSelector((game) => game.turns.active.paused);
   const activeCard = useGameSelector(
     (game) => selectCards(game)[game.turns.active.activeCardId]
@@ -65,7 +65,7 @@ export const ActionButtons: React.FC = () => {
     return <Flex height="36px"></Flex>;
   }
 
-  if (isFresh) {
+  if (isTurnFresh) {
     return (
       <Flex>
         <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>

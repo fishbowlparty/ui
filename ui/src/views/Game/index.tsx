@@ -88,6 +88,7 @@ const useMockStore = (
   const store = useMemo(
     () =>
       createGameStore({
+        isFresh: true,
         gameCode,
         phase: "active",
         activePlayer: {
@@ -166,10 +167,12 @@ const useMockStore = (
             paused: true,
             activeCardId: "",
             timeRemaining: 5,
-            guessedCardIds: {},
             skippedCardIds: {},
           },
-          recap: null,
+          recap: {
+            team: "orange",
+            cardEvents: [],
+          },
         },
       }),
     [gameCode]

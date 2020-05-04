@@ -21,6 +21,7 @@ import {
   SKIP_CARD,
   SKIP_TURN,
   START_TURN,
+  RESUME_TURN,
   SUBMIT_CARDS,
 } from "./types";
 import { selectCards, selectNumberOfPlayers } from "./selectors";
@@ -45,6 +46,7 @@ Gameplay events
 */
 
 const initialGame: Game = {
+  isFresh: true,
   gameCode: "",
   phase: "registration",
   playerCards: {},
@@ -81,10 +83,12 @@ const initialGame: Game = {
       isFresh: true,
       paused: true,
       timeRemaining: 45,
-      guessedCardIds: {},
       skippedCardIds: {},
     },
-    recap: null,
+    recap: {
+      team: "orange",
+      cardEvents: [],
+    },
   },
 };
 
@@ -190,13 +194,11 @@ function advanceFromDrafting(game: Game, action: ADVANCE_FROM_DRAFTING): Game {
         isFresh: true,
         paused: true,
         timeRemaining: game.settings.turnDuration,
-        guessedCardIds: {},
         skippedCardIds: {},
       },
       recap: {
-        team: game.activePlayer.team,
-        guessedCardIds: [],
-        skippedCardCount: 0,
+        team: "orange",
+        cardEvents: [],
       },
     },
   };
@@ -259,6 +261,7 @@ export function startTurn(game: Game, action: START_TURN): Game {
 
   return {
     ...game,
+    isFresh: false,
     round: {
       ...game.round,
     },
@@ -268,6 +271,10 @@ export function startTurn(game: Game, action: START_TURN): Game {
         ...game.turns.active,
         isFresh: false,
         paused: false,
+      },
+      recap: {
+        team: game.activePlayer.team,
+        cardEvents: [],
       },
     },
   };
@@ -296,8 +303,7 @@ export function pauseTurn(game: Game, action: PAUSE_TURN): Game {
   };
 }
 
-
-export function resumeTurn(game: Game): Game {
+export function resumeTurn(game: Game, action: RESUME_TURN): Game {
   if (game.phase !== "active") {
     return game;
   }
@@ -354,12 +360,9 @@ function gotCard(game: Game, action: GOT_CARD): Game {
     },
     turns: {
       ...game.turns,
-      active: {
-        ...game.turns.active,
-        guessedCardIds: {
-          ...game.round.guessedCardIds,
-          [cardId]: true,
-        },
+      recap: {
+        ...game.turns.recap,
+        cardEvents: game.turns.recap.cardEvents.concat(cardId),
       },
     },
   };
@@ -378,6 +381,8 @@ function skipCard(game: Game, action: SKIP_CARD): Game {
 
   const { cardId, drawSeed } = action.payload;
   const { skippedCardIds } = game.turns.active;
+
+  // if this card has not been skipped before
   if (!skippedCardIds[cardId]) {
     const { team } = game.activePlayer;
     game = {
@@ -387,13 +392,16 @@ function skipCard(game: Game, action: SKIP_CARD): Game {
         [team]: game.score[team] + game.settings.skipPenalty,
       },
       turns: {
-        ...game.turns,
         active: {
           ...game.turns.active,
           skippedCardIds: {
             ...game.turns.active.skippedCardIds,
             [cardId]: true,
           },
+        },
+        recap: {
+          ...game.turns.recap,
+          cardEvents: game.turns.recap.cardEvents.concat(null),
         },
       },
     };
@@ -441,19 +449,19 @@ export function GameReducer(game: Game = initialGame, action: Actions): Game {
       return skipTurn(game, action);
     case "START_TURN":
       return startTurn(game, action);
-      case "END_TURN":
-        return endTurn(game, action);
-            case "PAUSE_TURN":
+    case "END_TURN":
+      return endTurn(game, action);
+    case "PAUSE_TURN":
       return pauseTurn(game, action);
-      case "RESUME_TURN":
-        return resumeTurn(game, action);
+    case "RESUME_TURN":
+      return resumeTurn(game, action);
     case "GOT_CARD":
       return gotCard(game, action);
     case "SKIP_CARD":
       return skipCard(game, action);
-    case "SERVER_UPDATE_STATE": 
+    case "SERVER_UPDATE_STATE":
       // TODO: merge state for cheaper updates
-      return action.payload
+      return action.payload;
 
     // default
     default:
