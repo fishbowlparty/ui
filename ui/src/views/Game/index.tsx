@@ -183,6 +183,7 @@ const useMockStore = (
 const useNetworkStore = (
   gameCode: string
 ): [Store<Game, Actions> | null, boolean] => {
+  const { id } = getPlayer();
   const [store, setStore] = useState<Store<Game, Actions> | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
 
@@ -190,6 +191,7 @@ const useNetworkStore = (
     const socket = io({
       query: {
         gameCode,
+        playerId: id,
       },
     });
 

@@ -7,6 +7,7 @@ import { migrate } from "./postgres";
 import { getGameStore, createGame } from "./games";
 import bodyParser from "body-parser";
 import { CONFIG } from "./config";
+import { Unsubscribe } from "redux";
 
 console.log("hey there");
 
@@ -40,16 +41,15 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
   });
 
   io.on("connection", async (socket) => {
-    const { gameCode } = socket.handshake.query;
-    console.log("connection", gameCode);
-
+    const { gameCode, playerId } = socket.handshake.query;
     const gameStore = await getGameStore(gameCode);
+
     if (gameStore == null) {
       send(socket, {
         type: "SERVER_NOT_FOUND",
         payload: {},
       });
-      socket.disconnect();
+      return socket.disconnect();
     }
 
     send(socket, {
@@ -57,7 +57,22 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       payload: gameStore.getState(),
     });
 
-    gameStore.subscribe(() => {
+    let unsubscribeFromStore: Unsubscribe | null = null;
+    socket.on("connect", () => {
+      unsubscribeFromStore = gameStore.subscribe(() => {
+        send(socket, {
+          type: "SERVER_UPDATE_STATE",
+          payload: gameStore.getState(),
+        });
+      });
+    });
+
+    socket.on("disconnect", () => {
+      unsubscribeFromStore && unsubscribeFromStore();
+      gameStore.dispatch({ type: "LEAVE_GAME", payload: { playerId } });
+    });
+
+    const unsubScribeToStore = gameStore.subscribe(() => {
       send(socket, {
         type: "SERVER_UPDATE_STATE",
         payload: gameStore.getState(),
@@ -68,6 +83,8 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       console.log("socket message", action);
       gameStore.dispatch(action);
     });
+
+    socket.on("dis");
   });
 
   server.listen(CONFIG.PORT, () => {

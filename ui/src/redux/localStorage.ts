@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 
 export const initializePlayerId = () => {
   if (localStorage.getItem("PLAYER_ID") == null) {
-    localStorage.setItem("PLAYER_ID", v4());
+    localStorage.setItem("PLAYER_ID", id);
   }
 };
 
