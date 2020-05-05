@@ -2,6 +2,8 @@ import React from "react";
 import { Typography } from "@material-ui/core";
 import { TeamName } from "@fishbowl/common";
 import { theme } from "../theme";
+import styled from "@emotion/styled";
+import { keyframes } from "@emotion/core";
 
 export const Title: React.FC<{ small?: boolean }> = ({ children, small }) => (
   <Typography
@@ -47,7 +49,7 @@ export const Score: React.FC<{
   team?: TeamName;
   size?: "small" | "medium" | "large";
   bold?: boolean;
-}> = ({ team, size, bold }) => {
+}> = ({ children, team, size, bold }) => {
   const color =
     team == null
       ? "textSecondary"
@@ -64,7 +66,47 @@ export const Score: React.FC<{
       color={color}
       style={{ fontWeight: bold ? 600 : 400 }}
     >
-      0 points
+      {children}
     </Typography>
+  );
+};
+
+const fly = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-80px) scale(1.4);
+  }
+`;
+
+const AnimationWrapper = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Animation = styled.div`
+  animation: ${fly} 1s ease-out;
+`;
+
+export const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <AnimationWrapper {...props}>
+      <Animation>{children}</Animation>
+    </AnimationWrapper>
   );
 };

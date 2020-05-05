@@ -9,18 +9,23 @@ import { useTimerContext } from "./timer";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/core";
 import { v4 } from "uuid";
+import { AnimatedFlyout, Score } from "../../../../components/Typography";
 
 export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
 
   const activePlayer = useGameSelector(selectActivePlayer);
+  const activeTeam = useGameSelector((game) => game.activePlayer.team);
 
   const isMyTurn = activePlayer.id === id;
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isPaused = useGameSelector((game) => game.turns.active.paused);
   const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
-  const activeCard = useGameSelector(
-    (game) => selectCards(game)[game.turns.active.activeCardId]
+  const skippedCardIds = useGameSelector(
+    (game) => game.turns.active.skippedCardIds
+  );
+  const activeCardId = useGameSelector(
+    (game) => game.turns.active.activeCardId
   );
   const cantSkip = useGameSelector((game) => {
     const { activeCardId, skippedCardIds } = game.turns.active;
@@ -55,25 +60,19 @@ export const ActionButtons: React.FC = () => {
     [setMinusOnes]
   );
   const skipCard = useCallback(() => {
-    if (activeCard == null) {
-      return;
-    }
     dispatch({
       type: "SKIP_CARD",
-      payload: { cardId: activeCard.id, drawSeed: Math.random() },
+      payload: { cardId: activeCardId, drawSeed: Math.random() },
     });
-    if (skipPenalty < 0) {
+    if (skipPenalty < 0 && skippedCardIds[activeCardId] == null) {
       setMinusOnes((minusOnes) => ({ ...minusOnes, [v4()]: true }));
     }
-  }, [dispatch, activeCard]);
+  }, [dispatch, activeCardId, skippedCardIds]);
   const gotCard = useCallback(() => {
-    if (activeCard == null) {
-      return;
-    }
     dispatch({
       type: "GOT_CARD",
       payload: {
-        cardId: activeCard.id,
+        cardId: activeCardId,
         timeRemaining,
         drawSeed: Math.random(),
       },
@@ -82,7 +81,7 @@ export const ActionButtons: React.FC = () => {
       ...plusOnes,
       [v4()]: true,
     }));
-  }, [dispatch, activeCard, timeRemaining]);
+  }, [dispatch, activeCardId, timeRemaining]);
 
   const skipTurn = useCallback(() => {
     dispatch({ type: "SKIP_TURN", payload: { playerId: activePlayer.id } });
@@ -150,8 +149,8 @@ export const ActionButtons: React.FC = () => {
         >
           Skip
           {Object.keys(minusOnes).map((id) => (
-            <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
-              -1
+            <AnimatedFlyout key={id} onAnimationEnd={() => removeMinusOne(id)}>
+              <Score>- 1</Score>
             </AnimatedFlyout>
           ))}
         </Button>
@@ -161,52 +160,11 @@ export const ActionButtons: React.FC = () => {
           Got It!
           {Object.keys(plusOnes).map((id) => (
             <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
-              +1
+              <Score>+ 1</Score>
             </AnimatedFlyout>
           ))}
         </Button>
       </Flex>
     </Flex>
-  );
-};
-
-const fly = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(-40px) scale(0.8);
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(-80px) scale(1.4);
-  }
-`;
-
-const AnimationWrapper = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-`;
-
-const Animation = styled.div`
-  animation: ${fly} 100s ease-out;
-`;
-
-const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
-  children,
-  ...props
-}) => {
-  return (
-    <AnimationWrapper {...props}>
-      <Animation>{children}</Animation>
-    </AnimationWrapper>
   );
 };
