@@ -6,6 +6,7 @@ import { ActionPage } from "../../../components/ActionPage";
 import { useActionDispatch, useGameSelector } from "../../../redux";
 import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
+import { Score } from "../../../components/Typography";
 
 export const Ended: React.FC = () => {
   const { id } = getPlayer();
@@ -44,22 +45,14 @@ export const Ended: React.FC = () => {
           justifyContent="flex-end"
           marginRight={`${theme.spacing(2)}px`}
         >
-          <Typography
-            variant="h2"
-            color="secondary"
-            style={{ fontWeight: score.orange > score.blue ? 600 : 400 }}
-          >
+          <Score team="orange" size="large" bold={score.orange > score.blue}>
             {score.orange}
-          </Typography>
+          </Score>
         </Flex>
         <Flex flex="1 0 auto" marginLeft={`${theme.spacing(2)}px`}>
-          <Typography
-            variant="h2"
-            color="primary"
-            style={{ fontWeight: score.blue > score.orange ? 600 : 400 }}
-          >
+          <Score team="blue" size="large" bold={score.blue > score.orange}>
             {score.blue}
-          </Typography>
+          </Score>
         </Flex>
       </Flex>
       {isHost && (
@@ -78,8 +71,3 @@ export const Ended: React.FC = () => {
     </ActionPage>
   );
 };
-
-const Row = styled(Flex)`
-  flex-direction: column;
-  margin-bottom: ${theme.spacing(2)}px;
-`;

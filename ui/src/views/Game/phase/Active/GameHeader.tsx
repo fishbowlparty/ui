@@ -4,7 +4,7 @@ import React from "react";
 import { useGameSelector } from "../../../../redux";
 import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
-import { Title } from "../../../../components/Typography";
+import { Title, Score } from "../../../../components/Typography";
 
 export const GameHeader: React.FC = () => {
   const roundNumber = useGameSelector((game) => game.round.number);
@@ -72,14 +72,10 @@ export const GameHeader: React.FC = () => {
               justifyContent="flex-end"
               marginRight={`${theme.spacing(1)}px`}
             >
-              <Typography variant="h6" color="secondary">
-                {score.orange}
-              </Typography>
+              <Score team="orange">{score.orange}</Score>
             </Flex>
             <Flex flex="1 0 auto" marginLeft={`${theme.spacing(1)}px`}>
-              <Typography variant="h6" color="primary">
-                {score.blue}
-              </Typography>
+              <Score team="blue">{score.blue}</Score>
             </Flex>
           </Flex>
         </Flex>

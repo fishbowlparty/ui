@@ -1,31 +1,10 @@
-import React, { useCallback, useMemo } from "react";
-import { useGameSelector, useActionDispatch } from "../../../../redux";
-import { getPlayer } from "../../../../redux/localStorage";
+import { selectActivePlayer, selectCards } from "@fishbowl/common";
+import { Box, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import { theme } from "../../../../theme";
-import {
-  Box,
-  Typography,
-  Button,
-  TableContainer,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-} from "@material-ui/core";
-import {
-  selectActivePlayer,
-  selectCards,
-  selectIsNewTurn,
-} from "@fishbowl/common";
-import { TimerContextProvider, useTimerContext } from "./timer";
-import { ActionButtons } from "./ActionButtons";
-import { useRouteMatch } from "react-router-dom";
-import { GameInviteButton } from "../../components/GameInviteButton";
-import { GameHeader } from "./GameHeader";
-import { Title } from "../../../../components/Typography";
-import { StretchPaper } from "../../components/StretchPaper";
-import { PlayerTableRow } from "../../components/PlayerTable";
+import React from "react";
+import { useGameSelector } from "../../../../redux";
+import { getPlayer } from "../../../../redux/localStorage";
+import { Recap } from "./Recap";
 
 const badTurnPhrases = [
   "sooooo, you get what we're doing here, right?",
@@ -43,29 +22,12 @@ export const CardArea: React.FC = () => {
   const activePlayer = useGameSelector(selectActivePlayer);
 
   const isMyTurn = activePlayer.id === id;
-  const recap = useGameSelector((game) => game.turns.recap);
-  const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
-  const cards = useGameSelector(selectCards);
   const activeCard = useGameSelector(
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
-  const pointTotal = recap.cardEvents.reduce(
-    (sum, cardEvent) => sum + (cardEvent == null ? skipPenalty : 1),
-    0
-  );
 
-  // I want to choose a random phrase but I need a deterministic way to
-  const badTurnSeed = useGameSelector(
-    (game) =>
-      Object.keys(game.round.guessedCardIds).length +
-      game.activePlayer.team.length +
-      game.activePlayer.index[game.activePlayer.team]
-  );
-
-  // use # of guessed cards as seed for random phrase
-  const badTurnPhrase = badTurnPhrases[badTurnSeed % badTurnPhrases.length];
-
+  // Brand new game
   if (isGameFresh) {
     return (
       <Centered>
@@ -78,100 +40,13 @@ export const CardArea: React.FC = () => {
     );
   }
 
+  // End of a turn
   if (isTurnFresh) {
-    const teamColor =
-      theme.palette[recap.team === "orange" ? "secondary" : "primary"].main;
-
     return (
       <Centered>
-        <CardTitle>turn recap</CardTitle>
+        <CardTitle>Turn recap</CardTitle>
         <Box mb={1}></Box>
-        <TableContainer
-          component={Paper}
-          variant="outlined"
-          style={{ borderColor: teamColor, marginBottom: theme.spacing(1) }}
-        >
-          <Table aria-label="Players">
-            <TableBody>
-              {pointTotal <= 0 && (
-                <PlayerTableRow>
-                  <TableCell scope="row" align="center" colSpan={2}>
-                    <Typography
-                      variant="body2"
-                      style={{ fontWeight: 300 }}
-                      color="textSecondary"
-                    >
-                      {badTurnPhrase}
-                    </Typography>
-                  </TableCell>
-                </PlayerTableRow>
-              )}
-              {recap.cardEvents.length == 0 ? (
-                <>
-                  <PlayerTableRow>
-                    <TableCell scope="row" align="center">
-                      <Typography
-                        variant="subtitle2"
-                        color={recap.team == "orange" ? "secondary" : "primary"}
-                      >
-                        0 points
-                      </Typography>
-                    </TableCell>
-                  </PlayerTableRow>
-                </>
-              ) : (
-                <>
-                  {recap.cardEvents.map((cardId, i) => {
-                    const isSkip = cardId == null;
-
-                    return (
-                      <PlayerTableRow key={i}>
-                        <TableCell scope="row">
-                          {cardId == null ? (
-                            <Typography
-                              variant="body2"
-                              style={{ fontWeight: 300, fontStyle: "italic" }}
-                              color="textSecondary"
-                            >
-                              skipped
-                            </Typography>
-                          ) : (
-                            cards[cardId].text
-                          )}
-                        </TableCell>
-                        <TableCell scope="row" align="right">
-                          {cardId == null ? (
-                            skipPenalty == 0 ? null : (
-                              <Typography
-                                variant="subtitle2"
-                                color="textSecondary"
-                              >
-                                - 1
-                              </Typography>
-                            )
-                          ) : (
-                            <Typography variant="subtitle2">+ 1</Typography>
-                          )}
-                        </TableCell>
-                      </PlayerTableRow>
-                    );
-                  })}
-                  <PlayerTableRow>
-                    <TableCell scope="row" align="right"></TableCell>
-                    <TableCell scope="row" align="right">
-                      <Typography
-                        variant="subtitle2"
-                        color={recap.team == "orange" ? "secondary" : "primary"}
-                      >
-                        = {pointTotal}
-                      </Typography>
-                    </TableCell>
-                  </PlayerTableRow>
-                </>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Recap></Recap>
       </Centered>
     );
   }

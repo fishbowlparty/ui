@@ -1,5 +1,7 @@
 import React from "react";
 import { Typography } from "@material-ui/core";
+import { TeamName } from "@fishbowl/common";
+import { theme } from "../theme";
 
 export const Title: React.FC<{ small?: boolean }> = ({ children, small }) => (
   <Typography
@@ -40,3 +42,29 @@ export const GameCode: React.FC<{ small?: boolean }> = ({
     {children}
   </Typography>
 );
+
+export const Score: React.FC<{
+  team?: TeamName;
+  size?: "small" | "medium" | "large";
+  bold?: boolean;
+}> = ({ team, size, bold }) => {
+  const color =
+    team == null
+      ? "textSecondary"
+      : team === "orange"
+      ? "secondary"
+      : "primary";
+
+  // default size is medium
+  const variant = size == "small" ? "subtitle2" : size == "large" ? "h2" : "h6";
+
+  return (
+    <Typography
+      variant={variant}
+      color={color}
+      style={{ fontWeight: bold ? 600 : 400 }}
+    >
+      0 points
+    </Typography>
+  );
+};
