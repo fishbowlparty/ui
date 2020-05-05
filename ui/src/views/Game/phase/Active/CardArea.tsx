@@ -1,10 +1,11 @@
 import { selectActivePlayer, selectCards } from "@fishbowl/common";
 import { Box, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import React from "react";
+import React, { useEffect } from "react";
 import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { Recap } from "./Recap";
+import { usePlusMinusAnimation } from "../../../../components/Typography";
 
 const badTurnPhrases = [
   "sooooo, you get what we're doing here, right?",
@@ -26,6 +27,25 @@ export const CardArea: React.FC = () => {
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
+  const cardEvents = useGameSelector((game) => game.turns.recap.cardEvents);
+  const {
+    addPlusOne,
+    addMinusOne,
+    AnimatedPlusOnes,
+    AnimatedMinusOnes,
+  } = usePlusMinusAnimation("medium");
+
+  useEffect(() => {
+    if (cardEvents.length == 0) {
+      return;
+    }
+    const lastEvent = cardEvents[cardEvents.length - 1];
+    if (lastEvent == null) {
+      addMinusOne();
+    } else {
+      addPlusOne();
+    }
+  }, [cardEvents]);
 
   // Brand new game
   if (isGameFresh) {
@@ -54,6 +74,8 @@ export const CardArea: React.FC = () => {
   if (isPaused) {
     return (
       <Centered>
+        <AnimatedPlusOnes />
+        <AnimatedMinusOnes />
         <CardTitle center>{`${
           isMyTurn ? "You" : activePlayer.name
         } paused the timer.`}</CardTitle>
@@ -64,6 +86,8 @@ export const CardArea: React.FC = () => {
   if (isMyTurn) {
     return (
       <Centered>
+        <AnimatedPlusOnes />
+        <AnimatedMinusOnes />
         <Typography variant="h4" align="center">
           {activeCard?.text}
         </Typography>
@@ -73,6 +97,8 @@ export const CardArea: React.FC = () => {
 
   return (
     <Centered>
+      <AnimatedPlusOnes />
+      <AnimatedMinusOnes />
       <CardTitle center>
         {`${activePlayer.name} is giving clues. Pay attention!`}
       </CardTitle>
@@ -83,7 +109,9 @@ export const CardArea: React.FC = () => {
 const Centered: React.FC = ({ children }) => (
   <>
     <Flex flex="1 1 0%"></Flex>
-    {children}
+    <Flex flexDirection="column" style={{ position: "relative" }}>
+      {children}
+    </Flex>
     <Flex flex="2 2 0%"></Flex>
   </>
 );

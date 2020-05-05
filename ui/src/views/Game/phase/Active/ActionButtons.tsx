@@ -1,15 +1,11 @@
-import { selectActivePlayer, selectCards } from "@fishbowl/common";
+import { selectActivePlayer } from "@fishbowl/common";
 import { Button } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useCallback, useState, DetailedHTMLProps } from "react";
+import React, { useCallback } from "react";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useTimerContext } from "./timer";
-import styled from "@emotion/styled";
-import { keyframes } from "@emotion/core";
-import { v4 } from "uuid";
-import { AnimatedFlyout, Score } from "../../../../components/Typography";
 
 export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
@@ -37,36 +33,11 @@ export const ActionButtons: React.FC = () => {
 
   const dispatch = useActionDispatch();
 
-  // state to drive animated + / - 1s
-  const [plusOnes, setPlusOnes] = useState<Record<string, boolean>>({});
-  const [minusOnes, setMinusOnes] = useState<Record<string, boolean>>({});
-
-  const removePlusOne = useCallback(
-    (id: string) => {
-      setPlusOnes((plusOnes) => {
-        const { [id]: _, ...rest } = plusOnes;
-        return rest;
-      });
-    },
-    [setPlusOnes]
-  );
-  const removeMinusOne = useCallback(
-    (id: string) => {
-      setMinusOnes((minusOnes) => {
-        const { [id]: _, ...rest } = minusOnes;
-        return rest;
-      });
-    },
-    [setMinusOnes]
-  );
   const skipCard = useCallback(() => {
     dispatch({
       type: "SKIP_CARD",
       payload: { cardId: activeCardId, drawSeed: Math.random() },
     });
-    if (skipPenalty < 0 && skippedCardIds[activeCardId] == null) {
-      setMinusOnes((minusOnes) => ({ ...minusOnes, [v4()]: true }));
-    }
   }, [dispatch, activeCardId, skippedCardIds]);
   const gotCard = useCallback(() => {
     dispatch({
@@ -77,10 +48,6 @@ export const ActionButtons: React.FC = () => {
         drawSeed: Math.random(),
       },
     });
-    setPlusOnes((plusOnes) => ({
-      ...plusOnes,
-      [v4()]: true,
-    }));
   }, [dispatch, activeCardId, timeRemaining]);
 
   const skipTurn = useCallback(() => {
@@ -148,21 +115,11 @@ export const ActionButtons: React.FC = () => {
           disabled={cantSkip}
         >
           Skip
-          {Object.keys(minusOnes).map((id) => (
-            <AnimatedFlyout key={id} onAnimationEnd={() => removeMinusOne(id)}>
-              <Score>- 1</Score>
-            </AnimatedFlyout>
-          ))}
         </Button>
       </Flex>
       <Flex flex="2 2 0%" marginLeft={`${theme.spacing(1)}px`}>
         <Button variant="outlined" fullWidth color="primary" onClick={gotCard}>
           Got It!
-          {Object.keys(plusOnes).map((id) => (
-            <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
-              <Score>+ 1</Score>
-            </AnimatedFlyout>
-          ))}
         </Button>
       </Flex>
     </Flex>

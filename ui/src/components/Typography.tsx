@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Typography } from "@material-ui/core";
 import { TeamName } from "@fishbowl/common";
 import { theme } from "../theme";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/core";
+import { v4 } from "uuid";
 
 export const Title: React.FC<{ small?: boolean }> = ({ children, small }) => (
   <Typography
@@ -89,8 +90,10 @@ const fly = keyframes`
 
 const AnimationWrapper = styled.div`
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,7 +103,7 @@ const Animation = styled.div`
   animation: ${fly} 1s ease-out;
 `;
 
-export const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
   ...props
 }) => {
@@ -109,4 +112,69 @@ export const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
       <Animation>{children}</Animation>
     </AnimationWrapper>
   );
+};
+
+export const usePlusMinusAnimation = (size: "small" | "medium" = "medium") => {
+  const [plusOnes, setPlusOnes] = useState<Record<string, boolean>>({});
+  const [minusOnes, setMinusOnes] = useState<Record<string, boolean>>({});
+
+  const addPlusOne = useCallback(
+    () => setPlusOnes((plusOnes) => ({ ...plusOnes, [v4()]: true })),
+    [setPlusOnes]
+  );
+  const removePlusOne = useCallback(
+    (id: string) => {
+      setPlusOnes((plusOnes) => {
+        const { [id]: _, ...rest } = plusOnes;
+        return rest;
+      });
+    },
+    [setPlusOnes]
+  );
+
+  const addMinusOne = useCallback(
+    () => setMinusOnes((minusOnes) => ({ ...minusOnes, [v4()]: true })),
+    [setMinusOnes]
+  );
+  const removeMinusOne = useCallback(
+    (id: string) => {
+      setMinusOnes((minusOnes) => {
+        const { [id]: _, ...rest } = minusOnes;
+        return rest;
+      });
+    },
+    [setMinusOnes]
+  );
+
+  const AnimatedPlusOnes = useMemo(
+    () => () => (
+      <>
+        {Object.keys(plusOnes).map((id) => (
+          <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
+            <Score size={size}>+ 1</Score>
+          </AnimatedFlyout>
+        ))}
+      </>
+    ),
+    [plusOnes]
+  );
+  const AnimatedMinusOnes = useMemo(
+    () => () => (
+      <>
+        {Object.keys(minusOnes).map((id) => (
+          <AnimatedFlyout key={id} onAnimationEnd={() => removeMinusOne(id)}>
+            <Score size={size}>- 1</Score>
+          </AnimatedFlyout>
+        ))}
+      </>
+    ),
+    [minusOnes]
+  );
+
+  return {
+    addPlusOne,
+    addMinusOne,
+    AnimatedPlusOnes,
+    AnimatedMinusOnes,
+  };
 };
