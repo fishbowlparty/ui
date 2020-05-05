@@ -35,8 +35,8 @@ Think about List with and without borders across this and the lobby
 */
 export const Drafting: React.FC = () => {
   const { id } = getPlayer();
+  const isHost = useGameSelector((game) => game.hostId === id);
 
-  const players = useGameSelector((game) => game.players);
   const teams = useGameSelector((game) => game.teams);
   const dispatch = useActionDispatch();
 
@@ -76,10 +76,10 @@ export const Drafting: React.FC = () => {
         <Flex>
           <DragDropContext onDragEnd={onDragEnd}>
             <Flex flex="1 1 0%" marginRight={2}>
-              <TeamDroppable team="orange"></TeamDroppable>
+              <TeamDroppable team="orange" disabled={!isHost}></TeamDroppable>
             </Flex>
             <Flex flex="1 1 0%" marginLeft={2}>
-              <TeamDroppable team="blue"></TeamDroppable>
+              <TeamDroppable team="blue" disabled={!isHost}></TeamDroppable>
             </Flex>
           </DragDropContext>
         </Flex>
@@ -91,7 +91,10 @@ export const Drafting: React.FC = () => {
   );
 };
 
-const TeamDroppable: React.FC<{ team: TeamName }> = ({ team }) => {
+const TeamDroppable: React.FC<{ team: TeamName; disabled?: boolean }> = ({
+  team,
+  disabled,
+}) => {
   const players = useGameSelector((game) => game.players);
   const teams = useGameSelector((game) => game.teams);
 
@@ -111,7 +114,11 @@ const TeamDroppable: React.FC<{ team: TeamName }> = ({ team }) => {
           }}
         >
           {teams[team].map((playerId, i) => (
-            <DraggableCell player={players[playerId]} index={i}></DraggableCell>
+            <DraggableCell
+              player={players[playerId]}
+              index={i}
+              disabled={disabled}
+            ></DraggableCell>
           ))}
           {provided.placeholder}
         </Paper>
@@ -120,12 +127,18 @@ const TeamDroppable: React.FC<{ team: TeamName }> = ({ team }) => {
   );
 };
 
-const DraggableCell: React.FC<{ player: Player; index: number }> = ({
-  player,
-  index,
-}) => {
+const DraggableCell: React.FC<{
+  player: Player;
+  index: number;
+  disabled?: boolean;
+}> = ({ player, index, disabled }) => {
   return (
-    <Draggable key={player.id} draggableId={player.id} index={index}>
+    <Draggable
+      key={player.id}
+      draggableId={player.id}
+      index={index}
+      isDragDisabled={disabled}
+    >
       {(provided, snapshot) => {
         console.log(snapshot.isDragging);
         return (
