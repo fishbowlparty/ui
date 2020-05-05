@@ -9,9 +9,10 @@ import { useTimerContext } from "./timer";
 
 export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
-  const isActive = useGameSelector(
-    (game) => selectActivePlayer(game).id === id
-  );
+
+  const activePlayer = useGameSelector(selectActivePlayer);
+
+  const isMyTurn = activePlayer.id === id;
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isPaused = useGameSelector((game) => game.turns.active.paused);
   const activeCard = useGameSelector(
@@ -51,16 +52,19 @@ export const ActionButtons: React.FC = () => {
   }, [dispatch, activeCard, timeRemaining]);
 
   const skipTurn = useCallback(() => {
-    dispatch({ type: "SKIP_TURN", payload: {} });
-  }, [dispatch]);
+    dispatch({ type: "SKIP_TURN", payload: { playerId: activePlayer.id } });
+  }, [dispatch, activePlayer]);
   const startTurn = useCallback(() => {
-    dispatch({ type: "START_TURN", payload: { drawSeed: Math.random() } });
-  }, [dispatch]);
+    dispatch({
+      type: "START_TURN",
+      payload: { drawSeed: Math.random(), playerId: activePlayer.id },
+    });
+  }, [dispatch, activePlayer]);
   const resumeTurn = useCallback(() => {
-    dispatch({ type: "RESUME_TURN", payload: {} });
-  }, [dispatch]);
+    dispatch({ type: "RESUME_TURN", payload: { playerId: activePlayer.id } });
+  }, [dispatch, activePlayer]);
 
-  if (!isActive) {
+  if (!isMyTurn) {
     // placeholder to avoid layout thrashing when buttons disappear
     return <Flex height="36px"></Flex>;
   }

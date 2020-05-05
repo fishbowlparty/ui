@@ -1,31 +1,30 @@
 import {
+  drawNextCard,
   nextPlayerNextTeam,
   nextPlayerSameTeam,
-  nextRound,
   nextTurn,
-  drawNextCard,
 } from "./mutations";
+import { selectActivePlayer, selectNumberOfPlayers } from "./selectors";
 import {
   Actions,
+  ADVANCE_FROM_DRAFTING,
+  ADVANCE_FROM_REGISTRATION,
+  ADVANCE_FROM_WRITING,
   END_TURN,
   Game,
   GOT_CARD,
   JOIN_GAME,
   LEAVE_GAME,
   PAUSE_TURN,
-  ADVANCE_FROM_DRAFTING,
-  ADVANCE_FROM_REGISTRATION,
-  ADVANCE_FROM_WRITING,
   RESTART_GAME,
+  RESUME_TURN,
   SET_GAME_SETTINGS,
   SET_TEAMS,
   SKIP_CARD,
   SKIP_TURN,
   START_TURN,
-  RESUME_TURN,
   SUBMIT_CARDS,
 } from "./types";
-import { selectCards, selectNumberOfPlayers } from "./selectors";
 
 /*
 Flow:
@@ -275,6 +274,9 @@ export function skipTurn(game: Game, action: SKIP_TURN): Game {
   if (game.phase !== "active") {
     return game;
   }
+  if (selectActivePlayer(game).id !== action.payload.playerId) {
+    return game;
+  }
 
   const { active } = game.turns;
 
@@ -289,8 +291,11 @@ export function startTurn(game: Game, action: START_TURN): Game {
   if (game.phase !== "active") {
     return game;
   }
+  if (selectActivePlayer(game).id !== action.payload.playerId) {
+    return game;
+  }
 
-  const { drawSeed } = action.payload;
+  const { drawSeed, playerId } = action.payload;
 
   if (game.turns.active.isFresh) {
     game = drawNextCard(game, drawSeed, game.turns.active.timeRemaining);
@@ -321,6 +326,9 @@ export function pauseTurn(game: Game, action: PAUSE_TURN): Game {
   if (game.phase !== "active") {
     return game;
   }
+  if (selectActivePlayer(game).id !== action.payload.playerId) {
+    return game;
+  }
 
   const { timeRemaining } = action.payload;
 
@@ -342,6 +350,9 @@ export function pauseTurn(game: Game, action: PAUSE_TURN): Game {
 
 export function resumeTurn(game: Game, action: RESUME_TURN): Game {
   if (game.phase !== "active") {
+    return game;
+  }
+  if (selectActivePlayer(game).id !== action.payload.playerId) {
     return game;
   }
 
@@ -448,6 +459,13 @@ function skipCard(game: Game, action: SKIP_CARD): Game {
 }
 
 function endTurn(game: Game, action: END_TURN): Game {
+  if (game.phase !== "active") {
+    return game;
+  }
+  if (selectActivePlayer(game).id !== action.payload.playerId) {
+    return game;
+  }
+
   game = nextTurn(game);
   return nextPlayerNextTeam(game);
 }

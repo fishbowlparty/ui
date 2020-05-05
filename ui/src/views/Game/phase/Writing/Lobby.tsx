@@ -63,7 +63,9 @@ export const Lobby: React.FC = () => {
                       <Edit></Edit>
                     </IconButton>
                   ) : (
-                    playerHasCards(player.id) && <Check></Check>
+                    <IconButton style={{ margin: "-16px" }} disabled>
+                      {playerHasCards(player.id) && <Check></Check>}
+                    </IconButton>
                   )}
                 </TableCell>
               </PlayerTableRow>

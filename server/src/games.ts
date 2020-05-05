@@ -6,6 +6,7 @@ import { GameReducer, Game, Actions } from "@fishbowl/common";
 const initialGame: Game = {
   gameCode: "_PLACEHOLDER",
   phase: "registration",
+  isFresh: true,
   activePlayer: {
     team: "orange",
     index: {
@@ -40,10 +41,12 @@ const initialGame: Game = {
       paused: true,
       activeCardId: "",
       timeRemaining: 60,
-      guessedCardIds: {},
       skippedCardIds: {},
     },
-    recap: null,
+    recap: {
+      team: "orange",
+      cardEvents: [],
+    },
   },
 };
 

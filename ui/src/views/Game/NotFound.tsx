@@ -1,8 +1,9 @@
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import { Typography } from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import { theme } from "../../theme";
+import { GameCode, Title, Instructions } from "../../components/Typography";
 
 export const NotFound: React.FC = () => {
   const { params } = useRouteMatch<{ gameCode: string }>();
@@ -14,13 +15,12 @@ export const NotFound: React.FC = () => {
       padding={`${theme.spacing(2)}px`}
     >
       <Flex flex="1 1 0%"></Flex>
-      <Typography variant="h4" align="center">
-        Not Found
-      </Typography>
-      <Typography variant="body1" align="center">
-        Unable to find game {params.gameCode.toUpperCase()}. Check that your
-        game code is correct and try again.
-      </Typography>
+      <Title>Not Found</Title>
+      <GameCode>{params.gameCode}</GameCode>
+      <Box mb={4}></Box>
+      <Instructions>
+        Unable to find game. Check that your game code is correct and try again.
+      </Instructions>
       <Flex flex="2 2 0%"></Flex>
     </Flex>
   );

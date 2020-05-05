@@ -1,5 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { useGameSelector, useActionDispatch } from "../../../../redux";
+import { selectActivePlayer } from "@fishbowl/common";
 const TimerContext = React.createContext<number>(0);
 
 export const TimerContextProvider: React.FC = ({ children }) => {
@@ -8,6 +9,8 @@ export const TimerContextProvider: React.FC = ({ children }) => {
   const timeRemaining = useGameSelector(
     (game) => game.turns.active.timeRemaining
   );
+  const activePlayer = useGameSelector(selectActivePlayer);
+
   const [timer, setTimer] = useState(timeRemaining);
   const interval = useRef<number>();
 
@@ -26,7 +29,7 @@ export const TimerContextProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (timer < 0) {
-      dispatch({ type: "END_TURN", payload: {} });
+      dispatch({ type: "END_TURN", payload: { playerId: activePlayer.id } });
     }
   }, [dispatch, timer]);
 

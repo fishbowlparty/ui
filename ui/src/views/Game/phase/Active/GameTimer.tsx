@@ -22,21 +22,24 @@ import { PlayArrow, Pause } from "@material-ui/icons";
 export const GameTimer: React.FC = () => {
   const { id } = getPlayer();
   const dispatch = useActionDispatch();
+  const activePlayer = useGameSelector(selectActivePlayer);
+
+  const isMyTurn = activePlayer.id === id;
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isGameFresh = useGameSelector((game) => game.isFresh);
-  const isMyTurn = useGameSelector(
-    (game) => selectActivePlayer(game).id === id
-  );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
   const timer = useTimerContext();
 
   const togglePause = useCallback(() => {
     if (isPaused) {
-      dispatch({ type: "RESUME_TURN", payload: {} });
+      dispatch({ type: "RESUME_TURN", payload: { playerId: activePlayer.id } });
     } else {
-      dispatch({ type: "PAUSE_TURN", payload: { timeRemaining: timer } });
+      dispatch({
+        type: "PAUSE_TURN",
+        payload: { playerId: activePlayer.id, timeRemaining: timer },
+      });
     }
-  }, [dispatch, timer, isPaused]);
+  }, [dispatch, timer, isPaused, activePlayer]);
 
   // can only use the button when its your turn and turn is not fresh
   const isDisabled = isTurnFresh || !isMyTurn;

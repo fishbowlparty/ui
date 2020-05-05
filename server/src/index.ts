@@ -9,10 +9,7 @@ import bodyParser from "body-parser";
 import { CONFIG } from "./config";
 import { Unsubscribe } from "redux";
 
-console.log("hey there");
-
 function send(socket: socketIo.Socket, message: ServerEvents) {
-  console.log("sending", message);
   socket.send(message);
 }
 
@@ -58,13 +55,21 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
     });
 
     let unsubscribeFromStore: Unsubscribe | null = null;
-    socket.on("connect", () => {
+    const setupSubscription = () => {
+      unsubscribeFromStore && unsubscribeFromStore();
       unsubscribeFromStore = gameStore.subscribe(() => {
         send(socket, {
           type: "SERVER_UPDATE_STATE",
           payload: gameStore.getState(),
         });
       });
+    };
+
+    if (socket.connected) {
+      setupSubscription();
+    }
+    socket.on("connect", () => {
+      setupSubscription();
     });
 
     socket.on("disconnect", () => {
@@ -72,22 +77,13 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       gameStore.dispatch({ type: "LEAVE_GAME", payload: { playerId } });
     });
 
-    const unsubScribeToStore = gameStore.subscribe(() => {
-      send(socket, {
-        type: "SERVER_UPDATE_STATE",
-        payload: gameStore.getState(),
-      });
-    });
-
     socket.on("message", (action: Actions) => {
-      console.log("socket message", action);
+      console.log("<- action", JSON.stringify(action, null, 2));
       gameStore.dispatch(action);
     });
-
-    socket.on("dis");
   });
 
   server.listen(CONFIG.PORT, () => {
-    console.log("app listening");
+    console.log("app listening on", CONFIG.PORT);
   });
 })();

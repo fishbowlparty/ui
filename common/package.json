@@ -5,6 +5,7 @@
   "main": "dest/index.js",
   "types": "dest/index.d.ts",
   "scripts": {
+    "dev": "tsc -w",
     "build": "tsc"
   },
   "author": "",

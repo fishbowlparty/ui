@@ -181,53 +181,51 @@ export type ADMIN_ACTIONS =
 
 /**
  * GAMEPLAY ACTIONS
- *
- * skip turn
- *  advances turn within the same team
- *  only possible if a turn has not yet been started
- * start turn
- *  unpauses turn, starts timer
- * pause turn
- *  pauses turn, stops timers
- * end turn
- *  Advances turn to next team & player
- *
- * GOT IT
- * skip
  */
 export interface SKIP_TURN {
   type: "SKIP_TURN";
-  payload: {};
+  payload: {
+    playerId: string;
+  };
 }
 
 export interface START_TURN {
   type: "START_TURN";
   payload: {
+    playerId: string;
     drawSeed: number;
   };
 }
 
 export interface END_TURN {
   type: "END_TURN";
-  payload: {};
+  payload: {
+    playerId: string;
+  };
 }
 
 export interface PAUSE_TURN {
   type: "PAUSE_TURN";
-  payload: { timeRemaining: number };
+  payload: {
+    playerId: string;
+
+    timeRemaining: number;
+  };
 }
 
 export interface RESUME_TURN {
   type: "RESUME_TURN";
-  payload: {};
+  payload: {
+    playerId: string;
+  };
 }
 
 export interface GOT_CARD {
   type: "GOT_CARD";
   payload: {
-    timeRemaining: number;
     cardId: string;
     drawSeed: number;
+    timeRemaining: number;
   };
 }
 

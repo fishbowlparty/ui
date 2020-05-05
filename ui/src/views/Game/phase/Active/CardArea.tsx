@@ -40,11 +40,9 @@ export const CardArea: React.FC = () => {
 
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isGameFresh = useGameSelector((game) => game.isFresh);
-  const isMyTurn = useGameSelector(
-    (game) => selectActivePlayer(game).id === id
-  );
-
   const activePlayer = useGameSelector(selectActivePlayer);
+
+  const isMyTurn = activePlayer.id === id;
   const recap = useGameSelector((game) => game.turns.recap);
   const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
   const cards = useGameSelector(selectCards);
