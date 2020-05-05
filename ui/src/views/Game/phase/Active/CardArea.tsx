@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useGameSelector, useActionDispatch } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { Flex } from "@rebass/grid/emotion";
@@ -27,6 +27,14 @@ import { Title } from "../../../../components/Typography";
 import { StretchPaper } from "../../components/StretchPaper";
 import { PlayerTableRow } from "../../components/PlayerTable";
 
+const badTurnPhrases = [
+  "sooooo, you get what we're doing here, right?",
+  "yikes",
+  "(╯°□°)╯︵ ┻━┻",
+  "don't worry, it wasn't your fault",
+  "I'm not mad, I'm just disappointed",
+];
+
 export const CardArea: React.FC = () => {
   const { id } = getPlayer();
 
@@ -48,6 +56,17 @@ export const CardArea: React.FC = () => {
     (sum, cardEvent) => sum + (cardEvent == null ? skipPenalty : 1),
     0
   );
+
+  // I want to choose a random phrase but I need a deterministic way to
+  const badTurnSeed = useGameSelector(
+    (game) =>
+      Object.keys(game.round.guessedCardIds).length +
+      game.activePlayer.team.length +
+      game.activePlayer.index[game.activePlayer.team]
+  );
+
+  // use # of guessed cards as seed for random phrase
+  const badTurnPhrase = badTurnPhrases[badTurnSeed % badTurnPhrases.length];
 
   if (isGameFresh) {
     return (
@@ -76,19 +95,21 @@ export const CardArea: React.FC = () => {
         >
           <Table aria-label="Players">
             <TableBody>
+              {pointTotal <= 0 && (
+                <PlayerTableRow>
+                  <TableCell scope="row" align="center" colSpan={2}>
+                    <Typography
+                      variant="body2"
+                      style={{ fontWeight: 300 }}
+                      color="textSecondary"
+                    >
+                      {badTurnPhrase}
+                    </Typography>
+                  </TableCell>
+                </PlayerTableRow>
+              )}
               {recap.cardEvents.length == 0 ? (
                 <>
-                  <PlayerTableRow>
-                    <TableCell scope="row" align="center">
-                      <Typography
-                        variant="body2"
-                        style={{ fontWeight: 300, fontStyle: "italic" }}
-                        color="textSecondary"
-                      >
-                        soooo you get what we are doing here right?
-                      </Typography>
-                    </TableCell>
-                  </PlayerTableRow>
                   <PlayerTableRow>
                     <TableCell scope="row" align="center">
                       <Typography

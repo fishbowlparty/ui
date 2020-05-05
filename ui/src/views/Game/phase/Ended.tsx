@@ -7,12 +7,6 @@ import { useActionDispatch, useGameSelector } from "../../../redux";
 import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
 
-const placeholders = ["Darth Vader", "Arachnophobia", "Band Camp"];
-
-interface FormState {
-  cards: string[];
-}
-
 export const Ended: React.FC = () => {
   const { id } = getPlayer();
   const isHost = useGameSelector((game) => game.hostId === id);
