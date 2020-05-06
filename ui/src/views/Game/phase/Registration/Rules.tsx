@@ -116,7 +116,7 @@ export const Rules: React.FC = () => {
           <Row>
             <Label htmlFor="skipPenalty">Skip Penalty</Label>
             <Instructions>
-              players lose a point (-1) for their team when they skip a card
+              should players lose a point (-1) for when they skip a card?
             </Instructions>
             <FormGroup>
               <FormControlLabel
