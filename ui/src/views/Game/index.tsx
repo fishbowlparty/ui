@@ -37,8 +37,8 @@ export const GameView: React.FC<RouteComponentProps<{
 }>> = (props) => {
   const { gameCode } = props.match.params;
 
-  // const [store, notFound] = useNetworkStore(gameCode);
-  const [store, notFound] = useMockStore(gameCode);
+  const [store, notFound] = useNetworkStore(gameCode);
+  // const [store, notFound] = useMockStore(gameCode);
 
   if (notFound) {
     return <NotFound></NotFound>;
@@ -87,7 +87,7 @@ const useMockStore = (
       createGameStore({
         isFresh: true,
         gameCode,
-        phase: "active",
+        phase: "registration",
         activePlayer: {
           team: "orange",
           index: {
@@ -104,7 +104,7 @@ const useMockStore = (
           },
           1: {
             id: "1",
-            name: "Caitlin",
+            name: "",
             joinOrder: 1,
           },
           2: {

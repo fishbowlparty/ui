@@ -82,6 +82,9 @@ export const advanceErrorMessage = (
     if (selectNumberOfPlayers(game) < 4) {
       return "Waiting for 4 players...";
     }
+    if (Object.values(game.players).some((player) => player.name === "")) {
+      return "Waiting for everyone to enter a name...";
+    }
     return null;
   }
   if (phase === "writing") {
