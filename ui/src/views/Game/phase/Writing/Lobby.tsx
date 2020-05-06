@@ -1,9 +1,9 @@
 import { selectOrderedPlayers } from "@fishbowl/common";
-import { IconButton, TableBody, TableCell } from "@material-ui/core";
+import { IconButton, TableBody, TableCell, Box } from "@material-ui/core";
 import { Check, Edit } from "@material-ui/icons";
 import React, { useCallback } from "react";
 import { Link, Redirect, useRouteMatch } from "react-router-dom";
-import { Title } from "../../../../components/Typography";
+import { Title, Instructions } from "../../../../components/Typography";
 import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { LobbyPage } from "../../components/LobbyPage";
@@ -33,6 +33,11 @@ export const Lobby: React.FC = () => {
         <Title small>Writing Cards</Title>
         <GameInviteButton small></GameInviteButton>
       </Flex>
+      <Instructions>
+        Take it easy while everyone else finishes up, or go back and edit your
+        cards if you thought of something better.
+      </Instructions>
+      <Box mb={2}></Box>
       <PlayerTable>
         <TableBody>
           {orderedPlayers.map((player, i) => (

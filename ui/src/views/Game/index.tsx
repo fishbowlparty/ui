@@ -15,6 +15,7 @@ import { NotFound } from "./NotFound";
 import { Flex } from "@rebass/grid/emotion";
 import { CircularProgress } from "@material-ui/core";
 import { getPlayer } from "../../redux/localStorage";
+import { CenteredContent } from "../../components/Layout";
 
 /*
 Notes for socket server:
@@ -36,8 +37,8 @@ export const GameView: React.FC<RouteComponentProps<{
 }>> = (props) => {
   const { gameCode } = props.match.params;
 
-  const [store, notFound] = useNetworkStore(gameCode);
-  // const [store, notFound] = useMockStore(gameCode);
+  // const [store, notFound] = useNetworkStore(gameCode);
+  const [store, notFound] = useMockStore(gameCode);
 
   if (notFound) {
     return <NotFound></NotFound>;
@@ -45,13 +46,9 @@ export const GameView: React.FC<RouteComponentProps<{
 
   if (store == null) {
     return (
-      <Flex flex="1 1 0%" flexDirection="column">
-        <Flex flex="1 1 0%"></Flex>
-        <Flex justifyContent="center">
-          <CircularProgress></CircularProgress>
-        </Flex>
-        <Flex flex="2 2 0%"></Flex>
-      </Flex>
+      <CenteredContent>
+        <CircularProgress></CircularProgress>
+      </CenteredContent>
     );
   }
 

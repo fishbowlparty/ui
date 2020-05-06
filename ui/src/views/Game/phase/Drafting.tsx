@@ -8,6 +8,7 @@ import {
   Typography,
   TableRow,
   Divider,
+  Box,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
@@ -19,13 +20,13 @@ import {
   ResponderProvided,
 } from "react-beautiful-dnd";
 import { useActionDispatch, useGameSelector } from "../../../redux";
-import { Player, TeamName } from "@fishbowl/common";
+import { Player, TeamName, selectHost } from "@fishbowl/common";
 
 import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
 import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
 import { PlayerTableRow } from "../components/PlayerTable";
-import { Title } from "../../../components/Typography";
+import { Title, Instructions } from "../../../components/Typography";
 import styled from "@emotion/styled";
 import { LobbyPage } from "../components/LobbyPage";
 import { GameInviteButton } from "../components/GameInviteButton";
@@ -37,7 +38,8 @@ Think about List with and without borders across this and the lobby
 */
 export const Drafting: React.FC = () => {
   const { id } = getPlayer();
-  const isHost = useGameSelector((game) => game.hostId === id);
+  const host = useGameSelector(selectHost);
+  const isHost = host?.id === id;
 
   const teams = useGameSelector((game) => game.teams);
   const dispatch = useActionDispatch();
@@ -73,6 +75,12 @@ export const Drafting: React.FC = () => {
         <Title small>Choose Teams</Title>
         <GameInviteButton small></GameInviteButton>
       </Flex>
+      <Instructions>
+        {isHost
+          ? "Drag and drop to arrange teams."
+          : `${host?.name} will arrange the teams.`}
+      </Instructions>
+      <Box mb={2}></Box>
       <Flex>
         <DragDropContext onDragEnd={onDragEnd}>
           <Flex flex="1 1 0%" marginRight={2}>

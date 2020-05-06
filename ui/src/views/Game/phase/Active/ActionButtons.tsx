@@ -7,6 +7,7 @@ import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useTimerContext } from "./timer";
 import { StickyButtonFooter } from "../../components/StickyButtonFooter";
+import { Footer } from "../../../../components/Layout";
 
 export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
@@ -69,7 +70,7 @@ export const ActionButtons: React.FC = () => {
 
   if (isTurnFresh) {
     return (
-      <StickyButtonFooter>
+      <Footer>
         <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
           <Button variant="outlined" fullWidth onClick={skipTurn}>
             Skip Turn
@@ -85,13 +86,13 @@ export const ActionButtons: React.FC = () => {
             Start Turn
           </Button>
         </Flex>
-      </StickyButtonFooter>
+      </Footer>
     );
   }
 
   if (isPaused) {
     return (
-      <StickyButtonFooter>
+      <Footer>
         <Button
           variant="outlined"
           fullWidth
@@ -100,12 +101,12 @@ export const ActionButtons: React.FC = () => {
         >
           Resume Turn
         </Button>
-      </StickyButtonFooter>
+      </Footer>
     );
   }
 
   return (
-    <StickyButtonFooter>
+    <Footer>
       <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
         <Button
           variant="outlined"
@@ -121,6 +122,6 @@ export const ActionButtons: React.FC = () => {
           Got It!
         </Button>
       </Flex>
-    </StickyButtonFooter>
+    </Footer>
   );
 };

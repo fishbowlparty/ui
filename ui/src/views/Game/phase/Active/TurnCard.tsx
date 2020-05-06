@@ -123,7 +123,6 @@ export const TurnCard: React.FC = ({ children }) => {
           <CardArea></CardArea>
         </Flex>
       </StretchPaper>
-      <Box mb={2}></Box>
     </>
   );
 };
