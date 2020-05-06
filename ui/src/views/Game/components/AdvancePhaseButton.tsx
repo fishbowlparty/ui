@@ -21,7 +21,9 @@ export const AdvancePhaseButton: React.FC = () => {
   const isDisabled = errorMessage != null || !isHost;
   const message =
     errorMessage ||
-    (isHost ? hostMessage(phase) : `${host?.name} will start the game...`);
+    (isHost
+      ? hostMessage(phase)
+      : `${host?.name || "???"} will start the game...`);
 
   const onClick = useCallback(() => {
     if (phase === "registration") {

@@ -11,7 +11,9 @@ import { Score } from "../../../components/Typography";
 export const Ended: React.FC = () => {
   const { id } = getPlayer();
   const isHost = useGameSelector((game) => game.hostId === id);
-  const hostName = useGameSelector((game) => game.players[game.hostId]?.name);
+  const hostName = useGameSelector(
+    (game) => game.players[game.hostId]?.name || "???"
+  );
   const dispatch = useActionDispatch();
 
   const score = useGameSelector((game) => game.score);
