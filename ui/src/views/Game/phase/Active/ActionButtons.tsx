@@ -13,6 +13,7 @@ export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
 
   const activePlayer = useGameSelector(selectActivePlayer);
+  const isHost = useGameSelector((game) => game.hostId === id);
 
   const isMyTurn = activePlayer.id === id;
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
@@ -67,6 +68,19 @@ export const ActionButtons: React.FC = () => {
   }, [dispatch, activePlayer]);
 
   if (!isMyTurn) {
+    // Host can skip
+    if (isHost && isTurnFresh && isTimeFull) {
+      return (
+        <Footer>
+          <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>
+            <Button variant="outlined" fullWidth onClick={skipTurn}>
+              Skip {activePlayer.name}'s turn
+            </Button>
+          </Flex>
+          <Flex flex="1 1 0%" />
+        </Footer>
+      );
+    }
     // placeholder to avoid layout thrashing when buttons disappear
     return <Flex height="69px"></Flex>;
   }
@@ -75,13 +89,13 @@ export const ActionButtons: React.FC = () => {
     return (
       <Footer>
         {isTimeFull && (
-          <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
+          <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>
             <Button variant="outlined" fullWidth onClick={skipTurn}>
               Skip Turn
             </Button>
           </Flex>
         )}
-        <Flex flex="1 1 auto" marginLeft={`${theme.spacing(1)}px`}>
+        <Flex flex="1 1 0%" marginLeft={`${theme.spacing(1)}px`}>
           <Button
             variant="outlined"
             fullWidth
@@ -112,7 +126,7 @@ export const ActionButtons: React.FC = () => {
 
   return (
     <Footer>
-      <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
+      <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>
         <Button
           variant="outlined"
           fullWidth
@@ -122,7 +136,7 @@ export const ActionButtons: React.FC = () => {
           Skip
         </Button>
       </Flex>
-      <Flex flex="2 2 auto" marginLeft={`${theme.spacing(1)}px`}>
+      <Flex flex="1 1 0%" marginLeft={`${theme.spacing(1)}px`}>
         <Button variant="outlined" fullWidth color="primary" onClick={gotCard}>
           Got It!
         </Button>
