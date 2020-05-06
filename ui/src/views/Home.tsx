@@ -5,6 +5,7 @@ import { Flex } from "@rebass/grid/emotion";
 import styled from "@emotion/styled";
 import { Link, useHistory } from "react-router-dom";
 import { getPlayer } from "../redux/localStorage";
+import { CenteredContent } from "../components/Layout";
 
 export const Home: React.FC = () => {
   const { id } = getPlayer();
@@ -25,8 +26,7 @@ export const Home: React.FC = () => {
   }, [history]);
 
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex flex="1 1 0%"></Flex>
+    <CenteredContent>
       <Flex alignItems="center" justifyContent="center">
         <Typography
           variant="h2"
@@ -36,24 +36,16 @@ export const Home: React.FC = () => {
           fish<BlueText>bowl</BlueText>
         </Typography>
       </Flex>
-      <Flex flex="2 2 0%"></Flex>
-      <Flex flexDirection="column">
-        <Box mb={2}>
-          <Button fullWidth variant="outlined" component={Link} to="/join">
-            Join Game
-          </Button>
-        </Box>
-        <Button
-          fullWidth
-          variant="outlined"
-          color="primary"
-          onClick={createGame}
-        >
-          Create New Game
+      <Box mb={8}></Box>
+      <Box mb={2}>
+        <Button fullWidth variant="outlined" component={Link} to="/join">
+          Join Game
         </Button>
-      </Flex>
-      <Flex flex="1 1 0%"></Flex>
-    </Flex>
+      </Box>
+      <Button fullWidth variant="outlined" color="primary" onClick={createGame}>
+        Create New Game
+      </Button>
+    </CenteredContent>
   );
 };
 

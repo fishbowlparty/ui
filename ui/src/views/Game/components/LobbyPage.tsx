@@ -3,14 +3,13 @@ import React from "react";
 import { theme } from "../../../theme";
 import { StickyButtonFooter } from "./StickyButtonFooter";
 import { AdvancePhaseButton } from "./AdvancePhaseButton";
+import { Content, Footer } from "../../../components/Layout";
 
 export const LobbyPage: React.FC = ({ children }) => (
-  <Flex flexDirection="column" flex="1 0 auto">
-    <Flex flex="1 0 auto" flexDirection="column" padding={theme.spacing(2)}>
-      {children}
-    </Flex>
-    <StickyButtonFooter>
+  <>
+    <Content>{children}</Content>
+    <Footer>
       <AdvancePhaseButton></AdvancePhaseButton>
-    </StickyButtonFooter>
-  </Flex>
+    </Footer>
+  </>
 );

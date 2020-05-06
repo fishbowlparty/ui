@@ -87,7 +87,7 @@ const fly = keyframes`
     transform: translateY(-80px) scale(1.4);
   }
 
-  100% {
+  100% {  
     opacity: 0;
     transform: translateY(-80px) scale(1.4);
   }
