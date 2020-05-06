@@ -8,6 +8,7 @@ import { getGameStore, createGame } from "./games";
 import bodyParser from "body-parser";
 import { CONFIG } from "./config";
 import { Unsubscribe } from "redux";
+import { clearTimeout } from "timers";
 
 function send(socket: socketIo.Socket, message: ServerEvents) {
   socket.send(message);
@@ -55,7 +56,7 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
     });
 
     let unsubscribeFromStore: Unsubscribe | null = null;
-    const setupSubscription = () => {
+    const onConnect = () => {
       unsubscribeFromStore && unsubscribeFromStore();
       unsubscribeFromStore = gameStore.subscribe(() => {
         send(socket, {
@@ -65,16 +66,26 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       });
     };
 
+    const onDisconnect = () => {
+      unsubscribeFromStore && unsubscribeFromStore();
+      gameStore.dispatch({ type: "LEAVE_GAME", payload: { playerId } });
+    };
+
+    let timeout: NodeJS.Timer;
+    const startTimeout = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(onDisconnect, 10 * 1000);
+    };
+
     if (socket.connected) {
-      setupSubscription();
+      onConnect();
     }
     socket.on("connect", () => {
-      setupSubscription();
+      onConnect();
     });
 
     socket.on("disconnect", () => {
-      unsubscribeFromStore && unsubscribeFromStore();
-      gameStore.dispatch({ type: "LEAVE_GAME", payload: { playerId } });
+      startTimeout();
     });
 
     socket.on("message", (action: Actions) => {
