@@ -1,11 +1,12 @@
 import { selectActivePlayer } from "@fishbowl/common";
-import { Button } from "@material-ui/core";
+import { Button, Slide } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback } from "react";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { useTimerContext } from "./timer";
+import { StickyButtonFooter } from "../../components/StickyButtonFooter";
 
 export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
@@ -63,18 +64,18 @@ export const ActionButtons: React.FC = () => {
 
   if (!isMyTurn) {
     // placeholder to avoid layout thrashing when buttons disappear
-    return <Flex height="36px"></Flex>;
+    return <Flex height="69px"></Flex>;
   }
 
   if (isTurnFresh) {
     return (
-      <Flex>
-        <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>
+      <StickyButtonFooter>
+        <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
           <Button variant="outlined" fullWidth onClick={skipTurn}>
             Skip Turn
           </Button>
         </Flex>
-        <Flex flex="1 1 0%" marginLeft={`${theme.spacing(1)}px`}>
+        <Flex flex="1 1 auto" marginLeft={`${theme.spacing(1)}px`}>
           <Button
             variant="outlined"
             fullWidth
@@ -84,13 +85,13 @@ export const ActionButtons: React.FC = () => {
             Start Turn
           </Button>
         </Flex>
-      </Flex>
+      </StickyButtonFooter>
     );
   }
 
   if (isPaused) {
     return (
-      <Flex>
+      <StickyButtonFooter>
         <Button
           variant="outlined"
           fullWidth
@@ -99,13 +100,13 @@ export const ActionButtons: React.FC = () => {
         >
           Resume Turn
         </Button>
-      </Flex>
+      </StickyButtonFooter>
     );
   }
 
   return (
-    <Flex>
-      <Flex flex="1 1 0%" marginRight={`${theme.spacing(1)}px`}>
+    <StickyButtonFooter>
+      <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
         <Button
           variant="outlined"
           fullWidth
@@ -115,11 +116,11 @@ export const ActionButtons: React.FC = () => {
           Skip
         </Button>
       </Flex>
-      <Flex flex="2 2 0%" marginLeft={`${theme.spacing(1)}px`}>
+      <Flex flex="2 2 auto" marginLeft={`${theme.spacing(1)}px`}>
         <Button variant="outlined" fullWidth color="primary" onClick={gotCard}>
           Got It!
         </Button>
       </Flex>
-    </Flex>
+    </StickyButtonFooter>
   );
 };

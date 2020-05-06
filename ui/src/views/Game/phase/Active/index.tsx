@@ -10,12 +10,10 @@ export const Active: React.FC = () => {
   return (
     <TimerContextProvider>
       <Flex flex="1 0 auto" flexDirection="column" padding={theme.spacing(2)}>
-        <Flex flex="1 0 auto" flexDirection="column">
-          <GameHeader></GameHeader>
-          <TurnCard></TurnCard>
-        </Flex>
-        <ActionButtons></ActionButtons>
+        <GameHeader></GameHeader>
+        <TurnCard></TurnCard>
       </Flex>
+      <ActionButtons></ActionButtons>
     </TimerContextProvider>
   );
 };
