@@ -9,4 +9,5 @@ export const StickyButtonFooter: React.FC = styled(Flex)`
   padding: ${theme.spacing(2)}px;
   border-top: 1px solid ${theme.palette.divider};
   background: ${theme.palette.background.paper};
+  flex: 0 0 auto;
 `;

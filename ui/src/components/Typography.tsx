@@ -82,6 +82,11 @@ const fly = keyframes`
     opacity: 1;
   }
 
+  70% {
+    opacity: 1;
+    transform: translateY(-80px) scale(1.4);
+  }
+
   100% {
     opacity: 0;
     transform: translateY(-80px) scale(1.4);
@@ -100,10 +105,10 @@ const AnimationWrapper = styled.div`
 `;
 
 const Animation = styled.div`
-  animation: ${fly} 1s ease-out;
+  animation: ${fly} 1.5s cubic-bezier(0.61, 1, 0.88, 1);
 `;
 
-const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+export const AnimatedFlyout: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   children,
   ...props
 }) => {
