@@ -18,27 +18,36 @@ import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { GameCode } from "../../../components/Typography";
+import Clipboard from "clipboard";
 
 export const GameInviteButton: React.FC<{ small?: boolean }> = ({ small }) => {
   const [highlighted, setHighlighted] = useState(false);
   const { params } = useRouteMatch<{ gameCode: string }>();
   const timeout = useRef<number>();
 
-  const copyGameCode = useCallback(() => {
-    navigator.clipboard.writeText(window.location.href);
-    setHighlighted(true);
-    clearTimeout(timeout.current);
-    timeout.current = window.setTimeout(() => setHighlighted(false), 1500);
-  }, []);
+  useEffect(() => {
+    const clip = new Clipboard("#CopyButton");
+
+    clip.on("success", () => {
+      setHighlighted(true);
+      clearTimeout(timeout.current);
+      timeout.current = window.setTimeout(() => setHighlighted(false), 1500);
+    });
+
+    return () => {
+      clip.destroy();
+    };
+  }, [setHighlighted, timeout]);
 
   return (
     <Box mb={1}>
       <Button
+        id="CopyButton"
         variant="outlined"
         fullWidth={!small}
-        onClick={copyGameCode}
         color={small && !highlighted ? "default" : "secondary"}
         size={small ? "small" : "medium"}
+        data-clipboard-text={window.location.href}
       >
         {small ? (
           <>
