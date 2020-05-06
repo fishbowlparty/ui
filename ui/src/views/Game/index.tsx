@@ -163,7 +163,7 @@ const useMockStore = (
             isFresh: true,
             paused: true,
             activeCardId: "",
-            timeRemaining: 100,
+            timeRemaining: 5,
             skippedCardIds: {},
           },
           recap: {

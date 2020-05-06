@@ -16,6 +16,9 @@ export const ActionButtons: React.FC = () => {
 
   const isMyTurn = activePlayer.id === id;
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
+  const isTimeFull = useGameSelector(
+    (game) => game.settings.turnDuration === game.turns.active.timeRemaining
+  );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
   const skippedCardIds = useGameSelector(
     (game) => game.turns.active.skippedCardIds
@@ -71,11 +74,13 @@ export const ActionButtons: React.FC = () => {
   if (isTurnFresh) {
     return (
       <Footer>
-        <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
-          <Button variant="outlined" fullWidth onClick={skipTurn}>
-            Skip Turn
-          </Button>
-        </Flex>
+        {isTimeFull && (
+          <Flex flex="1 1 auto" marginRight={`${theme.spacing(1)}px`}>
+            <Button variant="outlined" fullWidth onClick={skipTurn}>
+              Skip Turn
+            </Button>
+          </Flex>
+        )}
         <Flex flex="1 1 auto" marginLeft={`${theme.spacing(1)}px`}>
           <Button
             variant="outlined"
