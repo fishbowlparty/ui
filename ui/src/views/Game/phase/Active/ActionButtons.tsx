@@ -11,12 +11,10 @@ export const ActionButtons: React.FC = () => {
   const { id } = getPlayer();
 
   const activePlayer = useGameSelector(selectActivePlayer);
-  const activeTeam = useGameSelector((game) => game.activePlayer.team);
 
   const isMyTurn = activePlayer.id === id;
   const isTurnFresh = useGameSelector((game) => game.turns.active.isFresh);
   const isPaused = useGameSelector((game) => game.turns.active.paused);
-  const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
   const skippedCardIds = useGameSelector(
     (game) => game.turns.active.skippedCardIds
   );

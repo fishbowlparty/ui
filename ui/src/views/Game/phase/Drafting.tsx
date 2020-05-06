@@ -27,6 +27,8 @@ import { AdvancePhaseButton } from "../components/AdvancePhaseButton";
 import { PlayerTableRow } from "../components/PlayerTable";
 import { Title } from "../../../components/Typography";
 import styled from "@emotion/styled";
+import { LobbyPage } from "../components/LobbyPage";
+import { GameInviteButton } from "../components/GameInviteButton";
 
 /*
 Make color neutral when dragging or change when crossing borders
@@ -66,28 +68,22 @@ export const Drafting: React.FC = () => {
   };
 
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex
-        flex="1 0 auto"
-        flexDirection="column"
-        marginBottom={`${theme.spacing(2)}px`}
-      >
+    <LobbyPage>
+      <Flex justifyContent="space-between" alignItems="center">
         <Title small>Choose Teams</Title>
-        <Flex>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Flex flex="1 1 0%" marginRight={2}>
-              <TeamDroppable team="orange" disabled={!isHost}></TeamDroppable>
-            </Flex>
-            <Flex flex="1 1 0%" marginLeft={2}>
-              <TeamDroppable team="blue" disabled={!isHost}></TeamDroppable>
-            </Flex>
-          </DragDropContext>
-        </Flex>
+        <GameInviteButton small></GameInviteButton>
       </Flex>
       <Flex>
-        <AdvancePhaseButton></AdvancePhaseButton>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Flex flex="1 1 0%" marginRight={2}>
+            <TeamDroppable team="orange" disabled={!isHost}></TeamDroppable>
+          </Flex>
+          <Flex flex="1 1 0%" marginLeft={2}>
+            <TeamDroppable team="blue" disabled={!isHost}></TeamDroppable>
+          </Flex>
+        </DragDropContext>
       </Flex>
-    </Flex>
+    </LobbyPage>
   );
 };
 

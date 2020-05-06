@@ -11,6 +11,7 @@ import { theme } from "../../../../theme";
 import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
 import { GameInviteButton } from "../../components/GameInviteButton";
 import { PlayerTable, PlayerTableRow } from "../../components/PlayerTable";
+import { LobbyPage } from "../../components/LobbyPage";
 
 export const Lobby: React.FC = () => {
   const { id, name } = getPlayer();
@@ -58,71 +59,64 @@ export const Lobby: React.FC = () => {
       <Redirect to={`/games/${match.params.gameCode}/register`}></Redirect>
     );
   }
-
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex flex="1 0 auto" flexDirection="column">
-        <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
-          <Title small>Game Lobby</Title>
-          <GameInviteButton></GameInviteButton>
+    <LobbyPage>
+      <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
+        <Title small>Game Lobby</Title>
+        <GameInviteButton></GameInviteButton>
+        {isHost && (
+          <Instructions>
+            You are the host. Use this invite link to let your friends join. You
+            will control this game's rules and when the game starts. Have fun!
+          </Instructions>
+        )}
+      </Flex>
+      <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
+        <Flex alignItems="center" justifyContent="space-between">
+          <Title small>Rules</Title>
           {isHost && (
-            <Instructions>
-              You are the host. Use this invite link to let your friends join.
-              You will control this game's rules and when the game starts. Have
-              fun!
-            </Instructions>
+            <IconButton component={Link} to={`${url}/rules`}>
+              <Settings></Settings>
+            </IconButton>
           )}
         </Flex>
-        <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Title small>Rules</Title>
-            {isHost && (
-              <IconButton component={Link} to={`${url}/rules`}>
-                <Settings></Settings>
-              </IconButton>
-            )}
-          </Flex>
-          <Instructions>{rulesDescription}</Instructions>
-        </Flex>
-        <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
-          <Title small>Players</Title>
-          <PlayerTable>
-            <TableBody>
-              {orderedPlayers.map((player, i) => (
-                <PlayerTableRow key={player.id}>
-                  <TableCell scope="row">{i + 1}</TableCell>
-                  <TableCell scope="row" style={{ width: "100%" }}>
-                    {player.name || "..."}
-                  </TableCell>
-                  <TableCell align="right">
-                    {isMe(player.id) ? (
+        <Instructions>{rulesDescription}</Instructions>
+      </Flex>
+      <Flex flexDirection="column">
+        <Title small>Players</Title>
+        <PlayerTable>
+          <TableBody>
+            {orderedPlayers.map((player, i) => (
+              <PlayerTableRow key={player.id}>
+                <TableCell scope="row">{i + 1}</TableCell>
+                <TableCell scope="row" style={{ width: "100%" }}>
+                  {player.name || "..."}
+                </TableCell>
+                <TableCell align="right">
+                  {isMe(player.id) ? (
+                    <IconButton
+                      component={Link}
+                      to={`${url}/register`}
+                      style={{ margin: "-16px" }}
+                    >
+                      <Edit></Edit>
+                    </IconButton>
+                  ) : (
+                    isHost && (
                       <IconButton
-                        component={Link}
-                        to={`${url}/register`}
+                        onClick={() => removeFromGame(player.id)}
                         style={{ margin: "-16px" }}
                       >
-                        <Edit></Edit>
+                        <Close></Close>
                       </IconButton>
-                    ) : (
-                      isHost && (
-                        <IconButton
-                          onClick={() => removeFromGame(player.id)}
-                          style={{ margin: "-16px" }}
-                        >
-                          <Close></Close>
-                        </IconButton>
-                      )
-                    )}
-                  </TableCell>
-                </PlayerTableRow>
-              ))}
-            </TableBody>
-          </PlayerTable>
-        </Flex>
+                    )
+                  )}
+                </TableCell>
+              </PlayerTableRow>
+            ))}
+          </TableBody>
+        </PlayerTable>
       </Flex>
-      <Flex>
-        <AdvancePhaseButton></AdvancePhaseButton>
-      </Flex>
-    </Flex>
+    </LobbyPage>
   );
 };

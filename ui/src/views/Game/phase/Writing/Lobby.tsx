@@ -1,26 +1,15 @@
-import {
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-  Box,
-} from "@material-ui/core";
+import { selectOrderedPlayers } from "@fishbowl/common";
+import { IconButton, TableBody, TableCell } from "@material-ui/core";
 import { Check, Edit } from "@material-ui/icons";
-import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback } from "react";
 import { Link, Redirect, useRouteMatch } from "react-router-dom";
+import { Title } from "../../../../components/Typography";
 import { useGameSelector } from "../../../../redux";
-import { selectOrderedPlayers } from "@fishbowl/common";
-
 import { getPlayer } from "../../../../redux/localStorage";
-import { theme } from "../../../../theme";
-import { AdvancePhaseButton } from "../../components/AdvancePhaseButton";
+import { LobbyPage } from "../../components/LobbyPage";
 import { PlayerTable, PlayerTableRow } from "../../components/PlayerTable";
-import { Title, Instructions } from "../../../../components/Typography";
+import { Flex } from "@rebass/grid/emotion";
+import { GameInviteButton } from "../../components/GameInviteButton";
 
 export const Lobby: React.FC = () => {
   const { id } = getPlayer();
@@ -39,53 +28,37 @@ export const Lobby: React.FC = () => {
   }
 
   return (
-    <Flex flexDirection="column" flex="1 0 auto" padding={theme.spacing(2)}>
-      <Flex
-        flex="1 0 auto"
-        flexDirection="column"
-        marginBottom={`${theme.spacing(2)}px`}
-      >
+    <LobbyPage>
+      <Flex justifyContent="space-between" alignItems="center">
         <Title small>Writing Cards</Title>
-        <PlayerTable>
-          <TableBody>
-            {orderedPlayers.map((player, i) => (
-              <PlayerTableRow key={player.id}>
-                <TableCell scope="row" style={{ width: "100%" }}>
-                  {player.name}
-                </TableCell>
-                <TableCell align="right">
-                  {player.id === id ? (
-                    <IconButton
-                      component={Link}
-                      to={`/games/${params.gameCode}/cards`}
-                      style={{ margin: "-16px" }}
-                    >
-                      <Edit></Edit>
-                    </IconButton>
-                  ) : (
-                    <IconButton style={{ margin: "-16px" }} disabled>
-                      {playerHasCards(player.id) && <Check></Check>}
-                    </IconButton>
-                  )}
-                </TableCell>
-              </PlayerTableRow>
-            ))}
-          </TableBody>
-        </PlayerTable>
+        <GameInviteButton small></GameInviteButton>
       </Flex>
-      <Flex>
-        <AdvancePhaseButton></AdvancePhaseButton>
-      </Flex>
-    </Flex>
+      <PlayerTable>
+        <TableBody>
+          {orderedPlayers.map((player, i) => (
+            <PlayerTableRow key={player.id}>
+              <TableCell scope="row" style={{ width: "100%" }}>
+                {player.name}
+              </TableCell>
+              <TableCell align="right">
+                {player.id === id ? (
+                  <IconButton
+                    component={Link}
+                    to={`/games/${params.gameCode}/cards`}
+                    style={{ margin: "-16px" }}
+                  >
+                    <Edit></Edit>
+                  </IconButton>
+                ) : (
+                  <IconButton style={{ margin: "-16px" }} disabled>
+                    {playerHasCards(player.id) && <Check></Check>}
+                  </IconButton>
+                )}
+              </TableCell>
+            </PlayerTableRow>
+          ))}
+        </TableBody>
+      </PlayerTable>
+    </LobbyPage>
   );
 };
-
-const Label: React.FC = ({ children }) => (
-  <Typography
-    style={{ fontWeight: 300, lineHeight: "36px" }}
-    color="textSecondary"
-    variant="h6"
-  >
-    {children}
-  </Typography>
-);
