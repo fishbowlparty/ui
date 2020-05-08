@@ -81,7 +81,11 @@ export const CardArea: React.FC = () => {
   }, [cardEvents]);
 
   return (
-    <Centered>
+    <Flex
+      flexDirection="column"
+      flex="1 0 auto"
+      style={{ position: "relative" }}
+    >
       {Object.keys(plusOnes).map((id) => (
         <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
           <Score>+ 1</Score>
@@ -92,90 +96,34 @@ export const CardArea: React.FC = () => {
           <Score>- 1</Score>
         </AnimatedFlyout>
       ))}
-      {isGameFresh ? (
-        <CardTitle center>
-          {isMyTurn
-            ? "You're up first. Start the turn whenever you're ready."
-            : `Waiting for ${activePlayer.name} to start the game`}
-        </CardTitle>
-      ) : isTurnFresh ? (
-        <>
-          <CardTitle>Turn recap</CardTitle>
-          <Box mb={1}></Box>
-          <Recap></Recap>
-        </>
-      ) : isPaused ? (
-        <CardTitle center>{`${
-          isMyTurn ? "You" : activePlayer.name
-        } paused the timer.`}</CardTitle>
-      ) : isMyTurn ? (
-        <Typography variant="h4" align="center">
-          {activeCard?.text}
-        </Typography>
-      ) : (
-        <CardTitle center>
-          {`${activePlayer.name} is giving clues. Pay attention!`}
-        </CardTitle>
-      )}
-    </Centered>
-  );
-
-  // Brand new game
-  if (isGameFresh) {
-    return (
       <Centered>
-        <CardTitle center>
-          {isMyTurn
-            ? "You're up first. Start the turn whenever you're ready."
-            : `Waiting for ${activePlayer.name} to start the game`}
-        </CardTitle>
+        {isGameFresh ? (
+          <CardTitle center>
+            {isMyTurn
+              ? "You're up first. Start the turn whenever you're ready."
+              : `Waiting for ${activePlayer.name} to start the game`}
+          </CardTitle>
+        ) : isTurnFresh ? (
+          <>
+            <CardTitle>Turn recap</CardTitle>
+            <Box mb={1}></Box>
+            <Recap></Recap>
+          </>
+        ) : isPaused ? (
+          <CardTitle center>{`${
+            isMyTurn ? "You" : activePlayer.name
+          } paused the timer.`}</CardTitle>
+        ) : isMyTurn ? (
+          <Typography variant="h4" align="center">
+            {activeCard?.text}
+          </Typography>
+        ) : (
+          <CardTitle center>
+            {`${activePlayer.name} is giving clues. Pay attention!`}
+          </CardTitle>
+        )}
       </Centered>
-    );
-  }
-
-  // End of a turn
-  if (isTurnFresh) {
-    return (
-      <Centered>
-        <CardTitle>Turn recap</CardTitle>
-        <Box mb={1}></Box>
-        <Recap></Recap>
-      </Centered>
-    );
-  }
-
-  if (isPaused) {
-    return (
-      <Centered>
-        <AnimatedPlusOnes />
-        <AnimatedMinusOnes />
-        <CardTitle center>{`${
-          isMyTurn ? "You" : activePlayer.name
-        } paused the timer.`}</CardTitle>
-      </Centered>
-    );
-  }
-
-  if (isMyTurn) {
-    return (
-      <Centered>
-        <AnimatedPlusOnes />
-        <AnimatedMinusOnes />
-        <Typography variant="h4" align="center">
-          {activeCard?.text}
-        </Typography>
-      </Centered>
-    );
-  }
-
-  return (
-    <Centered>
-      <AnimatedPlusOnes />
-      <AnimatedMinusOnes />
-      <CardTitle center>
-        {`${activePlayer.name} is giving clues. Pay attention!`}
-      </CardTitle>
-    </Centered>
+    </Flex>
   );
 };
 
