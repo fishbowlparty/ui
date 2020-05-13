@@ -4,10 +4,18 @@ import React from "react";
 import { useGameSelector } from "../../../../redux";
 import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
-import { Title, Score } from "../../../../components/Typography";
+import { Title, Score, Instructions } from "../../../../components/Typography";
+import { selectActivePlayer } from "@fishbowl/common";
+import { getPlayer } from "../../../../redux/localStorage";
 
+const roundDescriptions = ["Taboo", "Charades", "One Word"];
 export const GameHeader: React.FC = () => {
+  const { id } = getPlayer();
+  const myTeam = useGameSelector((game) =>
+    game.teams.blue.includes(id) ? "blue" : "orange"
+  );
   const roundNumber = useGameSelector((game) => game.round.number);
+  const roundDescription = roundDescriptions[roundNumber - 1];
   const nCards = useGameSelector(
     (game) => Object.values(game.playerCards).flat().length
   );
@@ -27,8 +35,11 @@ export const GameHeader: React.FC = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center">
-        <Typography variant="h5">Round {roundNumber}</Typography>
+      <Flex justifyContent="space-between">
+        <Flex flexDirection="column">
+          <Typography variant="h5">Round {roundNumber}</Typography>
+          <Instructions>{roundDescription}</Instructions>
+        </Flex>
         <GameInviteButton small></GameInviteButton>
       </Flex>
       <Box mb={1}></Box>
@@ -78,9 +89,12 @@ export const GameHeader: React.FC = () => {
               <Score team="blue">{score.blue}</Score>
             </Flex>
           </Flex>
+          <Typography variant="caption" color="textSecondary">
+            You are {myTeam}
+          </Typography>
         </Flex>
       </Flex>
-      <Box mb={1}></Box>
+      <Box mb={2}></Box>
     </>
   );
 };

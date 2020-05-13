@@ -33,9 +33,6 @@ export const CardArea: React.FC = () => {
   );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
   const cardEvents = useGameSelector((game) => game.turns.recap.cardEvents);
-  const { AnimatedPlusOnes, AnimatedMinusOnes } = usePlusMinusAnimation(
-    "medium"
-  );
 
   const [plusOnes, setPlusOnes] = useState<Record<string, boolean>>({});
   const [minusOnes, setMinusOnes] = useState<Record<string, boolean>>({});
@@ -88,7 +85,7 @@ export const CardArea: React.FC = () => {
     >
       {Object.keys(plusOnes).map((id) => (
         <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
-          <Score>+ 1</Score>
+          <Score team="orange">+ 1</Score>
         </AnimatedFlyout>
       ))}
       {Object.keys(minusOnes).map((id) => (

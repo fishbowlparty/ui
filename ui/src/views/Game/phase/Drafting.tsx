@@ -9,9 +9,11 @@ import {
   TableRow,
   Divider,
   Box,
+  Button,
+  IconButton,
 } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import React from "react";
+import React, { useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -30,6 +32,17 @@ import { Title, Instructions } from "../../../components/Typography";
 import styled from "@emotion/styled";
 import { LobbyPage } from "../components/LobbyPage";
 import { GameInviteButton } from "../components/GameInviteButton";
+import { Shuffle } from "@material-ui/icons";
+
+// https://javascript.info/task/shuffle
+function shuffle<T>(array: Array<T>) {
+  array = array.slice();
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 
 /*
 Make color neutral when dragging or change when crossing borders
@@ -39,6 +52,7 @@ Think about List with and without borders across this and the lobby
 export const Drafting: React.FC = () => {
   const { id } = getPlayer();
   const host = useGameSelector(selectHost);
+  const playerIds = useGameSelector((game) => Object.keys(game.players));
   const isHost = host?.id === id;
 
   const teams = useGameSelector((game) => game.teams);
@@ -69,18 +83,46 @@ export const Drafting: React.FC = () => {
     dispatch({ type: "SET_TEAMS", payload: { teams: nextTeams } });
   };
 
+  const shuffleTeams = useCallback(() => {
+    const shuffledPlayerIds = shuffle(playerIds);
+    const orange = shuffledPlayerIds.slice(
+      0,
+      Math.ceil(shuffledPlayerIds.length / 2)
+    );
+    const blue = shuffledPlayerIds.slice(
+      Math.ceil(shuffledPlayerIds.length / 2)
+    );
+
+    dispatch({
+      type: "SET_TEAMS",
+      payload: {
+        teams: {
+          orange,
+          blue,
+        },
+      },
+    });
+  }, [playerIds]);
+
   return (
     <LobbyPage>
       <Flex justifyContent="space-between" alignItems="center">
         <Title small>Choose Teams</Title>
         <GameInviteButton small></GameInviteButton>
       </Flex>
-      <Instructions>
-        {isHost
-          ? "Drag and drop to arrange teams."
-          : `${host?.name} will arrange the teams.`}
-      </Instructions>
-      <Box mb={2}></Box>
+      <Flex justifyContent="space-between" alignItems="baseline">
+        <Instructions>
+          {isHost
+            ? "Drag and drop to arrange teams"
+            : `${host?.name} will arrange the teams.`}
+        </Instructions>
+      </Flex>
+      <Flex justifyContent="flex-end">
+        <IconButton onClick={shuffleTeams}>
+          <Shuffle></Shuffle>
+        </IconButton>
+      </Flex>
+      <Box mb={1}></Box>
       <Flex>
         <DragDropContext onDragEnd={onDragEnd}>
           <Flex flex="1 1 0%" marginRight={2}>

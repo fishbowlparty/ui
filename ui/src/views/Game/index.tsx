@@ -87,7 +87,7 @@ const useMockStore = (
       createGameStore({
         isFresh: true,
         gameCode,
-        phase: "active",
+        phase: "drafting",
         activePlayer: {
           team: "orange",
           index: {
@@ -104,7 +104,7 @@ const useMockStore = (
           },
           1: {
             id: "1",
-            name: "",
+            name: "John",
             joinOrder: 1,
           },
           2: {

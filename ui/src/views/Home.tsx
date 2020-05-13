@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
-import { Box, Typography, Button } from "@material-ui/core";
+import { Box, Typography, Button, Link } from "@material-ui/core";
 import { theme } from "../theme";
 import { Flex } from "@rebass/grid/emotion";
 import styled from "@emotion/styled";
-import { Link, useHistory } from "react-router-dom";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 import { getPlayer } from "../redux/localStorage";
-import { CenteredContent } from "../components/Layout";
+import { CenteredContent, Footer } from "../components/Layout";
 
 export const Home: React.FC = () => {
   const { id } = getPlayer();
@@ -26,26 +26,57 @@ export const Home: React.FC = () => {
   }, [history]);
 
   return (
-    <CenteredContent>
-      <Flex alignItems="center" justifyContent="center">
-        <Typography
-          variant="h2"
-          color="secondary"
-          style={{ fontWeight: "bold" }}
+    <>
+      <CenteredContent>
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
         >
-          fish<BlueText>bowl</BlueText>
-        </Typography>
-      </Flex>
-      <Box mb={8}></Box>
-      <Box mb={2}>
-        <Button fullWidth variant="outlined" component={Link} to="/join">
+          <Typography
+            variant="h2"
+            color="secondary"
+            style={{ fontWeight: "bold" }}
+          >
+            fish<BlueText>bowl</BlueText>
+          </Typography>
+          <Typography variant="body1">a party game!</Typography>
+        </Flex>
+        <Box mb={12} />
+        <Button
+          fullWidth
+          component="a"
+          href="https://www.youtube.com/watch?v=QO-2s4CEd1w"
+          target="_blank"
+        >
+          How to play
+        </Button>
+        <Box mb={2} />
+        <Button fullWidth variant="outlined" component={RouterLink} to="/join">
           Join Game
         </Button>
-      </Box>
-      <Button fullWidth variant="outlined" color="primary" onClick={createGame}>
-        Create New Game
-      </Button>
-    </CenteredContent>
+        <Box mb={2} />
+        <Button
+          fullWidth
+          variant="outlined"
+          color="primary"
+          onClick={createGame}
+        >
+          Create New Game
+        </Button>
+        <Box mb={2} />
+      </CenteredContent>
+      <Footer>
+        <Flex justifyContent="center" width="100%">
+          <Typography variant="caption">
+            this is an{" "}
+            <Link href="https://github.com/fishbowlparty/game">
+              open source project
+            </Link>
+          </Typography>
+        </Flex>
+      </Footer>
+    </>
   );
 };
 

@@ -34,4 +34,6 @@ export const selectNumberOfPlayers = (game: Game): number => {
 export const selectOrderedPlayers = (game: Game): Player[] =>
   Object.values(game.players).sort((a, b) => a.joinOrder - b.joinOrder);
 
-export const selectIsNewTurn = (game: Game) => game.turns.active.isFresh && game.turns.active.timeRemaining === game.settings.turnDuration
+export const selectIsNewTurn = (game: Game) =>
+  game.turns.active.isFresh &&
+  game.turns.active.timeRemaining === game.settings.turnDuration;
