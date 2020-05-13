@@ -55,9 +55,9 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
       payload: gameStore.getState(),
     });
 
-    let unsubscribeFromStore: Unsubscribe | null = null;
+    let unsubscribeFromStore: Unsubscribe = () => {};
     const onConnect = () => {
-      unsubscribeFromStore && unsubscribeFromStore();
+      unsubscribeFromStore();
       unsubscribeFromStore = gameStore.subscribe(() => {
         send(socket, {
           type: "SERVER_UPDATE_STATE",
@@ -67,8 +67,7 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
     };
 
     const onDisconnect = () => {
-      unsubscribeFromStore && unsubscribeFromStore();
-      gameStore.dispatch({ type: "LEAVE_GAME", payload: { playerId } });
+      unsubscribeFromStore();
     };
 
     let timeout: NodeJS.Timer;
@@ -83,7 +82,6 @@ function send(socket: socketIo.Socket, message: ServerEvents) {
     socket.on("connect", () => {
       onConnect();
     });
-
     socket.on("disconnect", () => {
       startTimeout();
     });
