@@ -1,14 +1,13 @@
-import { Typography, Box } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
+import { Instructions, Score } from "../../../../components/Typography";
 import { useGameSelector } from "../../../../redux";
+import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
-import { Title, Score, Instructions } from "../../../../components/Typography";
-import { selectActivePlayer } from "@fishbowl/common";
-import { getPlayer } from "../../../../redux/localStorage";
 
-const roundDescriptions = ["Taboo", "Charades", "One Word"];
+const roundDescriptions = ["Taboo", "One Word", "Charades"];
 export const GameHeader: React.FC = () => {
   const { id } = getPlayer();
   const myTeam = useGameSelector((game) =>

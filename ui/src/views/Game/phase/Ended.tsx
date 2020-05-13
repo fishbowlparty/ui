@@ -10,19 +10,22 @@ import { Score } from "../../../components/Typography";
 
 export const Ended: React.FC = () => {
   const { id } = getPlayer();
+  const dispatch = useActionDispatch();
+
   const isHost = useGameSelector((game) => game.hostId === id);
   const hostName = useGameSelector(
     (game) => game.players[game.hostId]?.name || "???"
   );
-  const dispatch = useActionDispatch();
+  const myTeam = useGameSelector((game) =>
+    game.teams.blue.includes(id) ? "blue" : "orange"
+  );
 
   const score = useGameSelector((game) => game.score);
   const isTie = score.blue === score.orange;
-  const title = isTie
-    ? "Tie Game"
-    : score.blue > score.orange
-    ? "Blue team wins"
-    : "Orange team wins";
+  const winner = score.blue > score.orange ? "blue" : "orange";
+
+  const youWin = myTeam === winner;
+  const title = isTie ? "Tie game" : youWin ? "YOU WON!" : "you lost =(";
 
   const hostInstructions =
     "You can restart this game below - you'll be able to change the rules and add / remove players.";
@@ -41,6 +44,14 @@ export const Ended: React.FC = () => {
       }`}
     >
       <Box mb={4}></Box>
+      {isTie ? null : (
+        <Flex justifyContent="center">
+          <Score team={winner} size="large">
+            {winner} wins
+          </Score>
+        </Flex>
+      )}
+      <Box mb={2}></Box>
       <Flex>
         <Flex
           flex="1 0 auto"
