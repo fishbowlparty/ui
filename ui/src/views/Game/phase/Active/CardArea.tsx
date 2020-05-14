@@ -11,14 +11,7 @@ import {
   Score,
 } from "../../../../components/Typography";
 import { v4 } from "uuid";
-
-const badTurnPhrases = [
-  "sooooo, you get what we're doing here, right?",
-  "yikes",
-  "(╯°□°)╯︵ ┻━┻",
-  "don't worry, it wasn't your fault",
-  "I'm not mad, I'm just disappointed",
-];
+import { ScoreSprinkler } from "./ScoreSprinkler";
 
 export const CardArea: React.FC = () => {
   const { id } = getPlayer();
@@ -32,50 +25,6 @@ export const CardArea: React.FC = () => {
     (game) => selectCards(game)[game.turns.active.activeCardId]
   );
   const isPaused = useGameSelector((game) => game.turns.active.paused);
-  const cardEvents = useGameSelector((game) => game.turns.recap.cardEvents);
-
-  const [plusOnes, setPlusOnes] = useState<Record<string, boolean>>({});
-  const [minusOnes, setMinusOnes] = useState<Record<string, boolean>>({});
-
-  const addPlusOne = useCallback(
-    () => setPlusOnes((plusOnes) => ({ ...plusOnes, [v4()]: true })),
-    [setPlusOnes]
-  );
-  const removePlusOne = useCallback(
-    (id: string) => {
-      setPlusOnes((plusOnes) => {
-        const { [id]: _, ...rest } = plusOnes;
-        return rest;
-      });
-    },
-    [setPlusOnes]
-  );
-
-  const addMinusOne = useCallback(
-    () => setMinusOnes((minusOnes) => ({ ...minusOnes, [v4()]: true })),
-    [setMinusOnes]
-  );
-  const removeMinusOne = useCallback(
-    (id: string) => {
-      setMinusOnes((minusOnes) => {
-        const { [id]: _, ...rest } = minusOnes;
-        return rest;
-      });
-    },
-    [setMinusOnes]
-  );
-
-  useEffect(() => {
-    if (cardEvents.length == 0) {
-      return;
-    }
-    const lastEvent = cardEvents[cardEvents.length - 1];
-    if (lastEvent == null) {
-      addMinusOne();
-    } else {
-      addPlusOne();
-    }
-  }, [cardEvents]);
 
   return (
     <Flex
@@ -83,16 +32,7 @@ export const CardArea: React.FC = () => {
       flex="1 0 auto"
       style={{ position: "relative" }}
     >
-      {Object.keys(plusOnes).map((id) => (
-        <AnimatedFlyout key={id} onAnimationEnd={() => removePlusOne(id)}>
-          <Score team="orange">+ 1</Score>
-        </AnimatedFlyout>
-      ))}
-      {Object.keys(minusOnes).map((id) => (
-        <AnimatedFlyout key={id} onAnimationEnd={() => removeMinusOne(id)}>
-          <Score>- 1</Score>
-        </AnimatedFlyout>
-      ))}
+      {/* <ScoreSprinkler></ScoreSprinkler> */}
       <Centered>
         {isGameFresh ? (
           <CardTitle center>

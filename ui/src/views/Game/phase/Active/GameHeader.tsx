@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography, IconButton } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
 import { Instructions, Score } from "../../../../components/Typography";
@@ -6,8 +6,14 @@ import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
+import { Help, HelpOutline } from "@material-ui/icons";
 
 const roundDescriptions = ["Taboo", "One Word", "Charades"];
+const roundAbouts = [
+  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=1m25s",
+  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=2m16s",
+  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=2m57s",
+];
 export const GameHeader: React.FC = () => {
   const { id } = getPlayer();
   const myTeam = useGameSelector((game) =>
@@ -15,6 +21,7 @@ export const GameHeader: React.FC = () => {
   );
   const roundNumber = useGameSelector((game) => game.round.number);
   const roundDescription = roundDescriptions[roundNumber - 1];
+  const roundAbout = roundAbouts[roundNumber - 1];
   const nCards = useGameSelector(
     (game) => Object.values(game.playerCards).flat().length
   );
@@ -36,7 +43,12 @@ export const GameHeader: React.FC = () => {
     <>
       <Flex justifyContent="space-between">
         <Flex flexDirection="column">
-          <Typography variant="h5">Round {roundNumber}</Typography>
+          <Flex alignItems="center">
+            <Typography variant="h5">Round {roundNumber}</Typography>
+            <IconButton component="a" href={roundAbout} target="_blank">
+              <HelpOutline></HelpOutline>
+            </IconButton>
+          </Flex>
           <Instructions>{roundDescription}</Instructions>
         </Flex>
         <GameInviteButton small></GameInviteButton>
