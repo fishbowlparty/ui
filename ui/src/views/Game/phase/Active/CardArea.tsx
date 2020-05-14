@@ -32,7 +32,7 @@ export const CardArea: React.FC = () => {
       flex="1 0 auto"
       style={{ position: "relative" }}
     >
-      {/* <ScoreSprinkler></ScoreSprinkler> */}
+      <ScoreSprinkler></ScoreSprinkler>
       <Centered>
         {isGameFresh ? (
           <CardTitle center>
