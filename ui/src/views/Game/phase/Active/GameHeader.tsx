@@ -8,11 +8,11 @@ import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
 import { Help, HelpOutline } from "@material-ui/icons";
 
-const roundDescriptions = ["Taboo", "One Word", "Charades"];
+const roundDescriptions = ["Taboo", "Charades", "One Word"];
 const roundAbouts = [
   "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=1m25s",
-  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=2m16s",
-  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=2m57s",
+  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=3m05s",
+  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=2m24s",
 ];
 export const GameHeader: React.FC = () => {
   const { id } = getPlayer();

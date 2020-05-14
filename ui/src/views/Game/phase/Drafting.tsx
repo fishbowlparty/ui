@@ -117,11 +117,15 @@ export const Drafting: React.FC = () => {
             : `${host?.name} will arrange the teams.`}
         </Instructions>
       </Flex>
-      <Flex justifyContent="flex-end">
-        <IconButton onClick={shuffleTeams}>
-          <Shuffle></Shuffle>
-        </IconButton>
-      </Flex>
+      {isHost ? (
+        <Flex justifyContent="flex-end">
+          <IconButton onClick={shuffleTeams}>
+            <Shuffle></Shuffle>
+          </IconButton>
+        </Flex>
+      ) : (
+        <Box mb={3}></Box>
+      )}
       <Box mb={1}></Box>
       <Flex>
         <DragDropContext onDragEnd={onDragEnd}>
