@@ -1,6 +1,8 @@
-import React, { useContext, useState, useRef, useEffect, useMemo } from "react";
-import { useGameSelector, useActionDispatch } from "../../../../redux";
 import { selectActivePlayer } from "@fishbowl/common";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useActionDispatch, useGameSelector } from "../../../../redux";
+import { useSoundContext } from "./sound";
+
 const TimerContext = React.createContext<number>(0);
 
 export const TimerContextProvider: React.FC = ({ children }) => {
@@ -10,21 +12,7 @@ export const TimerContextProvider: React.FC = ({ children }) => {
     (game) => game.turns.active.timeRemaining
   );
   const activePlayer = useGameSelector(selectActivePlayer);
-  const pauseSound = useMemo(
-    () =>
-      new Audio(
-        "https://www.noiseforfun.com/waves/interface-and-media/NFF-trill.wav"
-      ),
-    []
-  );
-
-  const startSound = useMemo(
-    () =>
-      new Audio(
-        "https://www.noiseforfun.com/waves/interface-and-media/NFF-good-tip-low.wav"
-      ),
-    []
-  );
+  const { play } = useSoundContext();
 
   const [timer, setTimer] = useState(timeRemaining);
   const interval = useRef<number>();
@@ -33,10 +21,10 @@ export const TimerContextProvider: React.FC = ({ children }) => {
   const wasPaused = useRef(true);
   useEffect(() => {
     if (wasPaused.current && !paused) {
-      startSound.play();
+      play("unpause");
     }
     if (!wasPaused.current && paused) {
-      pauseSound.play();
+      play("pause");
     }
 
     wasPaused.current = paused;

@@ -6,7 +6,14 @@ import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
-import { Help, HelpOutline, VolumeMute } from "@material-ui/icons";
+import {
+  Help,
+  HelpOutline,
+  VolumeMute,
+  VolumeOff,
+  VolumeUp,
+} from "@material-ui/icons";
+import { useSoundContext } from "./sound";
 
 const roundDescriptions = ["Taboo", "Charades", "One Word"];
 const roundAbouts = [
@@ -39,6 +46,8 @@ export const GameHeader: React.FC = () => {
   const nCardsRemaining = nCards - nCardsGuessed - nCardsSkipped;
   const score = useGameSelector((game) => game.score);
 
+  const { isMuted, setMute } = useSoundContext();
+
   return (
     <>
       <Flex alignItems="center" justifyContent="space-between">
@@ -56,13 +65,8 @@ export const GameHeader: React.FC = () => {
         </Flex>
         <Flex alignItems="center">
           <Box ml={2}></Box>
-          <IconButton
-            component="a"
-            href={roundAbout}
-            target="_blank"
-            size="small"
-          >
-            <VolumeMute></VolumeMute>
+          <IconButton size="small" onClick={() => setMute(!isMuted)}>
+            {isMuted ? <VolumeOff></VolumeOff> : <VolumeUp></VolumeUp>}
           </IconButton>
           <Box ml={2}></Box>
           <GameInviteButton small></GameInviteButton>

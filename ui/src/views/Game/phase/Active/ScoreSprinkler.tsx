@@ -1,40 +1,17 @@
-import { selectActivePlayer, selectCards, TeamName } from "@fishbowl/common";
-import { Box, Typography } from "@material-ui/core";
-import { Flex } from "@rebass/grid/emotion";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useGameSelector } from "../../../../redux";
-import { getPlayer } from "../../../../redux/localStorage";
-import { Recap } from "./Recap";
-import {
-  usePlusMinusAnimation,
-  AnimatedFlyout,
-  Score,
-} from "../../../../components/Typography";
-import { v4 } from "uuid";
-import { theme } from "../../../../theme";
-import styled from "@emotion/styled";
 import { keyframes } from "@emotion/core";
+import styled from "@emotion/styled";
+import { TeamName } from "@fishbowl/common";
+import React, { useEffect, useState } from "react";
+import { Score } from "../../../../components/Typography";
+import { useGameSelector } from "../../../../redux";
+import { useSoundContext } from "./sound";
 
 export const ScoreSprinkler: React.FC = () => {
   const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
   const cardEvents = useGameSelector((game) => game.turns.recap.cardEvents);
   const team = useGameSelector((game) => game.turns.recap.team);
   const [scoreSprays, setScoreSprays] = useState<SprayProps[]>([]);
-
-  const plusSound = useMemo(
-    () =>
-      new Audio(
-        "https://www.noiseforfun.com/waves/interface-and-media/NFF-tiny-select-02.wav"
-      ),
-    []
-  );
-  const minusSound = useMemo(
-    () =>
-      new Audio(
-        "https://www.noiseforfun.com/waves/interface-and-media/NFF-tiny-select-03.wav"
-      ),
-    []
-  );
+  const { play } = useSoundContext();
 
   // this is dumb, but it should work as long as none of these assumptions change:
   // cardEvents is an array, it will only grow in length over the course of a turn
@@ -51,9 +28,9 @@ export const ScoreSprinkler: React.FC = () => {
       const isPenalized = skipPenalty != 0;
 
       if (!isSkip) {
-        plusSound.play();
+        play("plusOne");
       } else if (isPenalized) {
-        minusSound.play();
+        play("minusOne");
       }
 
       return {

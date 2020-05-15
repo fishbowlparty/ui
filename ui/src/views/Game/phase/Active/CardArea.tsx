@@ -1,16 +1,10 @@
 import { selectActivePlayer, selectCards } from "@fishbowl/common";
 import { Box, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { Recap } from "./Recap";
-import {
-  usePlusMinusAnimation,
-  AnimatedFlyout,
-  Score,
-} from "../../../../components/Typography";
-import { v4 } from "uuid";
 import { ScoreSprinkler } from "./ScoreSprinkler";
 
 export const CardArea: React.FC = () => {
