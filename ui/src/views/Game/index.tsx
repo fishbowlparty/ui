@@ -1,21 +1,20 @@
 import { Actions, Game, ServerEvents } from "@fishbowl/common";
-import React, { useEffect, useState, useMemo } from "react";
+import { CircularProgress } from "@material-ui/core";
+import React, { useEffect, useMemo, useState } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import { Store } from "redux";
 import io from "socket.io-client";
+import { CenteredContent } from "../../components/Layout";
 import { createGameStore, useGameSelector } from "../../redux";
+import { getPlayer } from "../../redux/localStorage";
+import { NotFound } from "./NotFound";
 import { Active } from "./phase/Active";
 import { Canceled } from "./phase/Canceled";
 import { Drafting } from "./phase/Drafting";
 import { Ended } from "./phase/Ended";
 import { Registration } from "./phase/Registration";
 import { Writing } from "./phase/Writing";
-import { NotFound } from "./NotFound";
-import { Flex } from "@rebass/grid/emotion";
-import { CircularProgress } from "@material-ui/core";
-import { getPlayer } from "../../redux/localStorage";
-import { CenteredContent } from "../../components/Layout";
 
 /*
 Notes for socket server:
@@ -37,8 +36,8 @@ export const GameView: React.FC<RouteComponentProps<{
 }>> = (props) => {
   const { gameCode } = props.match.params;
 
-  // const [store, notFound] = useNetworkStore(gameCode);
-  const [store, notFound] = useMockStore(gameCode);
+  const [store, notFound] = useNetworkStore(gameCode);
+  // const [store, notFound] = useMockStore(gameCode);
 
   if (notFound) {
     return <NotFound></NotFound>;
