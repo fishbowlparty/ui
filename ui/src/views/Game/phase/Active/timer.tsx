@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect, useMemo } from "react";
 import { useGameSelector, useActionDispatch } from "../../../../redux";
 import { selectActivePlayer } from "@fishbowl/common";
 const TimerContext = React.createContext<number>(0);
@@ -10,9 +10,25 @@ export const TimerContextProvider: React.FC = ({ children }) => {
     (game) => game.turns.active.timeRemaining
   );
   const activePlayer = useGameSelector(selectActivePlayer);
+  const pauseSound = useMemo(
+    () =>
+      new Audio(
+        "https://www.noiseforfun.com/waves/interface-and-media/NFF-trill.wav"
+      ),
+    []
+  );
 
   const [timer, setTimer] = useState(timeRemaining);
   const interval = useRef<number>();
+
+  // play pause sound whenever the paused state toggles
+  const wasPaused = useRef(true);
+  useEffect(() => {
+    if (wasPaused.current !== paused) {
+      pauseSound.play();
+    }
+    wasPaused.current = paused;
+  }, [paused]);
 
   useEffect(() => {
     setTimer(timeRemaining);

@@ -37,8 +37,8 @@ export const GameView: React.FC<RouteComponentProps<{
 }>> = (props) => {
   const { gameCode } = props.match.params;
 
-  const [store, notFound] = useNetworkStore(gameCode);
-  // const [store, notFound] = useMockStore(gameCode);
+  // const [store, notFound] = useNetworkStore(gameCode);
+  const [store, notFound] = useMockStore(gameCode);
 
   if (notFound) {
     return <NotFound></NotFound>;

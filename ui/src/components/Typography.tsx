@@ -47,7 +47,7 @@ export const GameCode: React.FC<{ small?: boolean }> = ({
 );
 
 export const Score: React.FC<{
-  team?: TeamName;
+  team?: TeamName | null;
   size?: "small" | "medium" | "large";
   bold?: boolean;
 }> = ({ children, team, size, bold }) => {
