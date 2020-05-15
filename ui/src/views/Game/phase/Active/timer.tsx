@@ -18,15 +18,27 @@ export const TimerContextProvider: React.FC = ({ children }) => {
     []
   );
 
+  const startSound = useMemo(
+    () =>
+      new Audio(
+        "https://www.noiseforfun.com/waves/interface-and-media/NFF-good-tip-low.wav"
+      ),
+    []
+  );
+
   const [timer, setTimer] = useState(timeRemaining);
   const interval = useRef<number>();
 
   // play pause sound whenever the paused state toggles
   const wasPaused = useRef(true);
   useEffect(() => {
-    if (wasPaused.current !== paused) {
+    if (wasPaused.current && !paused) {
+      startSound.play();
+    }
+    if (!wasPaused.current && paused) {
       pauseSound.play();
     }
+
     wasPaused.current = paused;
   }, [paused]);
 

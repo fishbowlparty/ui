@@ -40,51 +40,49 @@ export const GameInviteButton: React.FC<{ small?: boolean }> = ({ small }) => {
   }, [setHighlighted, timeout]);
 
   return (
-    <Box mb={1}>
-      <Button
-        id="CopyButton"
-        variant="outlined"
-        fullWidth={!small}
-        color={small && !highlighted ? "default" : "secondary"}
-        size={small ? "small" : "medium"}
-        data-clipboard-text={window.location.href}
-      >
-        {small ? (
-          <>
-            <Typography color="textSecondary">
-              <GameCode small>{params.gameCode}</GameCode>
-            </Typography>
-            <Fade in={highlighted} timeout={{ enter: 100, exit: 200 }}>
-              <Flex
-                style={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  background: "white",
-                  borderRadius: 4,
-                }}
-                alignItems="center"
-                justifyContent="center"
+    <Button
+      id="CopyButton"
+      variant="outlined"
+      fullWidth={!small}
+      color={small && !highlighted ? "default" : "secondary"}
+      size={small ? "small" : "medium"}
+      data-clipboard-text={window.location.href}
+    >
+      {small ? (
+        <>
+          <Typography color="textSecondary">
+            <GameCode small>{params.gameCode}</GameCode>
+          </Typography>
+          <Fade in={highlighted} timeout={{ enter: 100, exit: 200 }}>
+            <Flex
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                background: "white",
+                borderRadius: 4,
+              }}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Typography
+                variant="caption"
+                align="center"
+                style={{ lineHeight: "1em" }}
               >
-                <Typography
-                  variant="caption"
-                  align="center"
-                  style={{ lineHeight: "1em" }}
-                >
-                  copied!
-                </Typography>
-              </Flex>
-            </Fade>
-          </>
-        ) : (
-          <Flex flexDirection="column" alignItems="center">
-            <GameCode>{params.gameCode}</GameCode>
-            <Typography variant="caption" align="center">
-              {highlighted ? "copied!" : "copy invite link"}
-            </Typography>
-          </Flex>
-        )}
-      </Button>
-    </Box>
+                copied!
+              </Typography>
+            </Flex>
+          </Fade>
+        </>
+      ) : (
+        <Flex flexDirection="column" alignItems="center">
+          <GameCode>{params.gameCode}</GameCode>
+          <Typography variant="caption" align="center">
+            {highlighted ? "copied!" : "copy invite link"}
+          </Typography>
+        </Flex>
+      )}
+    </Button>
   );
 };

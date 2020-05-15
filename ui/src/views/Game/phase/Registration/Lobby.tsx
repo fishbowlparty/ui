@@ -1,5 +1,5 @@
 import { selectOrderedPlayers } from "@fishbowl/common";
-import { IconButton, TableBody, TableCell } from "@material-ui/core";
+import { IconButton, TableBody, TableCell, Box } from "@material-ui/core";
 import { Close, Edit, Settings } from "@material-ui/icons";
 import { Flex } from "@rebass/grid/emotion";
 import React, { useCallback, useEffect } from "react";
@@ -64,6 +64,7 @@ export const Lobby: React.FC = () => {
       <Flex flexDirection="column" marginBottom={`${theme.spacing(2)}px`}>
         <Title small>Game Lobby</Title>
         <GameInviteButton></GameInviteButton>
+        <Box mb={1}></Box>
         {isHost && (
           <Instructions>
             You are the host. Use this invite link to let your friends join. You

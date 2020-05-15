@@ -6,7 +6,7 @@ import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
 import { GameInviteButton } from "../../components/GameInviteButton";
-import { Help, HelpOutline } from "@material-ui/icons";
+import { Help, HelpOutline, VolumeMute } from "@material-ui/icons";
 
 const roundDescriptions = ["Taboo", "Charades", "One Word"];
 const roundAbouts = [
@@ -41,18 +41,34 @@ export const GameHeader: React.FC = () => {
 
   return (
     <>
-      <Flex justifyContent="space-between">
-        <Flex flexDirection="column">
-          <Flex alignItems="center">
-            <Typography variant="h5">Round {roundNumber}</Typography>
-            <IconButton component="a" href={roundAbout} target="_blank">
-              <HelpOutline></HelpOutline>
-            </IconButton>
-          </Flex>
-          <Instructions>{roundDescription}</Instructions>
+      <Flex alignItems="center" justifyContent="space-between">
+        <Flex alignItems="center">
+          <Typography variant="h5">Round {roundNumber}</Typography>
+          <Box mr={2}></Box>
+          <IconButton
+            component="a"
+            href={roundAbout}
+            target="_blank"
+            size="small"
+          >
+            <HelpOutline></HelpOutline>
+          </IconButton>
         </Flex>
-        <GameInviteButton small></GameInviteButton>
+        <Flex alignItems="center">
+          <Box ml={2}></Box>
+          <IconButton
+            component="a"
+            href={roundAbout}
+            target="_blank"
+            size="small"
+          >
+            <VolumeMute></VolumeMute>
+          </IconButton>
+          <Box ml={2}></Box>
+          <GameInviteButton small></GameInviteButton>
+        </Flex>
       </Flex>
+      <Instructions>{roundDescription}</Instructions>
       <Box mb={1}></Box>
       <Flex>
         <Flex flex="1 1 0%" alignItems="center" flexDirection="column">

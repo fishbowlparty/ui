@@ -21,6 +21,21 @@ export const ScoreSprinkler: React.FC = () => {
   const team = useGameSelector((game) => game.turns.recap.team);
   const [scoreSprays, setScoreSprays] = useState<SprayProps[]>([]);
 
+  const plusSound = useMemo(
+    () =>
+      new Audio(
+        "https://www.noiseforfun.com/waves/interface-and-media/NFF-tiny-select-02.wav"
+      ),
+    []
+  );
+  const minusSound = useMemo(
+    () =>
+      new Audio(
+        "https://www.noiseforfun.com/waves/interface-and-media/NFF-tiny-select-03.wav"
+      ),
+    []
+  );
+
   // this is dumb, but it should work as long as none of these assumptions change:
   // cardEvents is an array, it will only grow in length over the course of a turn
   // with either cardIds (got it) or null (skipped), and then it will reset to 0
@@ -34,6 +49,12 @@ export const ScoreSprinkler: React.FC = () => {
     const newSprays = cardEvents.slice(scoreSprays.length).map((event) => {
       const isSkip = event == null;
       const isPenalized = skipPenalty != 0;
+
+      if (!isSkip) {
+        plusSound.play();
+      } else if (isPenalized) {
+        minusSound.play();
+      }
 
       return {
         teamColor: isSkip ? null : team,
