@@ -1,16 +1,18 @@
 import styled from "@emotion/styled";
 import { Box, Button, Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { ActionPage } from "../../../components/ActionPage";
 import { useActionDispatch, useGameSelector } from "../../../redux";
 import { getPlayer } from "../../../redux/localStorage";
 import { theme } from "../../../theme";
 import { Score } from "../../../components/Typography";
+import { useSoundContext } from "../../../sound";
 
 export const Ended: React.FC = () => {
   const { id } = getPlayer();
   const dispatch = useActionDispatch();
+  const { play } = useSoundContext();
 
   const isHost = useGameSelector((game) => game.hostId === id);
   const hostName = useGameSelector(
@@ -26,6 +28,13 @@ export const Ended: React.FC = () => {
 
   const youWin = myTeam === winner;
   const title = isTie ? "Tie game" : youWin ? "YOU WON!" : "you lost =(";
+  useEffect(() => {
+    if (youWin) {
+      play("win");
+    } else if (!isTie) {
+      play("lose");
+    }
+  }, []);
 
   const hostInstructions =
     "You can restart this game below - you'll be able to change the rules and add / remove players.";

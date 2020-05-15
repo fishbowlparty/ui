@@ -1,7 +1,7 @@
 import { selectActivePlayer } from "@fishbowl/common";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useActionDispatch, useGameSelector } from "../../../../redux";
-import { useSoundContext } from "./sound";
+import { useSoundContext } from "../../../../sound";
 
 const TimerContext = React.createContext<number>(0);
 

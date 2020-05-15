@@ -93,10 +93,10 @@ export const Recap: React.FC = () => {
                     <TableCell scope="row" align="right">
                       {cardId == null ? (
                         skipPenalty == 0 ? null : (
-                          <Score size="small">- 1</Score>
+                          <Score size="small">-1</Score>
                         )
                       ) : (
-                        <Score size="small">+ 1</Score>
+                        <Score size="small">+1</Score>
                       )}
                     </TableCell>
                   </PlayerTableRow>
@@ -105,7 +105,7 @@ export const Recap: React.FC = () => {
                   <TableCell scope="row" align="right"></TableCell>
                   <TableCell scope="row" align="right">
                     <Score size="small" team={recap.team}>
-                      = {pointTotal}
+                      ={pointTotal}
                     </Score>
                   </TableCell>
                 </PlayerTableRow>

@@ -6,10 +6,10 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useGameSelector, useActionDispatch } from "../../../../redux";
+import { useGameSelector, useActionDispatch } from "./redux";
 import { selectActivePlayer } from "@fishbowl/common";
 
-type SoundEvent = "pause" | "unpause" | "plusOne" | "minusOne";
+type SoundEvent = "pause" | "unpause" | "plusOne" | "minusOne" | "win" | "lose";
 
 interface SoundContext {
   isMuted: boolean;
@@ -54,6 +54,12 @@ export const SoundContextProvider: React.FC = ({ children }) => {
       ),
       minusOne: new Audio(
         "https://www.noiseforfun.com/waves/interface-and-media/NFF-tiny-select-03.wav"
+      ),
+      win: new Audio(
+        "https://www.noiseforfun.com/waves/interface-and-media/NFF-choice-good.wav"
+      ),
+      lose: new Audio(
+        "https://www.noiseforfun.com/waves/interface-and-media/NFF-lose.wav"
       ),
     };
   }, []);

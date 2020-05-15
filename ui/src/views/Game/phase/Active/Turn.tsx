@@ -56,7 +56,7 @@ export const Turn: React.FC = ({ children }) => {
   const activeTeamPalette =
     theme.palette[activeTeam === "orange" ? "secondary" : "primary"];
   const headerBackground = activeTeamPalette.main;
-  const headerColor = activeTeamPalette.contrastText;
+  const headerTextColor = activeTeamPalette.contrastText;
 
   const borderColor =
     theme.palette[activeTeam === "orange" ? "secondary" : "primary"].main;
@@ -80,7 +80,7 @@ export const Turn: React.FC = ({ children }) => {
           <Typography
             variant="h6"
             style={{
-              color: headerColor,
+              color: headerTextColor,
               transition: ANIMATION,
             }}
           >
@@ -97,7 +97,7 @@ export const Turn: React.FC = ({ children }) => {
           <Typography
             variant="body1"
             style={{
-              color: headerColor,
+              color: headerTextColor,
             }}
           >
             {isMyTurn ? "You are" : `${activePlayer.name} is`} giving clues to{" "}

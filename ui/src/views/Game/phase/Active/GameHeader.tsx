@@ -13,7 +13,7 @@ import {
   VolumeOff,
   VolumeUp,
 } from "@material-ui/icons";
-import { useSoundContext } from "./sound";
+import { useSoundContext } from "../../../../sound";
 
 const roundDescriptions = ["Taboo", "Charades", "One Word"];
 export const GameHeader: React.FC = () => {

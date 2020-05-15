@@ -87,7 +87,7 @@ const useMockStore = (
       createGameStore({
         isFresh: true,
         gameCode,
-        phase: "active",
+        phase: "ended",
         activePlayer: {
           team: "orange",
           index: {
@@ -145,8 +145,8 @@ const useMockStore = (
           number: 1,
         },
         score: {
-          orange: 0,
-          blue: 0,
+          orange: 1,
+          blue: 2,
         },
         settings: {
           cardsPerPlayer: 3,

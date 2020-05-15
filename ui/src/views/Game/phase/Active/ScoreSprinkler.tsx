@@ -4,7 +4,7 @@ import { TeamName } from "@fishbowl/common";
 import React, { useEffect, useState } from "react";
 import { Score } from "../../../../components/Typography";
 import { useGameSelector } from "../../../../redux";
-import { useSoundContext } from "./sound";
+import { useSoundContext } from "../../../../sound";
 
 export const ScoreSprinkler: React.FC = () => {
   const skipPenalty = useGameSelector((game) => game.settings.skipPenalty);
