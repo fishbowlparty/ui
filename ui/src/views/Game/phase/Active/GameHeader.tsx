@@ -114,9 +114,6 @@ export const GameHeader: React.FC = () => {
               <Score team="blue">{score.blue}</Score>
             </Flex>
           </Flex>
-          <Typography variant="caption" color="textSecondary">
-            You are {myTeam}
-          </Typography>
         </Flex>
       </Flex>
       <Box mb={2}></Box>

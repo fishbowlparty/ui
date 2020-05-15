@@ -1,14 +1,13 @@
-import styled from "@emotion/styled";
 import { selectActivePlayer, selectIsNewTurn } from "@fishbowl/common";
-import { Box, Paper, Typography, Divider } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { Flex } from "@rebass/grid/emotion";
 import React from "react";
 import { useGameSelector } from "../../../../redux";
 import { getPlayer } from "../../../../redux/localStorage";
 import { theme } from "../../../../theme";
-import { GameTimer } from "./GameTimer";
-import { CardArea } from "./CardArea";
 import { StretchPaper } from "../../components/StretchPaper";
+import { CardArea } from "./CardArea";
+import { GameTimer } from "./GameTimer";
 
 const ANIMATION = "all 100ms cubic-bezier(0.4, 0, 0.2, 1)";
 
@@ -56,8 +55,8 @@ export const Turn: React.FC = ({ children }) => {
 
   const activeTeamPalette =
     theme.palette[activeTeam === "orange" ? "secondary" : "primary"];
-  const headerBackground = isMyTeam ? activeTeamPalette.main : undefined;
-  const headerColor = isMyTeam ? activeTeamPalette.contrastText : undefined;
+  const headerBackground = activeTeamPalette.main;
+  const headerColor = activeTeamPalette.contrastText;
 
   const borderColor =
     theme.palette[activeTeam === "orange" ? "secondary" : "primary"].main;
@@ -71,12 +70,10 @@ export const Turn: React.FC = ({ children }) => {
         }}
       >
         <Flex
+          flexDirection="column"
           style={{
             background: headerBackground,
             padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-            borderBottom: `1px solid ${
-              isMyTeam ? headerBackground : theme.palette.divider
-            }`,
             transition: ANIMATION,
           }}
         >
@@ -97,21 +94,17 @@ export const Turn: React.FC = ({ children }) => {
               ? "You're guessing"
               : "You're spectating"}
           </Typography>
-        </Flex>
-        <Box mb={1}></Box>
-        <Flex
-          style={{
-            padding: `${theme.spacing(0.5)}px ${theme.spacing(
-              2
-            )}px ${theme.spacing(1)}px`,
-            borderBottom: `1px solid ${theme.palette.divider}`,
-          }}
-        >
-          <Typography variant="body1">
+          <Typography
+            variant="body1"
+            style={{
+              color: headerColor,
+            }}
+          >
             {isMyTurn ? "You are" : `${activePlayer.name} is`} giving clues to{" "}
             {teammateNames}.
           </Typography>
         </Flex>
+
         <GameTimer></GameTimer>
         <Flex
           flex="1 0 auto"
