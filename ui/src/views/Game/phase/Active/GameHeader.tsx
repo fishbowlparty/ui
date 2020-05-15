@@ -16,11 +16,6 @@ import {
 import { useSoundContext } from "./sound";
 
 const roundDescriptions = ["Taboo", "Charades", "One Word"];
-const roundAbouts = [
-  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=1m25s",
-  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=3m05s",
-  "https://www.youtube.com/watch?v=QO-2s4CEd1w&t=2m24s",
-];
 export const GameHeader: React.FC = () => {
   const { id } = getPlayer();
   const myTeam = useGameSelector((game) =>
@@ -28,7 +23,6 @@ export const GameHeader: React.FC = () => {
   );
   const roundNumber = useGameSelector((game) => game.round.number);
   const roundDescription = roundDescriptions[roundNumber - 1];
-  const roundAbout = roundAbouts[roundNumber - 1];
   const nCards = useGameSelector(
     (game) => Object.values(game.playerCards).flat().length
   );
@@ -56,7 +50,7 @@ export const GameHeader: React.FC = () => {
           <Box mr={2}></Box>
           <IconButton
             component="a"
-            href={roundAbout}
+            href={"https://gathertogethergames.com/fishbowl"}
             target="_blank"
             size="small"
           >

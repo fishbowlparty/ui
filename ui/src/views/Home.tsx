@@ -46,7 +46,7 @@ export const Home: React.FC = () => {
         <Button
           fullWidth
           component="a"
-          href="https://www.youtube.com/watch?v=QO-2s4CEd1w"
+          href="https://gathertogethergames.com/fishbowl"
           target="_blank"
         >
           How to play
