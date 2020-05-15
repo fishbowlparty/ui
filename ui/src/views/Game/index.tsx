@@ -15,6 +15,7 @@ import { Drafting } from "./phase/Drafting";
 import { Ended } from "./phase/Ended";
 import { Registration } from "./phase/Registration";
 import { Writing } from "./phase/Writing";
+import { Flex } from "@rebass/grid/emotion";
 
 /*
 Notes for socket server:
@@ -46,7 +47,9 @@ export const GameView: React.FC<RouteComponentProps<{
   if (store == null) {
     return (
       <CenteredContent>
-        <CircularProgress></CircularProgress>
+        <Flex justifyContent="center">
+          <CircularProgress></CircularProgress>
+        </Flex>
       </CenteredContent>
     );
   }
