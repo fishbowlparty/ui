@@ -1,6 +1,6 @@
 export const CONFIG = {
   PORT: process.env.PORT || "5000",
-  DATABASE_URL: process.env.DATABASE_URL + "?ssl=1",
+  DATABASE_URL: process.env.DATABASE_URL + "?ssl=no-verify",
 };
 
 /**
