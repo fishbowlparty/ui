@@ -5,6 +5,8 @@ export const CONFIG = {
     (process.env.NODE_ENV === "production" ? "?ssl=1&ssl=no-verify" : ""),
 };
 
+console.log(CONFIG.DATABASE_URL);
+
 /**
  * Check to make sure all of our config propertes have a value.
  *
