@@ -2,7 +2,7 @@ export const CONFIG = {
   PORT: process.env.PORT || "5000",
   DATABASE_URL:
     process.env.DATABASE_URL +
-    (process.env.NODE_ENV == "production" ? "?ssl=no-verify" : ""),
+    (process.env.NODE_ENV === "production" ? "?ssl=1&ssl=no-verify" : ""),
 };
 
 /**
